@@ -2,6 +2,7 @@ package ninja.taskbook;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -14,6 +15,9 @@ import android.view.MenuItem;
 public class MainActivity extends AppCompatActivity {
 
     //----------------------------------------------------------------------------------------------------
+    NavigationView m_navigationView;
+
+    //----------------------------------------------------------------------------------------------------
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        m_navigationView = (NavigationView)findViewById(R.id.navigation_view);
     }
 
     //----------------------------------------------------------------------------------------------------
