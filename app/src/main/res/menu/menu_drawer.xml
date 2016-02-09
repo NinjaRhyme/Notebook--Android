@@ -1,11 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item
-        android:title="123"/>
-    <item
-        android:title="456"/>
-    <item
-        android:title="789"/>
+    <group
+        android:checkableBehavior="none">
 
+        <item
+            android:id="@+id/drawer_home"
+            android:icon="@drawable/drawer_home"
+            android:title="@string/drawer_home"/>
+
+
+        <item
+            android:id="@+id/section"
+            android:title="--">
+            <menu>
+                <item
+                    android:id="@+id/drawer_favourite"
+                    android:icon="@drawable/drawer_home"
+                    android:title="string/favourite"/>
+
+                <item
+                    android:id="@+id/drawer_downloaded"
+                    android:icon="@drawable/drawer_home"
+                    android:title="string/downloaded"/>
+            </menu>
+        </item>
+
+        <item
+            android:id="@+id/section2"
+            android:title="--">
+            <menu>
+                <item
+                    android:id="@+id/drawer_more"
+                    android:icon="@drawable/drawer_home"
+                    android:title="string/more"/>
+
+                <item
+                    android:id="@+id/drawer_settings"
+                    android:icon="@drawable/drawer_home"
+                    android:title="string/settings"/>
+            </menu>
+        </item>
+
+
+    </group>
 </menu>
