@@ -21,7 +21,7 @@ public class TBContentProvider extends ContentProvider {
     private final Map<String, SQLiteDatabase> m_databaseMap;
     private final Map<String, ReentrantLock> m_databaseLocks;
 
-    // init
+    // Init
     //----------------------------------------------------------------------------------------------------
     public TBContentProvider() {
         m_databaseMap = new HashMap<>();
@@ -49,24 +49,56 @@ public class TBContentProvider extends ContentProvider {
     //----------------------------------------------------------------------------------------------------
     @Override
     public Uri insert(@NonNull Uri uri, ContentValues values) {
+        List<String> segments = uri.getPathSegments();
+        final String dbName = segments.get(0);
+        final String table = segments.get(1);
 
-        return null;
+        try {
+            SQLiteDatabase db = getDatabase(dbName);
+            ReentrantLock lock = getDatabaseLock(dbName);
+
+            try {
+                lock.lock();
+                db.insertWithOnConflict(table, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+                return uri;
+            } finally {
+                lock.unlock();
+            }
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     //----------------------------------------------------------------------------------------------------
     @Override
     public int delete(@NonNull Uri uri, String whereClause, String[] whereArgs) {
+        List<String> segments = uri.getPathSegments();
+        final String dbName = segments.get(0);
+        final String table = segments.get(1);
 
-        return 0;
+        try {
+            SQLiteDatabase db = getDatabase(dbName);
+            ReentrantLock lock = getDatabaseLock(dbName);
+
+            try {
+                lock.lock();
+                return db.delete(table, whereClause, whereArgs);
+            } finally {
+                lock.unlock();
+            }
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
     //----------------------------------------------------------------------------------------------------
     @Override
     public int update(@NonNull Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+        List<String> segments = uri.getPathSegments();
+        final String dbName = segments.get(0);
+        final String table = segments.get(1);
+
         try {
-            List<String> segments = uri.getPathSegments();
-            final String dbName = segments.get(0);
-            final String table = segments.get(1);
             SQLiteDatabase db = getDatabase(dbName);
             ReentrantLock lock = getDatabaseLock(dbName);
 
@@ -84,8 +116,23 @@ public class TBContentProvider extends ContentProvider {
     //----------------------------------------------------------------------------------------------------
     @Override
     public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+        List<String> segments = uri.getPathSegments();
+        final String dbName = segments.get(0);
+        final String table = segments.get(1);
 
-        return null;
+        try {
+            SQLiteDatabase db = getDatabase(dbName);
+            ReentrantLock lock = getDatabaseLock(dbName);
+
+            try {
+                lock.lock();
+                return db.query(table, projection, selection, selectionArgs, null, null, sortOrder);
+            } finally {
+                lock.unlock();
+            }
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     //----------------------------------------------------------------------------------------------------
@@ -93,7 +140,7 @@ public class TBContentProvider extends ContentProvider {
         SQLiteDatabase db;
         db = m_databaseMap.get(dbName);
         if (db == null) {
-            final String absPath = new File("database", dbName).getAbsolutePath();
+            final String absPath = new File(DatabaseInfo.FILE_ROOT, dbName).getAbsolutePath();
 
             SQLiteOpenHelper helper = new UserDatabase(getContext(), absPath, null, 0);
             db = helper.getWritableDatabase();

@@ -16,13 +16,17 @@ public class UserDatabase extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         try {
-            db.execSQL("create table if not exists User (" +
-                    ")");
+            StringBuilder builder = new StringBuilder("create table if not exists ");
+            builder.append(DatabaseInfo.UserTable.TABLE_NAME);
+            for (String column : DatabaseInfo.UserTable.COLUMNS)
+            {
+                builder.append(column);
+            }
+
+            db.execSQL(builder.toString());
         } catch (Exception e) {
             //
         }
-
-        //onUpgrade(db,0,0);
     }
 
     //----------------------------------------------------------------------------------------------------

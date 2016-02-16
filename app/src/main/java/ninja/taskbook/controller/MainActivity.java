@@ -1,9 +1,8 @@
 package ninja.taskbook.controller;
 
+import android.content.ContentValues;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -11,9 +10,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import ninja.taskbook.R;
+import ninja.taskbook.model.database.DatabaseInfo;
+import ninja.taskbook.model.database.TBContentProvider;
 
 
 //----------------------------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     NavigationView m_navigationView;
     Toolbar m_toolbar;
 
-    // init
+    // Init
     //----------------------------------------------------------------------------------------------------
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +34,10 @@ public class MainActivity extends AppCompatActivity {
         initDrawer();
         initToolbar();
         initActionBarDrawerToggle();
+
+        ContentValues values = new ContentValues();
+        values.put("user_id", 0);
+        getContentResolver().insert(DatabaseInfo.UserTable.CONTENT_URI, values);
     }
 
     private void initDrawer() {
