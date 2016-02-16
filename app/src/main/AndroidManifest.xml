@@ -10,7 +10,7 @@
         android:theme="@style/Base.Theme.Light" >
 
         <activity
-            android:name=".MainActivity"
+            android:name=".controller.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/Base.Theme.Light" >
             <intent-filter>
