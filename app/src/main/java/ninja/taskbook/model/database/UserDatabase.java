@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-
+//----------------------------------------------------------------------------------------------------
 public class UserDatabase extends SQLiteOpenHelper {
 
     //----------------------------------------------------------------------------------------------------
@@ -16,7 +16,7 @@ public class UserDatabase extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         try {
-            StringBuilder builder = new StringBuilder("create table if not exists ");
+            StringBuilder builder = new StringBuilder("CREATE TABLE IF NOT EXISTS ");
             builder.append(DatabaseInfo.UserTable.TABLE_NAME);
             for (String column : DatabaseInfo.UserTable.COLUMNS)
             {

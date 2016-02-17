@@ -7,6 +7,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,14 +16,13 @@ import ninja.taskbook.R;
 import ninja.taskbook.model.database.DatabaseInfo;
 import ninja.taskbook.model.database.TBContentProvider;
 
-
 //----------------------------------------------------------------------------------------------------
 public class MainActivity extends AppCompatActivity {
 
     //----------------------------------------------------------------------------------------------------
-    DrawerLayout m_drawerLayout;
-    NavigationView m_navigationView;
-    Toolbar m_toolbar;
+    DrawerLayout mDrawerLayout;
+    NavigationView mNavigationView;
+    Toolbar mToolbar;
 
     // Init
     //----------------------------------------------------------------------------------------------------
@@ -41,9 +41,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initDrawer() {
-        m_drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
-        m_navigationView = (NavigationView)findViewById(R.id.navigation_view);
-        m_navigationView.setNavigationItemSelectedListener(
+        mDrawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+        mNavigationView = (NavigationView)findViewById(R.id.navigation_view);
+        mNavigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem item) {
@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
                                 break;
                         }
 
-                        m_drawerLayout.closeDrawers();
+                        mDrawerLayout.closeDrawers();
                         return true;
                     }
                 }
@@ -64,12 +64,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initToolbar() {
-        m_toolbar = (Toolbar)findViewById(R.id.toolbar);
-        setSupportActionBar(m_toolbar);
+        mToolbar = (Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
     }
 
     private void initActionBarDrawerToggle() {
-        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, m_drawerLayout, m_toolbar, R.string.drawer_open, R.string.drawer_close) {
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.drawer_open, R.string.drawer_close) {
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        m_drawerLayout.setDrawerListener(actionBarDrawerToggle);
+        mDrawerLayout.setDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
     }
 

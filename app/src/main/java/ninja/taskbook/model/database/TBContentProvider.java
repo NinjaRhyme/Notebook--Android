@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import java.io.File;
 import java.util.HashMap;
@@ -14,18 +15,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
-
+//----------------------------------------------------------------------------------------------------
 public class TBContentProvider extends ContentProvider {
 
     //----------------------------------------------------------------------------------------------------
-    private final Map<String, SQLiteDatabase> m_databaseMap;
-    private final Map<String, ReentrantLock> m_databaseLocks;
+    private final Map<String, SQLiteDatabase> mDatabaseMap;
+    private final Map<String, ReentrantLock> mDatabaseLocks;
 
     // Init
     //----------------------------------------------------------------------------------------------------
     public TBContentProvider() {
-        m_databaseMap = new HashMap<>();
-        m_databaseLocks = new HashMap<>();
+        mDatabaseMap = new HashMap<>();
+        mDatabaseLocks = new HashMap<>();
     }
 
     @Override
@@ -138,24 +139,22 @@ public class TBContentProvider extends ContentProvider {
     //----------------------------------------------------------------------------------------------------
     private synchronized SQLiteDatabase getDatabase(final String dbName) {
         SQLiteDatabase db;
-        db = m_databaseMap.get(dbName);
+        db = mDatabaseMap.get(dbName);
         if (db == null) {
-            final String absPath = new File(DatabaseInfo.FILE_ROOT, dbName).getAbsolutePath();
-
-            SQLiteOpenHelper helper = new UserDatabase(getContext(), absPath, null, 0);
+            SQLiteOpenHelper helper = new UserDatabase(getContext(), dbName, null, 3);
             db = helper.getWritableDatabase();
 
-            m_databaseMap.put(dbName, db);
+            mDatabaseMap.put(dbName, db);
         }
 
         return db;
     }
 
     private synchronized ReentrantLock getDatabaseLock(String dbName) {
-        ReentrantLock lock = m_databaseLocks.get(dbName);
+        ReentrantLock lock = mDatabaseLocks.get(dbName);
         if (lock == null) {
             lock = new ReentrantLock();
-            m_databaseLocks.put(dbName, lock);
+            mDatabaseLocks.put(dbName, lock);
         }
 
         return lock;

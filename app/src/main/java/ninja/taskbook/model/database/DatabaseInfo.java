@@ -2,12 +2,11 @@ package ninja.taskbook.model.database;
 
 import android.net.Uri;
 
-
+//----------------------------------------------------------------------------------------------------
 public class DatabaseInfo {
 
     //----------------------------------------------------------------------------------------------------
-    public static final String FILE_ROOT = "database";
-    public static final String AUTHORITY = "provider";
+    public static final String AUTHORITY = "database";
     public static final Uri BASE_URI = new Uri.Builder().scheme("content").authority(AUTHORITY).build();
 
     // Databases
@@ -19,11 +18,11 @@ public class DatabaseInfo {
     // Tables
     //----------------------------------------------------------------------------------------------------
     public static class UserTable {
-        public static final String TABLE_NAME = "User";
+        public static final String TABLE_NAME = "user";
         public static final Uri CONTENT_URI = getTableContentUri(Databases.USER, TABLE_NAME);
         public static final String[] COLUMNS = {
-                "(user_id integer,",
-                "user_password varchar default \"\")",
+                "(user_id INTEGER PRIMARY KEY AUTOINCREMENT,",
+                "user_password VARCHAR(255) DEFAULT \"\");",
         };
     }
 
