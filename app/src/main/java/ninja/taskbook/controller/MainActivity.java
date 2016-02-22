@@ -7,14 +7,17 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import org.apache.thrift.TException;
+import org.apache.thrift.async.AsyncMethodCallback;
+
 import ninja.taskbook.R;
 import ninja.taskbook.model.database.DatabaseInfo;
-import ninja.taskbook.model.database.TBContentProvider;
+import ninja.taskbook.model.network.thrift.manager.ThriftManager;
+import ninja.taskbook.model.network.thrift.online.hello.HelloService;
 
 //----------------------------------------------------------------------------------------------------
 public class MainActivity extends AppCompatActivity {
@@ -98,6 +101,19 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
+            /*
+            Runnable task = new Runnable() {
+                public void run() {
+                    try {
+                        int result = ((HelloService.Client) ThriftManager.getInstance().createClient(ThriftManager.ClientTypeEnum.CLIENT_HELLO.toString())).hi("123", "234", "345");
+                    } catch (TException e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            new Thread(task).start();
+            */
+
             return true;
         }
 

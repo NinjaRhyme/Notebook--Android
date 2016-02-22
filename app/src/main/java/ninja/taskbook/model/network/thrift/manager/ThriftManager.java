@@ -1,26 +1,18 @@
 package ninja.taskbook.model.network.thrift.manager;
 
-import android.content.Context;
 import android.util.ArrayMap;
 
 import org.apache.thrift.TServiceClient;
 import org.apache.thrift.TServiceClientFactory;
-import org.apache.thrift.async.TAsyncClientManager;
-import org.apache.thrift.async.TAsyncMethodCall;
-import org.apache.thrift.protocol.TCompactProtocol;
+import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
-import org.apache.thrift.protocol.TProtocolFactory;
-import org.apache.thrift.transport.TNonblockingSocket;
-import org.apache.thrift.transport.TNonblockingTransport;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
 
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
-import ninja.taskbook.model.network.thrift.online.hello.HelloWorldService;
+import ninja.taskbook.model.network.thrift.online.hello.HelloService;
 
 //----------------------------------------------------------------------------------------------------
 public class ThriftManager {
@@ -42,12 +34,31 @@ public class ThriftManager {
     }
 
     //----------------------------------------------------------------------------------------------------
-    public static final String THRIFT_HOST = "http://127.0.0.1";
+    public static final String THRIFT_HOST = "10.0.2.22";
+    public static final int THRIFT_PORT = 8090;
+
+    private static ThriftManager sInstance;
     private Map<String, ThriftClientInfo> mClientMap = new ArrayMap<>();
 
     //----------------------------------------------------------------------------------------------------
-    public void initialize() {
-        registerClient(ClientTypeEnum.CLIENT_HELLO.toString(), THRIFT_HOST, 8090, new HelloWorldService.Client.Factory());
+    public static ThriftManager getInstance() {
+        if (sInstance == null) {
+            sInstance = new ThriftManager();
+        }
+        return sInstance;
+    }
+
+    //----------------------------------------------------------------------------------------------------
+    private ThriftManager() {
+        initialize();
+    }
+
+    private void initialize() {
+        try {
+            registerClient(ClientTypeEnum.CLIENT_HELLO.toString(), THRIFT_HOST, THRIFT_PORT, new HelloService.Client.Factory());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     //----------------------------------------------------------------------------------------------------
@@ -65,7 +76,7 @@ public class ThriftManager {
 
             TTransport transport = new TSocket(clientInfo.host, clientInfo.port);
             transport.open();
-            TProtocol protocol = new TCompactProtocol(transport);
+            TProtocol protocol = new TBinaryProtocol(transport);
             return clientInfo.factory.getClient(protocol);
         } catch (Exception e) {
             e.printStackTrace();
