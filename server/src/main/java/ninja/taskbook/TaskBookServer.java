@@ -43,7 +43,7 @@ public class TaskBookServer {
 
         @Override
         public int hi(String word1, String word2, String word3) throws TException {
-            System.out.println("hi");
+            System.out.println("hi:" + word1 + word2 + word3);
             return 123;
         }
 
