@@ -22,18 +22,15 @@ public class ThriftManager {
         CLIENT_HELLO("/hello");
 
         private String name;
-
         ClientTypeEnum(String name) {
             this.name = name;
         }
-
         @Override
         public String toString() {
             return this.name;
         }
     }
 
-    //----------------------------------------------------------------------------------------------------
     public static final String THRIFT_HOST = "10.0.2.22";
     public static final int THRIFT_PORT = 8090;
 
@@ -41,14 +38,13 @@ public class ThriftManager {
     private Map<String, ThriftClientInfo> mClientMap = new ArrayMap<>();
 
     //----------------------------------------------------------------------------------------------------
-    public static ThriftManager getInstance() {
+    private static ThriftManager getInstance() {
         if (sInstance == null) {
             sInstance = new ThriftManager();
         }
         return sInstance;
     }
 
-    //----------------------------------------------------------------------------------------------------
     private ThriftManager() {
         initialize();
     }
@@ -61,15 +57,15 @@ public class ThriftManager {
         }
     }
 
-    //----------------------------------------------------------------------------------------------------
-    public void registerClient(String name, String host, int port, TServiceClientFactory<?> factory) {
+    private void registerClient(String name, String host, int port, TServiceClientFactory<?> factory) {
         mClientMap.put(name, new ThriftClientInfo(name, host, port, factory));
     }
 
+    // APIs
     //----------------------------------------------------------------------------------------------------
-    public TServiceClient createClient(String name) {
+    public static TServiceClient createClient(String name) {
         try {
-            ThriftClientInfo clientInfo = mClientMap.get(name);
+            ThriftClientInfo clientInfo = getInstance().mClientMap.get(name);
             if (clientInfo == null) {
                 throw new TTransportException("client not exists");
             }

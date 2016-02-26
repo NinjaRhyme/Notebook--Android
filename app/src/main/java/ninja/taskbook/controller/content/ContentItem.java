@@ -1,18 +1,17 @@
-package ninja.taskbook.controller.drawer;
+package ninja.taskbook.controller.content;
 
 //----------------------------------------------------------------------------------------------------
-public class DrawerItem {
+public class ContentItem {
 
     //----------------------------------------------------------------------------------------------------
-    private int mImageRes;
+    private String mItemText;
 
     //----------------------------------------------------------------------------------------------------
-    public DrawerItem(int imageRes) {
-        this.mImageRes = imageRes;
+    public ContentItem(String itemText) {
+        mItemText = itemText;
     }
 
-    //----------------------------------------------------------------------------------------------------
-    public int getImageRes() {
-        return mImageRes;
+    public String getItemText() {
+        return mItemText;
     }
 }

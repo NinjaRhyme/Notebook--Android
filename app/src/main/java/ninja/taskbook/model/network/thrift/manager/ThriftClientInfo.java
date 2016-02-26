@@ -1,7 +1,6 @@
 package ninja.taskbook.model.network.thrift.manager;
 
 import org.apache.thrift.TServiceClientFactory;
-import org.apache.thrift.async.TAsyncClientFactory;
 
 //----------------------------------------------------------------------------------------------------
 public class ThriftClientInfo {

@@ -22,6 +22,7 @@ public class DatabaseInfo {
         public static final Uri CONTENT_URI = getTableContentUri(Databases.USER, TABLE_NAME);
         public static final String[] COLUMNS = {
                 "(user_id INTEGER PRIMARY KEY AUTOINCREMENT,",
+                "user_name VARCHAR(255) DEFAULT \"\",",
                 "user_password VARCHAR(255) DEFAULT \"\");",
         };
     }

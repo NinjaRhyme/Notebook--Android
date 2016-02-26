@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="primary_dark_color">#000000</color>
-    <color name="primary_color">#018675</color>
+    <color name="primary_color">#764735</color>
     <color name="accent_color">#FF4081</color>
 
-    <color name="drawer_background_color">#1f242a</color>
+    <color name="drawer_background_color">#2c2c45</color>
     <color name="drawer_item_text_color">#909397</color>
     <color name="drawer_item_background_color">#909397</color>
+
+    <color name="content_background_color">#21252a</color>
 </resources>

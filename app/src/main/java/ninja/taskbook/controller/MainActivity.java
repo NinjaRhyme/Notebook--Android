@@ -2,11 +2,11 @@ package ninja.taskbook.controller;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
@@ -15,18 +15,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ninja.taskbook.R;
-import ninja.taskbook.controller.Drawer.DrawerManager;
-import ninja.taskbook.controller.Drawer.DrawerItem;
+import ninja.taskbook.controller.content.ContentItem;
+import ninja.taskbook.controller.content.ContentManager;
+import ninja.taskbook.controller.drawer.DrawerManager;
+import ninja.taskbook.controller.drawer.DrawerItem;
 
 //----------------------------------------------------------------------------------------------------
 public class MainActivity extends AppCompatActivity {
 
     //----------------------------------------------------------------------------------------------------
+    private CoordinatorLayout mCoordinatorLayout;
+    private Toolbar mToolbar;
     private DrawerLayout mDrawerLayout;
     private LinearLayout mDrawer;
     private List<DrawerItem> mDrawerItems = new ArrayList<>();
     private DrawerManager mDrawerManager;
-    private Toolbar mToolbar;
+
+    private RecyclerView mContentView;
+    private List<ContentItem> mContentItems = new ArrayList<>();
+    private ContentManager mContentManager;
 
     // Init
     //----------------------------------------------------------------------------------------------------
@@ -37,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
         initToolbar();
         initDrawer();
+        initContent();
 
         //ContentValues values = new ContentValues();
         //values.put("user_id", 0);
@@ -49,15 +57,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initDrawer() {
+        mCoordinatorLayout = (CoordinatorLayout)findViewById(R.id.coordinator_layout);
         mDrawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
-        mDrawerLayout.setScrimColor(Color.TRANSPARENT);
         mDrawer = (LinearLayout)findViewById(R.id.drawer);
-        mDrawer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mDrawerLayout.closeDrawers();
-            }
-        });
 
         DrawerItem item0 = new DrawerItem(R.mipmap.drawer_item_close);
         mDrawerItems.add(item0);
@@ -76,7 +78,19 @@ public class MainActivity extends AppCompatActivity {
         DrawerItem item7 = new DrawerItem(R.mipmap.drawer_item_7);
         mDrawerItems.add(item7);
 
-        mDrawerManager = new DrawerManager(this, mDrawerLayout, mToolbar, mDrawerItems);
+        mDrawerManager = new DrawerManager(this, mCoordinatorLayout, mToolbar, mDrawerLayout, mDrawer, mDrawerItems);
+    }
+
+    private void initContent() {
+        mContentView = (RecyclerView)findViewById(R.id.content_view);
+
+        ContentItem item0 = new ContentItem("xi xi xi");
+        mContentItems.add(item0);
+        mContentItems.add(item0);
+        mContentItems.add(item0);
+
+
+        mContentManager = new ContentManager(this, mContentView, mContentItems);
     }
 
     //----------------------------------------------------------------------------------------------------

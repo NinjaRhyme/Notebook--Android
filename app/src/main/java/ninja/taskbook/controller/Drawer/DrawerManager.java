@@ -1,6 +1,8 @@
-package ninja.taskbook.controller.Drawer;
+package ninja.taskbook.controller.drawer;
 
+import android.graphics.Color;
 import android.os.Handler;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -24,14 +26,25 @@ public class DrawerManager {
 
     private Boolean mIsActive;
     private AppCompatActivity mActivity;
+    private CoordinatorLayout mCoordinatorLayout;
     private DrawerLayout mDrawerLayout;
+    private LinearLayout mDrawer;
     private List<View> mDrawerItemViews = new ArrayList<>();
 
     //----------------------------------------------------------------------------------------------------
-    public DrawerManager(AppCompatActivity activity, DrawerLayout drawerLayout, Toolbar toolbar, List<DrawerItem> drawerItems) {
+    public DrawerManager(AppCompatActivity activity, CoordinatorLayout coordinatorLayout, Toolbar toolbar, DrawerLayout drawerLayout, LinearLayout drawer, List<DrawerItem> drawerItems) {
         mIsActive = false;
         mActivity = activity;
+        mCoordinatorLayout = coordinatorLayout;
         mDrawerLayout = drawerLayout;
+        mDrawerLayout.setScrimColor(Color.TRANSPARENT);
+        mDrawer = drawer;
+        mDrawer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDrawerLayout.closeDrawers();
+            }
+        });
         for (int i = 0; i < drawerItems.size(); ++i) {
             //final int index = i;
             View itemView = mActivity.getLayoutInflater().inflate(R.layout.drawer_item, null); // Todo
@@ -46,10 +59,10 @@ public class DrawerManager {
             ((ImageView) itemView.findViewById(R.id.drawer_item_image)).setImageResource(drawerItems.get(i).getImageRes());
 
             mDrawerItemViews.add(itemView);
-            ((LinearLayout)mDrawerLayout.findViewById(R.id.drawer)).addView(itemView);
+            mDrawer.addView(itemView);
         }
 
-        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this.mActivity, mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(mActivity, mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
@@ -64,6 +77,7 @@ public class DrawerManager {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 super.onDrawerSlide(drawerView, slideOffset);
+                mCoordinatorLayout.setTranslationX(drawerView.getWidth() * slideOffset);
                 if (slideOffset > 0.6f && !mIsActive)
                     showContent();
                 else if (slideOffset == 0.f && mIsActive) {
@@ -101,7 +115,7 @@ public class DrawerManager {
     }
 
     //----------------------------------------------------------------------------------------------------
-    private void showAnimation(int index) {
+    private void showAnimation(final int index) {
         final View view = mDrawerItemViews.get(index);
         view.setVisibility(View.VISIBLE);
         DrawerItemAnimation animation = new DrawerItemAnimation(90, 0, 0.f, view.getHeight() / 2.f);
@@ -131,20 +145,11 @@ public class DrawerManager {
 
     //----------------------------------------------------------------------------------------------------
     private void hideContent() {
-        for (int i = 0; i < mDrawerItemViews.size(); ++i) {
-            final int index = i;
-            final double delay = 3 * ANIMATION_DURATION * ((float)index / mDrawerItemViews.size());
-            new Handler().postDelayed(new Runnable() {
-                public void run() {
-                    if (index < mDrawerItemViews.size()) {
-                        hideAnimation(index);
-                    }
-                }
-            }, (long)delay);
-        }
+        mDrawerLayout.closeDrawers();
     }
 
     //----------------------------------------------------------------------------------------------------
+    /*
     private void hideAnimation(final int index) {
         final View view = mDrawerItemViews.get(index);
         DrawerItemAnimation animation = new DrawerItemAnimation(0, 90, 0.f, view.getHeight() / 2.f);
@@ -174,4 +179,5 @@ public class DrawerManager {
 
         view.startAnimation(animation);
     }
+    */
 }
