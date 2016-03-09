@@ -1,6 +1,5 @@
 package ninja.taskbook.controller;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.widget.DrawerLayout;
@@ -11,6 +10,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
 
+import org.apache.thrift.TException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +20,13 @@ import ninja.taskbook.controller.content.ContentItem;
 import ninja.taskbook.controller.content.ContentManager;
 import ninja.taskbook.controller.drawer.DrawerManager;
 import ninja.taskbook.controller.drawer.DrawerItem;
+import ninja.taskbook.model.network.thrift.manager.ThriftManager;
+import ninja.taskbook.model.network.thrift.online.hello.HelloService;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
+import rx.Observable;
 
 //----------------------------------------------------------------------------------------------------
 public class MainActivity extends AppCompatActivity {
@@ -88,7 +96,12 @@ public class MainActivity extends AppCompatActivity {
         mContentItems.add(item0);
         mContentItems.add(item0);
         mContentItems.add(item0);
-
+        mContentItems.add(item0);
+        mContentItems.add(item0);
+        mContentItems.add(item0);
+        mContentItems.add(item0);
+        mContentItems.add(item0);
+        mContentItems.add(item0);
 
         mContentManager = new ContentManager(this, mContentView, mContentItems);
     }
@@ -118,6 +131,31 @@ public class MainActivity extends AppCompatActivity {
             };
             new Thread(task).start();
             */
+            /*
+            String[] words = {"Hello", "Hi", "Aloha"};
+            Observable.just(words)
+                    .map(new Func1<String[], Integer>() {
+                        @Override
+                        public Integer call(String[] words) {
+                            try {
+                                HelloService.Client client = (HelloService.Client)ThriftManager.createClient(ThriftManager.ClientTypeEnum.CLIENT_HELLO.toString());
+                                if (client != null)
+                                    return client.hi(words[0], words[1], words[2]);
+                            } catch (TException e) {
+                                e.printStackTrace();
+                            }
+                            return 0;
+                        }
+                    })
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Action1<Integer>() {
+                        @Override
+                        public void call(Integer result) {
+
+                        }
+                    });
+                    */
 
             return true;
         }

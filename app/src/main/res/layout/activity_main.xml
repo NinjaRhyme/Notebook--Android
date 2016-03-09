@@ -46,14 +46,16 @@
             android:src="@android:drawable/ic_dialog_email" />
             -->
 
+        <!--
         <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/content_background_color"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            android:background="@color/content_background_color">
 
             <include layout="@layout/content"/>
         </android.support.v4.widget.NestedScrollView>
+        -->
+        <include layout="@layout/content"/>
     </android.support.design.widget.CoordinatorLayout>
 
     <include layout="@layout/drawer"/>
