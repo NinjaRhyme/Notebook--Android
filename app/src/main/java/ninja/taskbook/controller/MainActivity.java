@@ -1,5 +1,10 @@
 package ninja.taskbook.controller;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.widget.DrawerLayout;
@@ -156,6 +161,20 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
                     */
+            /*
+            NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
+            Notification notify = new Notification.Builder(this)
+                    .setSmallIcon(R.drawable.useless0)
+                    .setTicker("TickerText:" + "xi xi xi")
+                    .setContentTitle("Notification Title")
+                    .setContentText("This is the notification message")
+                    .setContentIntent(pendingIntent)
+                    .setNumber(1)
+                    .build();
+            notify.flags |= Notification.FLAG_AUTO_CANCEL;
+            manager.notify(1, notify);
+            */
 
             return true;
         }
