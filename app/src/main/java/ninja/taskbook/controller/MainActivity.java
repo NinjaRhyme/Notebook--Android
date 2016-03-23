@@ -21,7 +21,7 @@ import ninja.taskbook.controller.drawer.DrawerManager;
 import ninja.taskbook.controller.drawer.DrawerItem;
 
 //----------------------------------------------------------------------------------------------------
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements DrawerManager.DrawerListener {
 
     //----------------------------------------------------------------------------------------------------
     private CoordinatorLayout mCoordinatorLayout;
@@ -30,7 +30,10 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout mDrawer;
     private List<DrawerItem> mDrawerItems = new ArrayList<>();
     private DrawerManager mDrawerManager;
+    private int mDrawerIndex = 0;
 
+    private FrameLayout mFrameLayout;
+    private TaskFragment mTaskFragment;
     private List<TaskItem> mTaskItems = new ArrayList<>();
 
     // Init
@@ -72,10 +75,12 @@ public class MainActivity extends AppCompatActivity {
         DrawerItem item7 = new DrawerItem(R.mipmap.drawer_item_7);
         mDrawerItems.add(item7);
 
-        mDrawerManager = new DrawerManager(this, mCoordinatorLayout, mToolbar, mDrawerLayout, mDrawer, mDrawerItems);
+        mDrawerManager = new DrawerManager(this, mCoordinatorLayout, mToolbar, mDrawerLayout, mDrawer, mDrawerItems, this);
     }
 
     private void initContent() {
+        mFrameLayout = (FrameLayout)findViewById(R.id.frame_layout);
+
         TaskItem item0 = new TaskItem("xi xi xi", "boss");
         mTaskItems.add(item0);
         mTaskItems.add(item0);
@@ -87,11 +92,11 @@ public class MainActivity extends AppCompatActivity {
         mTaskItems.add(item0);
         mTaskItems.add(item0);
 
-        TaskFragment taskFragment = new TaskFragment();
-        taskFragment.setTaskItems(mTaskItems);
+        mTaskFragment = new TaskFragment();
+        mTaskFragment.setTaskItems(mTaskItems);
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.frame_layout, taskFragment)
+                .replace(R.id.frame_layout, mTaskFragment)
                 .commit();
     }
 
@@ -171,8 +176,25 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    // DrawerListener
     //----------------------------------------------------------------------------------------------------
-    public DrawerManager getDrawerManager() {
-        return mDrawerManager;
+    @Override
+    public void onDrawerItemClicked(int index) {
+        if (mDrawerIndex != index) {
+            // Todo: animation
+            switch (index) {
+                case 0:
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.frame_layout, mTaskFragment)
+                            .commit();
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        mDrawerIndex = index;
     }
 }

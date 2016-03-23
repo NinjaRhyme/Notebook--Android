@@ -31,15 +31,17 @@ public class DrawerManager {
     private DrawerLayout mDrawerLayout;
     private LinearLayout mDrawer;
     private List<View> mDrawerItemViews = new ArrayList<>();
+    private DrawerListener mDrawerListener;
 
     //----------------------------------------------------------------------------------------------------
-    public DrawerManager(AppCompatActivity activity, CoordinatorLayout coordinatorLayout, Toolbar toolbar, DrawerLayout drawerLayout, LinearLayout drawer, List<DrawerItem> drawerItems) {
+    public DrawerManager(AppCompatActivity activity, CoordinatorLayout coordinatorLayout, Toolbar toolbar, DrawerLayout drawerLayout, LinearLayout drawer, List<DrawerItem> drawerItems, DrawerListener drawerListener) {
         mIsActive = false;
         mActivity = activity;
         mCoordinatorLayout = coordinatorLayout;
         mDrawerLayout = drawerLayout;
         mDrawerLayout.setScrimColor(Color.TRANSPARENT);
         mDrawer = drawer;
+        mDrawerListener = drawerListener;
         mDrawer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -54,8 +56,9 @@ public class DrawerManager {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // index
-                    // takeScreenShot();
+                    if (mDrawerListener != null) {
+                        mDrawerListener.onDrawerItemClicked(index);
+                    }
                     hideContent();
                 }
             });
@@ -149,5 +152,10 @@ public class DrawerManager {
     //----------------------------------------------------------------------------------------------------
     private void hideContent() {
         mDrawerLayout.closeDrawers();
+    }
+
+    //----------------------------------------------------------------------------------------------------
+    public interface DrawerListener {
+        void onDrawerItemClicked(int index);
     }
 }
