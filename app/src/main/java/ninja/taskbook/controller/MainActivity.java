@@ -1,10 +1,5 @@
 package ninja.taskbook.controller;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.widget.DrawerLayout;
@@ -13,25 +8,17 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-
-import org.apache.thrift.TException;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import ninja.taskbook.R;
-import ninja.taskbook.controller.content.ContentItem;
-import ninja.taskbook.controller.content.ContentManager;
+import ninja.taskbook.controller.task.TaskItem;
+import ninja.taskbook.controller.task.TaskFragment;
 import ninja.taskbook.controller.drawer.DrawerManager;
 import ninja.taskbook.controller.drawer.DrawerItem;
-import ninja.taskbook.model.network.thrift.manager.ThriftManager;
-import ninja.taskbook.model.network.thrift.online.hello.HelloService;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
-import rx.Observable;
 
 //----------------------------------------------------------------------------------------------------
 public class MainActivity extends AppCompatActivity {
@@ -44,9 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private List<DrawerItem> mDrawerItems = new ArrayList<>();
     private DrawerManager mDrawerManager;
 
-    private RecyclerView mContentView;
-    private List<ContentItem> mContentItems = new ArrayList<>();
-    private ContentManager mContentManager;
+    private List<TaskItem> mTaskItems = new ArrayList<>();
 
     // Init
     //----------------------------------------------------------------------------------------------------
@@ -58,10 +43,6 @@ public class MainActivity extends AppCompatActivity {
         initToolbar();
         initDrawer();
         initContent();
-
-        //ContentValues values = new ContentValues();
-        //values.put("user_id", 0);
-        //getContentResolver().insert(DatabaseInfo.UserTable.CONTENT_URI, values);
     }
 
     private void initToolbar() {
@@ -95,20 +76,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initContent() {
-        mContentView = (RecyclerView)findViewById(R.id.content_view);
+        TaskItem item0 = new TaskItem("xi xi xi", "boss");
+        mTaskItems.add(item0);
+        mTaskItems.add(item0);
+        mTaskItems.add(item0);
+        mTaskItems.add(item0);
+        mTaskItems.add(item0);
+        mTaskItems.add(item0);
+        mTaskItems.add(item0);
+        mTaskItems.add(item0);
+        mTaskItems.add(item0);
 
-        ContentItem item0 = new ContentItem("xi xi xi");
-        mContentItems.add(item0);
-        mContentItems.add(item0);
-        mContentItems.add(item0);
-        mContentItems.add(item0);
-        mContentItems.add(item0);
-        mContentItems.add(item0);
-        mContentItems.add(item0);
-        mContentItems.add(item0);
-        mContentItems.add(item0);
-
-        mContentManager = new ContentManager(this, mContentView, mContentItems);
+        TaskFragment taskFragment = new TaskFragment();
+        taskFragment.setTaskItems(mTaskItems);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.frame_layout, taskFragment)
+                .commit();
     }
 
     //----------------------------------------------------------------------------------------------------
@@ -124,6 +108,11 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
+            /*
+            ContentValues values = new ContentValues();
+            values.put("user_id", 0);
+            getContentResolver().insert(DatabaseInfo.UserTable.CONTENT_URI, values);
+            */
             /*
             Runnable task = new Runnable() {
                 public void run() {
@@ -180,5 +169,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    //----------------------------------------------------------------------------------------------------
+    public DrawerManager getDrawerManager() {
+        return mDrawerManager;
     }
 }

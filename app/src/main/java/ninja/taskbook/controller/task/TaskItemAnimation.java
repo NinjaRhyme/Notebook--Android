@@ -1,7 +1,7 @@
-package ninja.taskbook.controller.content;
+package ninja.taskbook.controller.task;
 
 //----------------------------------------------------------------------------------------------------
-public class ContentItemAnimation {
+public class TaskItemAnimation {
 
     //----------------------------------------------------------------------------------------------------
 }

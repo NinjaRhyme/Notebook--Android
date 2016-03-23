@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ninja.taskbook.R;
+import ninja.taskbook.controller.MainActivity;
 
 //----------------------------------------------------------------------------------------------------
 public class DrawerManager {
@@ -46,13 +47,15 @@ public class DrawerManager {
             }
         });
         for (int i = 0; i < drawerItems.size(); ++i) {
-            //final int index = i;
+            final int index = i;
             View itemView = mActivity.getLayoutInflater().inflate(R.layout.drawer_item, null); // Todo
             itemView.setVisibility(View.INVISIBLE);
             itemView.setEnabled(false);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    // index
+                    // takeScreenShot();
                     hideContent();
                 }
             });
@@ -147,37 +150,4 @@ public class DrawerManager {
     private void hideContent() {
         mDrawerLayout.closeDrawers();
     }
-
-    //----------------------------------------------------------------------------------------------------
-    /*
-    private void hideAnimation(final int index) {
-        final View view = mDrawerItemViews.get(index);
-        DrawerItemAnimation animation = new DrawerItemAnimation(0, 90, 0.f, view.getHeight() / 2.f);
-        animation.setDuration(ANIMATION_DURATION);
-        animation.setFillAfter(true);
-        animation.setInterpolator(new AccelerateInterpolator());
-        animation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                view.clearAnimation();
-                view.setVisibility(View.INVISIBLE);
-                if (index == mDrawerItemViews.size() - 1) {
-                    mDrawerLayout.closeDrawers();
-                }
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-
-        view.startAnimation(animation);
-    }
-    */
 }

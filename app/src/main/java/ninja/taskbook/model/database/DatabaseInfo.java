@@ -7,7 +7,7 @@ public class DatabaseInfo {
 
     //----------------------------------------------------------------------------------------------------
     public static final String AUTHORITY = "database";
-    public static final Uri BASE_URI = new Uri.Builder().scheme("content").authority(AUTHORITY).build();
+    public static final Uri BASE_URI = new Uri.Builder().scheme("task").authority(AUTHORITY).build();
 
     // Databases
     //----------------------------------------------------------------------------------------------------

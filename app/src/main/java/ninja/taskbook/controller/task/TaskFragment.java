@@ -1,0 +1,123 @@
+package ninja.taskbook.controller.task;
+
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import java.util.List;
+
+import ninja.taskbook.R;
+
+//----------------------------------------------------------------------------------------------------
+public class TaskFragment extends Fragment {
+
+    //----------------------------------------------------------------------------------------------------
+    private RecyclerView mRecyclerView;
+    private List<TaskItem> mTaskItems;
+
+    //----------------------------------------------------------------------------------------------------
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+    }
+
+    //----------------------------------------------------------------------------------------------------
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.task, container, false);
+
+        // Recycler Layout
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 1);
+        gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mRecyclerView.setLayoutManager(gridLayoutManager);
+
+        // Decoration
+        mRecyclerView.addItemDecoration(new TaskItemDecoration());
+
+        // Adapter
+        mRecyclerView.setAdapter(new TaskItemAdapter());
+
+        return rootView;
+    }
+
+    //----------------------------------------------------------------------------------------------------
+    public Bitmap takeScreenShot() {
+        // Thread
+        Bitmap bitmap = Bitmap.createBitmap(mRecyclerView.getWidth(), mRecyclerView.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        mRecyclerView.draw(canvas);
+
+        return bitmap;
+    }
+
+    //----------------------------------------------------------------------------------------------------
+    public void setTaskItems(List<TaskItem> taskItems) {
+        mTaskItems = taskItems;
+    }
+
+    // ContentItemHolder
+    //----------------------------------------------------------------------------------------------------
+    class TaskItemHolder extends RecyclerView.ViewHolder {
+        public TextView itemTitleTextView;
+        public TextView itemAuthorTextView;
+
+        public TaskItemHolder(View itemView) {
+            super(itemView);
+            itemTitleTextView = (TextView)itemView.findViewById(R.id.item_title);
+            itemAuthorTextView = (TextView)itemView.findViewById(R.id.item_author);
+        }
+    }
+
+    // ContentItemAdapter
+    //----------------------------------------------------------------------------------------------------
+    class TaskItemAdapter extends RecyclerView.Adapter<TaskItemHolder> {
+        public TaskItemAdapter() {
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return mTaskItems.size();
+        }
+
+        @Override
+        public TaskItemHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(getContext()).inflate(R.layout.task_item, null);
+            return new TaskItemHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(TaskItemHolder holder, int position) {
+            CardView cardView = (CardView)holder.itemView;
+            switch (position % 4) {
+                case 0:
+                    cardView.setCardBackgroundColor(Color.parseColor("#6BC39A"));
+                    break;
+                case 1:
+                    cardView.setCardBackgroundColor(Color.parseColor("#76BEE6"));
+                    break;
+                case 2:
+                    cardView.setCardBackgroundColor(Color.parseColor("#E99A79"));
+                    break;
+                case 3:
+                    cardView.setCardBackgroundColor(Color.parseColor("#657DC1"));
+                    break;
+            }
+
+            holder.itemTitleTextView.setText(mTaskItems.get(position).getItemTitle());
+            holder.itemAuthorTextView.setText(mTaskItems.get(position).getItemAuthor());
+        }
+    }
+}
