@@ -1,7 +1,5 @@
 package ninja.taskbook.controller.task;
 
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ninja.taskbook.R;
@@ -23,7 +22,7 @@ public class TaskFragment extends Fragment {
 
     //----------------------------------------------------------------------------------------------------
     private RecyclerView mRecyclerView;
-    private List<TaskItem> mTaskItems;
+    private List<TaskItem> mTaskItems = new ArrayList<>();
 
     //----------------------------------------------------------------------------------------------------
     @Override
@@ -49,22 +48,50 @@ public class TaskFragment extends Fragment {
         // Adapter
         mRecyclerView.setAdapter(new TaskItemAdapter());
 
+        // Load
+        loadTaskItems();
+
         return rootView;
     }
 
     //----------------------------------------------------------------------------------------------------
-    public Bitmap takeScreenShot() {
-        // Thread
-        Bitmap bitmap = Bitmap.createBitmap(mRecyclerView.getWidth(), mRecyclerView.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        mRecyclerView.draw(canvas);
+    private void loadTaskItems() {
+        TaskItem item0 = new TaskItem("xi xi xi", "boss");
+        mTaskItems.add(item0);
+        mTaskItems.add(item0);
+        mTaskItems.add(item0);
+        mTaskItems.add(item0);
+        mTaskItems.add(item0);
+        mTaskItems.add(item0);
+        mTaskItems.add(item0);
+        mTaskItems.add(item0);
+        mTaskItems.add(item0);
 
-        return bitmap;
-    }
+        /*
+        String[] words = {"Hello", "Hi", "Aloha"};
+        Observable.just(words)
+                .map(new Func1<String[], Integer>() {
+                    @Override
+                    public Integer call(String[] words) {
+                        try {
+                            HelloService.Client client = (HelloService.Client)ThriftManager.createClient(ThriftManager.ClientTypeEnum.CLIENT_HELLO.toString());
+                            if (client != null)
+                                return client.hi(words[0], words[1], words[2]);
+                        } catch (TException e) {
+                            e.printStackTrace();
+                        }
+                        return 0;
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Integer>() {
+                    @Override
+                    public void call(Integer result) {
 
-    //----------------------------------------------------------------------------------------------------
-    public void setTaskItems(List<TaskItem> taskItems) {
-        mTaskItems = taskItems;
+                    }
+                });
+                */
     }
 
     // ContentItemHolder

@@ -1,5 +1,7 @@
 package ninja.taskbook.controller;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.widget.DrawerLayout;
@@ -15,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ninja.taskbook.R;
+import ninja.taskbook.controller.profile.ProfileFragment;
+import ninja.taskbook.controller.setting.SettingFragment;
 import ninja.taskbook.controller.task.TaskItem;
 import ninja.taskbook.controller.task.TaskFragment;
 import ninja.taskbook.controller.drawer.DrawerManager;
@@ -31,10 +35,7 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
     private List<DrawerItem> mDrawerItems = new ArrayList<>();
     private DrawerManager mDrawerManager;
     private int mDrawerIndex = 0;
-
     private FrameLayout mFrameLayout;
-    private TaskFragment mTaskFragment;
-    private List<TaskItem> mTaskItems = new ArrayList<>();
 
     // Init
     //----------------------------------------------------------------------------------------------------
@@ -81,22 +82,9 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
     private void initContent() {
         mFrameLayout = (FrameLayout)findViewById(R.id.frame_layout);
 
-        TaskItem item0 = new TaskItem("xi xi xi", "boss");
-        mTaskItems.add(item0);
-        mTaskItems.add(item0);
-        mTaskItems.add(item0);
-        mTaskItems.add(item0);
-        mTaskItems.add(item0);
-        mTaskItems.add(item0);
-        mTaskItems.add(item0);
-        mTaskItems.add(item0);
-        mTaskItems.add(item0);
-
-        mTaskFragment = new TaskFragment();
-        mTaskFragment.setTaskItems(mTaskItems);
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.frame_layout, mTaskFragment)
+                .replace(R.id.frame_layout, new TaskFragment())
                 .commit();
     }
 
@@ -176,6 +164,16 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
         return super.onOptionsItemSelected(item);
     }
 
+    //----------------------------------------------------------------------------------------------------
+    public Bitmap takeFrameScreenShot() {
+        // Todo: Thread
+        Bitmap bitmap = Bitmap.createBitmap(mFrameLayout.getWidth(), mFrameLayout.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        mFrameLayout.draw(canvas);
+
+        return bitmap;
+    }
+
     // DrawerListener
     //----------------------------------------------------------------------------------------------------
     @Override
@@ -186,10 +184,21 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
                 case 0:
                     getSupportFragmentManager()
                             .beginTransaction()
-                            .replace(R.id.frame_layout, mTaskFragment)
+                            .replace(R.id.frame_layout, new ProfileFragment())
                             .commit();
                     break;
-
+                case 1:
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.frame_layout, new TaskFragment())
+                            .commit();
+                    break;
+                case 3:
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.frame_layout, new SettingFragment())
+                            .commit();
+                    break;
                 default:
                     break;
             }

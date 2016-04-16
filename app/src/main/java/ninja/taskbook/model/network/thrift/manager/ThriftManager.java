@@ -12,14 +12,14 @@ import org.apache.thrift.transport.TTransportException;
 
 import java.util.Map;
 
-import ninja.taskbook.model.network.thrift.online.hello.HelloService;
+import ninja.taskbook.model.network.thrift.service.TaskBookService;
 
 //----------------------------------------------------------------------------------------------------
 public class ThriftManager {
 
     //----------------------------------------------------------------------------------------------------
     public enum ClientTypeEnum {
-        CLIENT_HELLO("/hello");
+        CLIENT("/service");
 
         private String name;
         ClientTypeEnum(String name) {
@@ -51,7 +51,7 @@ public class ThriftManager {
 
     private void initialize() {
         try {
-            registerClient(ClientTypeEnum.CLIENT_HELLO.toString(), THRIFT_HOST, THRIFT_PORT, new HelloService.Client.Factory());
+            registerClient(ClientTypeEnum.CLIENT.toString(), THRIFT_HOST, THRIFT_PORT, new TaskBookService.Client.Factory());
         } catch (Exception e) {
             e.printStackTrace();
         }

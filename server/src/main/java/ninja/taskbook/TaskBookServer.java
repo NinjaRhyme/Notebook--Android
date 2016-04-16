@@ -8,10 +8,21 @@ import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.transport.TServerSocket;
 
 import ninja.taskbook.hello.HelloService;
+import ninja.taskbook.model.database.DatabaseManager;
 
+//----------------------------------------------------------------------------------------------------
 public class TaskBookServer {
-    public static final int SERVER_PORT = 8090;
 
+    //----------------------------------------------------------------------------------------------------
+    public static final int SERVER_PORT = 8090;
+    private DatabaseManager mDatabaseManager;
+
+    //----------------------------------------------------------------------------------------------------
+    public TaskBookServer() {
+        mDatabaseManager = new DatabaseManager();
+    }
+
+    //----------------------------------------------------------------------------------------------------
     public void startServer() {
         try {
             System.out.println("Server start ...");
@@ -31,11 +42,7 @@ public class TaskBookServer {
         }
     }
 
-    public static void main(String[] args) {
-        TaskBookServer server = new TaskBookServer();
-        server.startServer();
-    }
-
+    //----------------------------------------------------------------------------------------------------
     public class HelloServiceImpl implements HelloService.Iface {
 
         public HelloServiceImpl() {
@@ -46,6 +53,11 @@ public class TaskBookServer {
             System.out.println("hi:" + word1 + word2 + word3);
             return 123;
         }
+    }
 
+    //----------------------------------------------------------------------------------------------------
+    public static void main(String[] args) {
+        TaskBookServer server = new TaskBookServer();
+        server.startServer();
     }
 }

@@ -23,7 +23,8 @@ public class DatabaseInfo {
         public static final String[] COLUMNS = {
                 "(user_id INTEGER PRIMARY KEY AUTOINCREMENT,",
                 "user_name VARCHAR(255) DEFAULT \"\",",
-                "user_password VARCHAR(255) DEFAULT \"\");",
+                //"user_password VARCHAR(255) DEFAULT \"\");",
+                "user_nickname VARCHAR(255) DEFAULT \"\");",
         };
     }
 
