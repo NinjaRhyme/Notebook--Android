@@ -7,8 +7,9 @@ import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.transport.TServerSocket;
 
-import ninja.taskbook.hello.HelloService;
 import ninja.taskbook.model.database.DatabaseManager;
+import ninja.taskbook.model.network.thrift.service.TaskBookService;
+import ninja.taskbook.model.network.thrift.service.ThriftUserInfo;
 
 //----------------------------------------------------------------------------------------------------
 public class TaskBookServer {
@@ -27,7 +28,7 @@ public class TaskBookServer {
         try {
             System.out.println("Server start ...");
 
-            TProcessor processor = new HelloService.Processor<HelloService.Iface> (new HelloServiceImpl());
+            TProcessor processor = new TaskBookService.Processor<TaskBookService.Iface> (new ServiceImpl());
             TServerSocket transport = new TServerSocket(SERVER_PORT);
             TThreadPoolServer.Args args = new TThreadPoolServer.Args(transport);
             args.processor(processor);
@@ -43,15 +44,19 @@ public class TaskBookServer {
     }
 
     //----------------------------------------------------------------------------------------------------
-    public class HelloServiceImpl implements HelloService.Iface {
+    public class ServiceImpl implements TaskBookService.Iface {
 
-        public HelloServiceImpl() {
+        public ServiceImpl() {
         }
 
         @Override
-        public int hi(String word1, String word2, String word3) throws TException {
-            System.out.println("hi:" + word1 + word2 + word3);
-            return 123;
+        public ThriftUserInfo userInfo(int userId) throws TException {
+            ThriftUserInfo userInfo = new ThriftUserInfo();
+            userInfo.setUserId(userId);
+            userInfo.setUserName("TestUser");
+            userInfo.setUserNickname("TestNickName");
+
+            return userInfo;
         }
     }
 

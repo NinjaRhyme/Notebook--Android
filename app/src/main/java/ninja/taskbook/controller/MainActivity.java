@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.frame_layout, new TaskFragment())
+                .replace(R.id.frame_layout, new ProfileFragment())
                 .commit();
     }
 

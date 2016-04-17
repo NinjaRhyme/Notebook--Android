@@ -37,7 +37,7 @@ public class TaskFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.task, container, false);
 
         // Recycler Layout
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+        mRecyclerView = (RecyclerView)rootView.findViewById(R.id.recycler_view);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 1);
         gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(gridLayoutManager);
