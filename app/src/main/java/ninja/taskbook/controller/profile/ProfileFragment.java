@@ -1,9 +1,7 @@
 package ninja.taskbook.controller.profile;
 
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +10,6 @@ import android.widget.TextView;
 import org.apache.thrift.TException;
 
 import ninja.taskbook.R;
-import ninja.taskbook.model.network.thrift.manager.ThriftClientInfo;
 import ninja.taskbook.model.network.thrift.manager.ThriftManager;
 import ninja.taskbook.model.network.thrift.service.TaskBookService;
 import ninja.taskbook.model.network.thrift.service.ThriftUserInfo;

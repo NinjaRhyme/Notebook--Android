@@ -1,12 +1,12 @@
 package ninja.taskbook.controller;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,9 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ninja.taskbook.R;
+import ninja.taskbook.controller.login.LoginActivity;
 import ninja.taskbook.controller.profile.ProfileFragment;
 import ninja.taskbook.controller.setting.SettingFragment;
-import ninja.taskbook.controller.task.TaskItem;
 import ninja.taskbook.controller.task.TaskFragment;
 import ninja.taskbook.controller.drawer.DrawerManager;
 import ninja.taskbook.controller.drawer.DrawerItem;
@@ -43,6 +43,9 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //Intent login = new Intent(MainActivity.this, LoginActivity.class);
+        //startActivityForResult(login, 0);
 
         initToolbar();
         initDrawer();
@@ -162,6 +165,16 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    //----------------------------------------------------------------------------------------------------
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+
+            default:
+                break;
+        }
     }
 
     //----------------------------------------------------------------------------------------------------

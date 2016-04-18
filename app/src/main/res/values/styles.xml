@@ -10,5 +10,7 @@
     <style name="Toolbar.Theme.Light" parent="Theme.AppCompat.Light">
 
     </style>
+    <style name="Base.Theme.Light.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Base.Theme.Light.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>
