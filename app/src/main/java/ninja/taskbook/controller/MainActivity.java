@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ninja.taskbook.R;
+import ninja.taskbook.controller.group.GroupFragment;
 import ninja.taskbook.controller.login.LoginActivity;
 import ninja.taskbook.controller.profile.ProfileFragment;
 import ninja.taskbook.controller.setting.SettingFragment;
@@ -26,6 +27,9 @@ import ninja.taskbook.controller.drawer.DrawerItem;
 
 //----------------------------------------------------------------------------------------------------
 public class MainActivity extends AppCompatActivity implements DrawerManager.DrawerListener {
+
+    //----------------------------------------------------------------------------------------------------
+    static final int LOGIN_ACTIVITY_CODE = 1;
 
     //----------------------------------------------------------------------------------------------------
     private CoordinatorLayout mCoordinatorLayout;
@@ -44,12 +48,11 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Intent login = new Intent(MainActivity.this, LoginActivity.class);
-        //startActivityForResult(login, 0);
-
         initToolbar();
         initDrawer();
-        initContent();
+
+        Intent login = new Intent(MainActivity.this, LoginActivity.class);
+        startActivityForResult(login, LOGIN_ACTIVITY_CODE);
     }
 
     private void initToolbar() {
@@ -88,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.frame_layout, new ProfileFragment())
-                .commit();
+                .commitAllowingStateLoss();
     }
 
     //----------------------------------------------------------------------------------------------------
@@ -104,6 +107,8 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
+            Intent settings = new Intent(MainActivity.this, LoginActivity.class);
+            startActivityForResult(settings, 0);
             /*
             ContentValues values = new ContentValues();
             values.put("user_id", 0);
@@ -171,7 +176,9 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-
+            case LOGIN_ACTIVITY_CODE:
+                initContent();
+                break;
             default:
                 break;
         }
@@ -201,6 +208,12 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
                             .commit();
                     break;
                 case 1:
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.frame_layout, new GroupFragment())
+                            .commit();
+                    break;
+                case 2:
                     getSupportFragmentManager()
                             .beginTransaction()
                             .replace(R.id.frame_layout, new TaskFragment())

@@ -35,4 +35,5 @@ dependencies {
     compile 'org.apache.thrift:libthrift:0.9.3'
     compile 'io.reactivex:rxandroid:1.1.0'
     compile 'io.reactivex:rxjava:1.1.0'
+    compile 'com.github.lecho:hellocharts-library:1.5.8@aar'
 }
