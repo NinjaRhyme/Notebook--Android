@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ninja.taskbook.model.database.DatabaseManager;
+import ninja.taskbook.model.database.UserTable;
+import ninja.taskbook.model.entity.UserEntity;
 import ninja.taskbook.model.network.thrift.service.TaskBookService;
 import ninja.taskbook.model.network.thrift.service.ThriftGroupInfo;
 import ninja.taskbook.model.network.thrift.service.ThriftTaskInfo;
@@ -21,11 +23,13 @@ public class TaskBookServer {
 
     //----------------------------------------------------------------------------------------------------
     public static final int SERVER_PORT = 8090;
-    private DatabaseManager mDatabaseManager;
+    private DatabaseManager mDatabaseManager = new DatabaseManager();
 
     //----------------------------------------------------------------------------------------------------
     public TaskBookServer() {
-        mDatabaseManager = new DatabaseManager();
+        //UserTable table = (UserTable)mDatabaseManager.getTable(UserTable.class);
+        //UserEntity entity = new UserEntity(0, "test", "123456", "嘻嘻嘻嘻");
+        //table.insert(entity);
     }
 
     //----------------------------------------------------------------------------------------------------
@@ -56,12 +60,22 @@ public class TaskBookServer {
 
         @Override
         public int login(String userName, String userPassword) throws org.apache.thrift.TException {
-            return 0;
+            UserTable table = (UserTable)mDatabaseManager.getTable(UserTable.class);
+            UserEntity entity = table.queryEntity("user_name = '" + userName  + "' and user_password = '" + userPassword + "'");
+            if (entity != null) {
+                return entity.userId;
+            }
+            return -1;
         }
 
         @Override
         public ThriftUserInfo userInfo(int userId) throws org.apache.thrift.TException {
-            return new ThriftUserInfo(userId, "TestUser", "TestNickName");
+            UserTable table = (UserTable)mDatabaseManager.getTable(UserTable.class);
+            UserEntity entity = table.queryEntity("user_id = '" + userId  + "'");
+            if (entity != null) {
+                return new ThriftUserInfo(entity.userId, entity.userName, entity.userNickname);
+            }
+            return null;
         }
 
         @Override

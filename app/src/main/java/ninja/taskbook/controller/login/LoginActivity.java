@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 import org.apache.thrift.TException;
 
@@ -23,6 +24,8 @@ import rx.schedulers.Schedulers;
 public class LoginActivity extends AppCompatActivity {
 
     //----------------------------------------------------------------------------------------------------
+    EditText mNameEditText;
+    EditText mPasswordEditText;
 
     //----------------------------------------------------------------------------------------------------
     @Override
@@ -30,21 +33,26 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.login_toolbar);
         setSupportActionBar(toolbar);
 
-        // button
+        // EditText
+        mNameEditText = (EditText)findViewById(R.id.name_edit_text);
+        mPasswordEditText = (EditText)findViewById(R.id.password_edit_text);
+
+        // Button
         Button registerButton = (Button)findViewById(R.id.register_button);
         registerButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                login();
+                register();
             }
         });
 
         Button loginButton = (Button)findViewById(R.id.login_button);
         loginButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                register();
+                login();
             }
         });
     }
@@ -58,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
                         try {
                             TaskBookService.Client client = (TaskBookService.Client) ThriftManager.createClient(ThriftManager.ClientTypeEnum.CLIENT.toString());
                             if (client != null)
-                                return client.login("name", "password");
+                                return client.login(mNameEditText.getText().toString(), mPasswordEditText.getText().toString());
                         } catch (TException e) {
                             e.printStackTrace();
                         }
@@ -70,8 +78,10 @@ public class LoginActivity extends AppCompatActivity {
                 .subscribe(new Action1<Integer>() {
                     @Override
                     public void call(Integer result) {
-                        setResult(RESULT_OK, null);
-                        finish();
+                        if (result >= 0) {
+                            setResult(RESULT_OK, null);
+                            finish();
+                        }
                     }
                 });
     }
@@ -79,7 +89,5 @@ public class LoginActivity extends AppCompatActivity {
     //----------------------------------------------------------------------------------------------------
     private void register() {
         // Todo
-        setResult(RESULT_OK, null);
-        finish();
     }
 }
