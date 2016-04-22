@@ -5,10 +5,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 //----------------------------------------------------------------------------------------------------
-public class UserDatabase extends SQLiteOpenHelper {
+public class UserTable extends SQLiteOpenHelper {
 
     //----------------------------------------------------------------------------------------------------
-    public UserDatabase(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+    public UserTable(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
     }
 

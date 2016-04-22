@@ -3,22 +3,22 @@ package ninja.taskbook.model.database;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import ninja.taskbook.model.entity.UserEntity;
+import ninja.taskbook.model.entity.TaskEntity;
 
 //----------------------------------------------------------------------------------------------------
-public class UserTable extends TableBase<UserEntity> {
+public class TaskTable extends TableBase<TaskEntity> {
 
     //----------------------------------------------------------------------------------------------------
-    public static final String TABLE_NAME = "user";
+    public static final String TABLE_NAME = "task";
     public static final String[] COLUMNS = {
-            "(user_id INTEGER PRIMARY KEY AUTOINCREMENT,",
-            "user_name VARCHAR(255) DEFAULT \"\",",
+            "(task_id INTEGER PRIMARY KEY AUTOINCREMENT,",
+            "task_name VARCHAR(255) DEFAULT \"\",",
             "user_password VARCHAR(255) DEFAULT \"\",",
             "user_nickname VARCHAR(255) DEFAULT \"\");",
     };
 
     //----------------------------------------------------------------------------------------------------
-    public UserTable() {
+    public TaskTable() {
 
     }
 
@@ -42,13 +42,15 @@ public class UserTable extends TableBase<UserEntity> {
 
     //----------------------------------------------------------------------------------------------------
     @Override
-    public UserEntity resultSetToEntity(ResultSet rs) {
+    public TaskEntity resultSetToEntity(ResultSet rs) {
         try {
-            UserEntity entity = new UserEntity();
-            entity.userId = rs.getInt("user_id");
-            entity.userName = rs.getString("user_name");
-            entity.userPassword = rs.getString("user_password");
-            entity.userNickname = rs.getString("user_nickname");
+            TaskEntity entity = new TaskEntity();
+            entity.taskId = rs.getInt("task_id");
+            entity.taskGroupId = rs.getInt("task_group_id");
+            entity.taskName = rs.getString("task_name");
+            entity.taskContent = rs.getString("task_content");
+            entity.taskTime = rs.getString("task_time");
+            entity.taskProgress = rs.getFloat("task_progress");
 
             return entity;
         } catch (SQLException e) {
@@ -59,13 +61,16 @@ public class UserTable extends TableBase<UserEntity> {
 
     //----------------------------------------------------------------------------------------------------
     @Override
-    public String entityToString(UserEntity entity) {
+    public String entityToString(TaskEntity entity) {
         String result = "";
-        result += (entity.userId < 0? "null" : "'" + entity.userId + "'") + ",";
-        result += "'" + entity.userName + "',";
-        result += "'" + entity.userPassword + "',";
-        result += "'" + entity.userNickname + "'";
+        result += (entity.taskId < 0? "null" : "'" + entity.taskId + "'") + ",";
+        result += "'" + entity.taskGroupId + "',";
+        result += "'" + entity.taskName + "',";
+        result += "'" + entity.taskContent + "'";
+        result += "'" + entity.taskTime + "'";
+        result += "'" + entity.taskProgress + "'";
 
         return result;
     }
+
 }

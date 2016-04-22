@@ -28,7 +28,7 @@ public class TaskBookServer {
     //----------------------------------------------------------------------------------------------------
     public TaskBookServer() {
         //UserTable table = (UserTable)mDatabaseManager.getTable(UserTable.class);
-        //UserEntity entity = new UserEntity(0, "test", "123456", "嘻嘻嘻嘻");
+        //UserEntity entity = new UserEntity(-1, "test", "123456", "嘻嘻嘻嘻");
         //table.insert(entity);
     }
 

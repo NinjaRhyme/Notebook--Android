@@ -7,6 +7,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,7 +95,12 @@ public class TaskFragment extends Fragment {
                 */
     }
 
-    // ContentItemHolder
+    //----------------------------------------------------------------------------------------------------
+    void onTaskItemClicked(int index) {
+        Log.d("click", "" + index);
+    }
+
+    // TaskItemHolder
     //----------------------------------------------------------------------------------------------------
     class TaskItemHolder extends RecyclerView.ViewHolder {
         public TextView itemTitleTextView;
@@ -107,7 +113,7 @@ public class TaskFragment extends Fragment {
         }
     }
 
-    // ContentItemAdapter
+    // TaskItemAdapter
     //----------------------------------------------------------------------------------------------------
     class TaskItemAdapter extends RecyclerView.Adapter<TaskItemHolder> {
         public TaskItemAdapter() {
@@ -126,7 +132,7 @@ public class TaskFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(TaskItemHolder holder, int position) {
+        public void onBindViewHolder(TaskItemHolder holder, final int position) {
             CardView cardView = (CardView)holder.itemView;
             switch (position % 4) {
                 case 0:
@@ -142,9 +148,14 @@ public class TaskFragment extends Fragment {
                     cardView.setCardBackgroundColor(Color.parseColor("#657DC1"));
                     break;
             }
-
             holder.itemTitleTextView.setText(mTaskItems.get(position).getItemTitle());
             holder.itemAuthorTextView.setText(mTaskItems.get(position).getItemAuthor());
+            cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onTaskItemClicked(position);
+                }
+            });
         }
     }
 }

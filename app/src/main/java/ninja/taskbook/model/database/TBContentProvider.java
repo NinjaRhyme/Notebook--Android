@@ -7,9 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -141,7 +139,7 @@ public class TBContentProvider extends ContentProvider {
         SQLiteDatabase db;
         db = mDatabaseMap.get(dbName);
         if (db == null) {
-            SQLiteOpenHelper helper = new UserDatabase(getContext(), dbName, null, 3);
+            SQLiteOpenHelper helper = new UserTable(getContext(), dbName, null, 3);
             db = helper.getWritableDatabase();
 
             mDatabaseMap.put(dbName, db);

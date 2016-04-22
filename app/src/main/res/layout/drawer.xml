@@ -5,6 +5,7 @@
     android:layout_width="@dimen/drawer_width"
     android:layout_height="match_parent"
     android:layout_gravity="start|bottom"
+    android:background="@color/drawer_background_color"
     android:scrollbarThumbVertical="@android:color/transparent">
 
     <LinearLayout

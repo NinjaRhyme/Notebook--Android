@@ -65,22 +65,16 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
         mDrawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
         mDrawer = (LinearLayout)findViewById(R.id.drawer);
 
-        DrawerItem item0 = new DrawerItem(R.mipmap.drawer_item_close);
-        mDrawerItems.add(item0);
-        DrawerItem item1 = new DrawerItem(R.mipmap.drawer_item_1);
+        DrawerItem item = new DrawerItem(R.mipmap.drawer_item_home);
+        mDrawerItems.add(item);
+        DrawerItem item1 = new DrawerItem(R.mipmap.drawer_item_bags);
         mDrawerItems.add(item1);
-        DrawerItem item2 = new DrawerItem(R.mipmap.drawer_item_2);
+        DrawerItem item2 = new DrawerItem(R.mipmap.drawer_item_book);
         mDrawerItems.add(item2);
-        DrawerItem item3 = new DrawerItem(R.mipmap.drawer_item_3);
+        DrawerItem item3 = new DrawerItem(R.mipmap.drawer_item_picture);
         mDrawerItems.add(item3);
-        DrawerItem item4 = new DrawerItem(R.mipmap.drawer_item_4);
+        DrawerItem item4 = new DrawerItem(R.mipmap.drawer_item_close);
         mDrawerItems.add(item4);
-        DrawerItem item5 = new DrawerItem(R.mipmap.drawer_item_5);
-        mDrawerItems.add(item5);
-        DrawerItem iem6 = new DrawerItem(R.mipmap.drawer_item_6);
-        mDrawerItems.add(iem6);
-        DrawerItem item7 = new DrawerItem(R.mipmap.drawer_item_7);
-        mDrawerItems.add(item7);
 
         mDrawerManager = new DrawerManager(this, mCoordinatorLayout, mToolbar, mDrawerLayout, mDrawer, mDrawerItems, this);
     }
@@ -199,7 +193,7 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
     @Override
     public void onDrawerItemClicked(int index) {
         if (mDrawerIndex != index) {
-            // Todo: animation
+            // Todo: animation & save fragment
             switch (index) {
                 case 0:
                     getSupportFragmentManager()
@@ -224,6 +218,10 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
                             .beginTransaction()
                             .replace(R.id.frame_layout, new SettingFragment())
                             .commit();
+                    break;
+                case 4:
+                    Intent login = new Intent(MainActivity.this, LoginActivity.class);
+                    startActivityForResult(login, LOGIN_ACTIVITY_CODE);
                     break;
                 default:
                     break;
