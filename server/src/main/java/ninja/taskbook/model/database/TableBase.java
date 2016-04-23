@@ -6,6 +6,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+// Todo: rollback
 //----------------------------------------------------------------------------------------------------
 public abstract class TableBase<T> {
 
@@ -15,6 +16,18 @@ public abstract class TableBase<T> {
     //----------------------------------------------------------------------------------------------------
     public TableBase() {
 
+    }
+
+    //----------------------------------------------------------------------------------------------------
+    protected void finalize() {
+        try {
+            super.finalize();
+            if (mConnection != null) {
+                mConnection.close();
+            }
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
     }
 
     //----------------------------------------------------------------------------------------------------
@@ -30,13 +43,15 @@ public abstract class TableBase<T> {
     public abstract String entityToString(T entity);
 
     //----------------------------------------------------------------------------------------------------
-    public void executeUpdate(String sql) {
+    public boolean executeUpdate(String sql) {
         try {
             Statement stat = mConnection.createStatement();
             stat.executeUpdate(sql);
             stat.close();
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
         }
     }
 
@@ -58,6 +73,22 @@ public abstract class TableBase<T> {
     }
 
     //----------------------------------------------------------------------------------------------------
+    public int queryLastId() {
+        try{
+            String sql = "select last_insert_rowid() as last from " + getTableName() + ";";
+            Statement stat = mConnection.createStatement();
+            ResultSet resultSet = stat.executeQuery(sql);
+            int id = resultSet.getInt(1);
+            System.out.println(id);
+            stat.close();
+            return id;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    //----------------------------------------------------------------------------------------------------
     private void create() {
         try {
             Statement stat = mConnection.createStatement();
@@ -75,9 +106,12 @@ public abstract class TableBase<T> {
     }
 
     //----------------------------------------------------------------------------------------------------
-    public void insert(T entity) {
+    public int insert(T entity) {
         String sql = "insert into " + getTableName()  + " values(" + entityToString(entity) + ");";
-        executeUpdate(sql);
+        if (executeUpdate(sql)) {
+            return queryLastId();
+        }
+        return 0;
     }
 
     //----------------------------------------------------------------------------------------------------

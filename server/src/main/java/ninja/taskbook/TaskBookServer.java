@@ -13,10 +13,14 @@ import java.util.List;
 import ninja.taskbook.model.database.DatabaseManager;
 import ninja.taskbook.model.database.GroupTable;
 import ninja.taskbook.model.database.TaskTable;
+import ninja.taskbook.model.database.UserGroupTable;
 import ninja.taskbook.model.database.UserTable;
+import ninja.taskbook.model.database.UserTaskTable;
 import ninja.taskbook.model.entity.GroupEntity;
 import ninja.taskbook.model.entity.TaskEntity;
 import ninja.taskbook.model.entity.UserEntity;
+import ninja.taskbook.model.entity.UserGroupRelation;
+import ninja.taskbook.model.entity.UserTaskRelation;
 import ninja.taskbook.model.network.thrift.service.TaskBookService;
 import ninja.taskbook.model.network.thrift.service.ThriftGroupInfo;
 import ninja.taskbook.model.network.thrift.service.ThriftTaskInfo;
@@ -31,16 +35,51 @@ public class TaskBookServer {
 
     //----------------------------------------------------------------------------------------------------
     public TaskBookServer() {
-        //UserTable table = (UserTable)mDatabaseManager.getTable(UserTable.class);
-        //UserEntity entity = new UserEntity(-1, "test", "123456", "嘻嘻嘻嘻");
-        //table.insert(entity);
 
-        //TaskTable table = (TaskTable)mDatabaseManager.getTable(TaskTable.class);
-        //TaskEntity entity = new TaskEntity(-1, 0, "Boss", "Task1", "嘻嘻嘻嘻嘻嘻嘻嘻嘻", "12345", 0.5f);
-        //table.insert(entity);
+        // Demo
+        /*
+        UserTable userTable = (UserTable)mDatabaseManager.getTable(UserTable.class);
+        userTable.drop();
+        userTable = (UserTable)mDatabaseManager.getTable(UserTable.class);
+        UserEntity userEntity = new UserEntity(0, "test", "123456", "嘻嘻嘻嘻");
+        userTable.insert(userEntity);
 
-        //TaskTable table = (TaskTable)mDatabaseManager.getTable(TaskTable.class);
-        //table.drop();
+        GroupTable groupTable = (GroupTable)mDatabaseManager.getTable(GroupTable.class);
+        groupTable.drop();
+        groupTable = (GroupTable)mDatabaseManager.getTable(GroupTable.class);
+        GroupEntity groupEntity = new GroupEntity(0, "Group1");
+        groupTable.insert(groupEntity);
+
+        TaskTable taskTable = (TaskTable)mDatabaseManager.getTable(TaskTable.class);
+        taskTable.drop();
+        taskTable = (TaskTable)mDatabaseManager.getTable(TaskTable.class);
+        TaskEntity taskEntity = new TaskEntity(0, 1, "Boss1", "Task1", "嘻嘻嘻嘻嘻嘻嘻嘻嘻", "12345", 1.f);
+        taskTable.insert(taskEntity);
+        taskEntity = new TaskEntity(0, 1, "Boss1", "Task2", "嘻嘻嘻嘻嘻嘻嘻嘻嘻", "12345", 0.5f);
+        taskTable.insert(taskEntity);
+        taskEntity = new TaskEntity(0, 1, "Boss2", "Task3", "嘻嘻嘻嘻嘻嘻嘻嘻嘻", "12345", 0.3f);
+        taskTable.insert(taskEntity);
+        taskEntity = new TaskEntity(0, 1, "Boss2", "Task4", "嘻嘻嘻嘻嘻嘻嘻嘻嘻", "12345", 0.5f);
+        taskTable.insert(taskEntity);
+
+        UserGroupTable userGroupTable = (UserGroupTable)mDatabaseManager.getTable(UserGroupTable.class);
+        userGroupTable.drop();
+        userGroupTable = (UserGroupTable)mDatabaseManager.getTable(UserGroupTable.class);
+        UserGroupRelation userGroupRelation = new UserGroupRelation(0, 1, 1, 0);
+        userGroupTable.insert(userGroupRelation);
+
+        UserTaskTable userTaskTable = (UserTaskTable)mDatabaseManager.getTable(UserTaskTable.class);
+        userTaskTable.drop();
+        userTaskTable = (UserTaskTable)mDatabaseManager.getTable(UserTaskTable.class);
+        UserTaskRelation userTaskRelation = new UserTaskRelation(0, 1, 1, 0);
+        userTaskTable.insert(userTaskRelation);
+        userTaskRelation = new UserTaskRelation(0, 1, 2, 0);
+        userTaskTable.insert(userTaskRelation);
+        userTaskRelation = new UserTaskRelation(0, 1, 3, 0);
+        userTaskTable.insert(userTaskRelation);
+        userTaskRelation = new UserTaskRelation(0, 1, 4, 0);
+        userTaskTable.insert(userTaskRelation);
+        */
     }
 
     //----------------------------------------------------------------------------------------------------
@@ -90,9 +129,10 @@ public class TaskBookServer {
         }
 
         @Override
-        public ThriftGroupInfo groupInfo(int groupId) throws org.apache.thrift.TException {
+        public ThriftGroupInfo groupInfo(int userId, int groupId) throws org.apache.thrift.TException {
+            // Todo:userRole = 0;
             GroupTable table = (GroupTable)mDatabaseManager.getTable(GroupTable.class);
-            GroupEntity entity = table.queryEntity("group_id = '" + groupId  + "'");
+            GroupEntity entity = table.queryEntity("group_id = '" + groupId + "'");
             if (entity != null) {
                 return new ThriftGroupInfo(entity.groupId, entity.groupName);
             }
@@ -101,36 +141,87 @@ public class TaskBookServer {
 
         @Override
         public List<ThriftGroupInfo> groupInfos(int userId) throws org.apache.thrift.TException {
-            // Todo
-            List<ThriftGroupInfo> groupInfos = new ArrayList<>();
-            groupInfos.add(new ThriftGroupInfo(0, "Group0"));
-            groupInfos.add(new ThriftGroupInfo(1, "Group1"));
-            groupInfos.add(new ThriftGroupInfo(2, "Group2"));
-            groupInfos.add(new ThriftGroupInfo(3, "Group3"));
-            groupInfos.add(new ThriftGroupInfo(4, "Group4"));
-            return groupInfos;
+            UserGroupTable userGroupTable = (UserGroupTable)mDatabaseManager.getTable(UserGroupTable.class);
+            List<UserGroupRelation> relations = userGroupTable.queryEntities("user_id = '" + userId + "'");
+            if (relations.size() > 0) {
+                String idSet = "(";
+                for (UserGroupRelation relation : relations) {
+                    idSet += relation.groupId + ",";
+                }
+                idSet = idSet.substring(0, idSet.length() - 1);
+                idSet += ")";
+
+                GroupTable groupTable = (GroupTable)mDatabaseManager.getTable(GroupTable.class);
+                List<GroupEntity> entities = groupTable.queryEntities("group_id in " + idSet);
+                List<ThriftGroupInfo> groupInfos = new ArrayList<>();
+                for (GroupEntity entity : entities) {
+                    groupInfos.add(new ThriftGroupInfo(entity.groupId, entity.groupName));
+                }
+                return groupInfos;
+            }
+            return null;
         }
 
         @Override
-        public ThriftTaskInfo taskInfo(int taskId) throws org.apache.thrift.TException {
+        public ThriftGroupInfo createGroup(int userId, ThriftGroupInfo groupInfo) throws org.apache.thrift.TException {
+            GroupTable table = (GroupTable)mDatabaseManager.getTable(GroupTable.class);
+            GroupEntity entity = new GroupEntity(0, groupInfo.groupName);
+            int groupId = table.insert(entity);
+            if (0 < groupId) {
+                UserGroupTable userGroupTable = (UserGroupTable)mDatabaseManager.getTable(UserGroupTable.class);
+                UserGroupRelation relation = new UserGroupRelation(0, userId, groupId, 0);
+                userGroupTable.insert(relation);
+                return groupInfo(userId, groupId);
+            }
+            return null;
+        }
+
+        @Override
+        public ThriftTaskInfo taskInfo(int userId, int taskId) throws org.apache.thrift.TException {
+            // Todo:userRole = 0;
             TaskTable table = (TaskTable)mDatabaseManager.getTable(TaskTable.class);
-            TaskEntity entity = table.queryEntity("task_id = '" + taskId  + "'");
+            TaskEntity entity = table.queryEntity("task_id = '" + taskId + "'");
             if (entity != null) {
-                return new ThriftTaskInfo(entity.taskId, entity.taskGroupId, entity.taskName, entity.taskProgress);
+                return new ThriftTaskInfo(entity.taskId, entity.taskGroupId, entity.taskAuthor, entity.taskName, entity.taskContent, entity.taskTime, entity.taskProgress);
             }
             return null;
         }
 
         @Override
         public List<ThriftTaskInfo> taskInfos(int userId) throws org.apache.thrift.TException {
-            // Todo
-            List<ThriftTaskInfo> taskInfos = new ArrayList<>();
-            taskInfos.add(new ThriftTaskInfo(0, 0, "Task0", 0.6));
-            taskInfos.add(new ThriftTaskInfo(1, 0, "Task1", 0.5));
-            taskInfos.add(new ThriftTaskInfo(2, 1, "Task2", 0.2));
-            taskInfos.add(new ThriftTaskInfo(3, 2, "Task3", 0.1));
-            taskInfos.add(new ThriftTaskInfo(4, 2, "Task4", 0.6));
-            return taskInfos;
+            UserTaskTable userTaskTable = (UserTaskTable)mDatabaseManager.getTable(UserTaskTable.class);
+            List<UserTaskRelation> relations = userTaskTable.queryEntities("user_id = '" + userId + "'");
+            if (relations.size() > 0) {
+                String idSet = "(";
+                for (UserTaskRelation relation : relations) {
+                    idSet += relation.taskId + ",";
+                }
+                idSet = idSet.substring(0, idSet.length() - 1);
+                idSet += ")";
+
+                TaskTable taskTable = (TaskTable)mDatabaseManager.getTable(TaskTable.class);
+                List<TaskEntity> entities = taskTable.queryEntities("task_id in " + idSet);
+                List<ThriftTaskInfo> taskInfos = new ArrayList<>();
+                for (TaskEntity entity : entities) {
+                    taskInfos.add(new ThriftTaskInfo(entity.taskId, entity.taskGroupId, entity.taskAuthor, entity.taskName, entity.taskContent, entity.taskTime, entity.taskProgress));
+                }
+                return taskInfos;
+            }
+            return null;
+        }
+
+        @Override
+        public ThriftTaskInfo createTask(int userId, ThriftTaskInfo taskInfo) throws org.apache.thrift.TException {
+            TaskTable table = (TaskTable)mDatabaseManager.getTable(TaskTable.class);
+            TaskEntity entity = new TaskEntity(0, taskInfo.groupId, taskInfo.taskAuthor, taskInfo.taskName, taskInfo.taskContent, taskInfo.taskTime, (float)taskInfo.taskProgress);
+            int taskId = table.insert(entity);
+            if (0 < taskId) {
+                UserTaskTable userTaskTable = (UserTaskTable)mDatabaseManager.getTable(UserTaskTable.class);
+                UserTaskRelation relation = new UserTaskRelation(0, userId, taskId, 0);
+                userTaskTable.insert(relation);
+                return taskInfo(userId, taskId);
+            }
+            return null;
         }
     }
 

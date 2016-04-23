@@ -67,7 +67,7 @@ public class TaskTable extends TableBase<TaskEntity> {
     @Override
     public String entityToString(TaskEntity entity) {
         String result = "";
-        result += (entity.taskId < 0? "null" : "'" + entity.taskId + "'") + ",";
+        result += (entity.taskId <= 0? "null" : "'" + entity.taskId + "'") + ",";
         result += "'" + entity.taskGroupId + "',";
         result += "'" + entity.taskAuthor + "',";
         result += "'" + entity.taskName + "',";

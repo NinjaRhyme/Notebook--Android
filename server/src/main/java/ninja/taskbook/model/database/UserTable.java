@@ -61,7 +61,7 @@ public class UserTable extends TableBase<UserEntity> {
     @Override
     public String entityToString(UserEntity entity) {
         String result = "";
-        result += (entity.userId < 0? "null" : "'" + entity.userId + "'") + ",";
+        result += (entity.userId <= 0? "null" : "'" + entity.userId + "'") + ",";
         result += "'" + entity.userName + "',";
         result += "'" + entity.userPassword + "',";
         result += "'" + entity.userNickname + "'";

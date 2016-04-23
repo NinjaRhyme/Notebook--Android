@@ -13,17 +13,30 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.apache.thrift.TException;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import ninja.taskbook.R;
+import ninja.taskbook.controller.group.GroupTaskFragment;
+import ninja.taskbook.model.entity.TaskEntity;
+import ninja.taskbook.model.network.thrift.manager.ThriftManager;
+import ninja.taskbook.model.network.thrift.service.TaskBookService;
+import ninja.taskbook.model.network.thrift.service.ThriftTaskInfo;
+import ninja.taskbook.model.network.thrift.service.ThriftUserInfo;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 //----------------------------------------------------------------------------------------------------
 public class TaskFragment extends Fragment {
 
     //----------------------------------------------------------------------------------------------------
     private RecyclerView mRecyclerView;
-    private List<TaskItem> mTaskItems = new ArrayList<>();
+    private List<TaskEntity> mTaskItems = new ArrayList<>();
 
     //----------------------------------------------------------------------------------------------------
     @Override
@@ -57,47 +70,44 @@ public class TaskFragment extends Fragment {
 
     //----------------------------------------------------------------------------------------------------
     private void loadTaskItems() {
-        TaskItem item0 = new TaskItem("xi xi xi", "boss");
-        mTaskItems.add(item0);
-        mTaskItems.add(item0);
-        mTaskItems.add(item0);
-        mTaskItems.add(item0);
-        mTaskItems.add(item0);
-        mTaskItems.add(item0);
-        mTaskItems.add(item0);
-        mTaskItems.add(item0);
-        mTaskItems.add(item0);
-
-        /*
-        String[] words = {"Hello", "Hi", "Aloha"};
-        Observable.just(words)
-                .map(new Func1<String[], Integer>() {
+        Observable.just(1) // Todo: id
+                .map(new Func1<Integer, List<ThriftTaskInfo>>() {
                     @Override
-                    public Integer call(String[] words) {
+                    public List<ThriftTaskInfo> call(Integer userId) {
                         try {
-                            HelloService.Client client = (HelloService.Client)ThriftManager.createClient(ThriftManager.ClientTypeEnum.CLIENT_HELLO.toString());
+                            TaskBookService.Client client = (TaskBookService.Client) ThriftManager.createClient(ThriftManager.ClientTypeEnum.CLIENT.toString());
                             if (client != null)
-                                return client.hi(words[0], words[1], words[2]);
+                                return client.taskInfos(userId);
                         } catch (TException e) {
                             e.printStackTrace();
                         }
-                        return 0;
+                        return null;
                     }
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<Integer>() {
+                .subscribe(new Action1<List<ThriftTaskInfo>>() {
                     @Override
-                    public void call(Integer result) {
-
+                    public void call(List<ThriftTaskInfo> result) {
+                        if (result != null) {
+                            mTaskItems.clear();
+                            for (ThriftTaskInfo info : result) {
+                                mTaskItems.add(new TaskEntity(info.taskId, info.groupId, info.taskName, info.taskName, info.taskName, info.taskName, (float)info.taskProgress));
+                            }
+                            mRecyclerView.getAdapter().notifyDataSetChanged();
+                        }
                     }
                 });
-                */
     }
 
     //----------------------------------------------------------------------------------------------------
-    void onTaskItemClicked(int index) {
-        Log.d("click", "" + index);
+    void onTaskItemClicked(int id) {
+        Log.d("click", "" + id);
+        getFragmentManager()
+                .beginTransaction()
+                .add(R.id.frame_layout, new GroupTaskFragment())
+                .addToBackStack(null)
+                .commit();
     }
 
     // TaskItemHolder
@@ -148,12 +158,12 @@ public class TaskFragment extends Fragment {
                     cardView.setCardBackgroundColor(Color.parseColor("#657DC1"));
                     break;
             }
-            holder.itemTitleTextView.setText(mTaskItems.get(position).getItemTitle());
-            holder.itemAuthorTextView.setText(mTaskItems.get(position).getItemAuthor());
+            holder.itemTitleTextView.setText(mTaskItems.get(position).taskName);
+            holder.itemAuthorTextView.setText(mTaskItems.get(position).taskAuthor);
             cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    onTaskItemClicked(position);
+                    onTaskItemClicked(mTaskItems.get(position).taskId);
                 }
             });
         }

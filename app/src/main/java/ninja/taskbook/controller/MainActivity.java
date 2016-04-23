@@ -5,9 +5,11 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
@@ -51,6 +53,10 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
         initToolbar();
         initDrawer();
 
+        login();
+    }
+
+    private void login() {
         Intent login = new Intent(MainActivity.this, LoginActivity.class);
         startActivityForResult(login, LOGIN_ACTIVITY_CODE);
     }
@@ -82,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
     private void initContent() {
         mFrameLayout = (FrameLayout)findViewById(R.id.frame_layout);
 
+        mDrawerIndex = 0;
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.frame_layout, new ProfileFragment())
@@ -179,6 +186,18 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
     }
 
     //----------------------------------------------------------------------------------------------------
+    @Override
+    public void onBackPressed() {
+        Log.d("back", "back");
+        FragmentManager manager = getSupportFragmentManager();
+        if (0 < getSupportFragmentManager().getBackStackEntryCount()) {
+            getSupportFragmentManager().popBackStack();
+        } else {
+            login();
+        }
+    }
+
+    //----------------------------------------------------------------------------------------------------
     public Bitmap takeFrameScreenShot() {
         // Todo: Thread
         Bitmap bitmap = Bitmap.createBitmap(mFrameLayout.getWidth(), mFrameLayout.getHeight(), Bitmap.Config.ARGB_8888);
@@ -220,8 +239,7 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
                             .commit();
                     break;
                 case 4:
-                    Intent login = new Intent(MainActivity.this, LoginActivity.class);
-                    startActivityForResult(login, LOGIN_ACTIVITY_CODE);
+                    login();
                     break;
                 default:
                     break;

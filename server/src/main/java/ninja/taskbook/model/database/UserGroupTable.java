@@ -13,7 +13,7 @@ public class UserGroupTable extends TableBase<UserGroupRelation> {
             "(user_group_id INTEGER PRIMARY KEY AUTOINCREMENT,",
             "user_id INTEGER DEFAULT 0,",
             "group_id INTEGER DEFAULT 0,",
-            "user_group_level INTEGER DEFAULT 0);",
+            "user_role INTEGER DEFAULT 0);",
     };
 
     //----------------------------------------------------------------------------------------------------
@@ -47,7 +47,7 @@ public class UserGroupTable extends TableBase<UserGroupRelation> {
             entity.userGroupId = rs.getInt("user_group_id");
             entity.userId = rs.getInt("user_id");
             entity.groupId = rs.getInt("group_id");
-            entity.userGroupLevel = rs.getInt("user_group_level");
+            entity.userRole = rs.getInt("user_role");
 
             return entity;
         } catch (SQLException e) {
@@ -60,10 +60,10 @@ public class UserGroupTable extends TableBase<UserGroupRelation> {
     @Override
     public String entityToString(UserGroupRelation entity) {
         String result = "";
-        result += (entity.userGroupId < 0 ? "null" : "'" + entity.userGroupId + "'") + ",";
+        result += (entity.userGroupId <= 0 ? "null" : "'" + entity.userGroupId + "'") + ",";
         result += "'" + entity.userId + "',";
         result += "'" + entity.groupId + "',";
-        result += "'" + entity.userGroupLevel + "'";
+        result += "'" + entity.userRole + "'";
 
         return result;
     }

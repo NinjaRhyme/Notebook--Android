@@ -8,7 +8,7 @@ import ninja.taskbook.model.entity.GroupEntity;
 public class GroupTable extends TableBase<GroupEntity> {
 
     //----------------------------------------------------------------------------------------------------
-    public static final String TABLE_NAME = "group";
+    public static final String TABLE_NAME = "'group'";
     public static final String[] COLUMNS = {
             "(group_id INTEGER PRIMARY KEY AUTOINCREMENT,",
             "group_name VARCHAR(255) DEFAULT \"\");",
@@ -56,7 +56,7 @@ public class GroupTable extends TableBase<GroupEntity> {
     @Override
     public String entityToString(GroupEntity entity) {
         String result = "";
-        result += (entity.groupId < 0? "null" : "'" + entity.groupId + "'") + ",";
+        result += (entity.groupId <= 0? "null" : "'" + entity.groupId + "'") + ",";
         result += "'" + entity.groupName + "'";
 
         return result;

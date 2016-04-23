@@ -54,7 +54,7 @@ public class ProfileFragment extends Fragment {
 
     //----------------------------------------------------------------------------------------------------
     private void loadProfileData() {
-        Observable.just(0)
+        Observable.just(1) // Todo: id
                 .map(new Func1<Integer, ThriftUserInfo>() {
                     @Override
                     public ThriftUserInfo call(Integer userId) {

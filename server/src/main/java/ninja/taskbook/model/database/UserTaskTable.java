@@ -13,7 +13,8 @@ public class UserTaskTable extends TableBase<UserTaskRelation> {
     public static final String[] COLUMNS = {
             "(user_task_id INTEGER PRIMARY KEY AUTOINCREMENT,",
             "user_id INTEGER DEFAULT 0,",
-            "task_id INTEGER DEFAULT 0);",
+            "task_id INTEGER DEFAULT 0,",
+            "user_role INTEGER DEFAULT 0);",
     };
 
     //----------------------------------------------------------------------------------------------------
@@ -47,6 +48,7 @@ public class UserTaskTable extends TableBase<UserTaskRelation> {
             entity.userTaskId = rs.getInt("user_task_id");
             entity.userId = rs.getInt("user_id");
             entity.taskId = rs.getInt("task_id");
+            entity.userRole = rs.getInt("user_role");
 
             return entity;
         } catch (SQLException e) {
@@ -59,9 +61,10 @@ public class UserTaskTable extends TableBase<UserTaskRelation> {
     @Override
     public String entityToString(UserTaskRelation entity) {
         String result = "";
-        result += (entity.userTaskId < 0 ? "null" : "'" + entity.userTaskId + "'") + ",";
+        result += (entity.userTaskId <= 0 ? "null" : "'" + entity.userTaskId + "'") + ",";
         result += "'" + entity.userId + "',";
-        result += "'" + entity.taskId + "'";
+        result += "'" + entity.taskId + "',";
+        result += "'" + entity.userRole + "'";
 
         return result;
     }
