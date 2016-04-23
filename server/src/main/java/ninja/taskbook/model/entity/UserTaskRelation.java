@@ -1,11 +1,10 @@
 package ninja.taskbook.model.entity;
 
 //----------------------------------------------------------------------------------------------------
-public class UserGroupRelation {
+public class UserTaskRelation {
 
     //----------------------------------------------------------------------------------------------------
-    public int userGroupId;
+    public int userTaskId;
     public int userId;
-    public int groupId;
-    public int userGroupLevel;
+    public int taskId;
 }

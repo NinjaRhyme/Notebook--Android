@@ -20,7 +20,7 @@ public abstract class TableBase<T> {
     //----------------------------------------------------------------------------------------------------
     public void setConnection(Connection connection) {
         mConnection = connection;
-        create(getCreationSQL());
+        create();
     }
 
     //----------------------------------------------------------------------------------------------------
@@ -58,14 +58,20 @@ public abstract class TableBase<T> {
     }
 
     //----------------------------------------------------------------------------------------------------
-    private void create(String sql) {
+    private void create() {
         try {
             Statement stat = mConnection.createStatement();
-            stat.executeUpdate(sql);
+            stat.executeUpdate(getCreationSQL());
             stat.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    //----------------------------------------------------------------------------------------------------
+    public void drop() {
+        String sql = "drop table if exists " + getTableName()  + ";";
+        executeUpdate(sql);
     }
 
     //----------------------------------------------------------------------------------------------------

@@ -11,7 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ninja.taskbook.model.database.DatabaseManager;
+import ninja.taskbook.model.database.GroupTable;
+import ninja.taskbook.model.database.TaskTable;
 import ninja.taskbook.model.database.UserTable;
+import ninja.taskbook.model.entity.GroupEntity;
+import ninja.taskbook.model.entity.TaskEntity;
 import ninja.taskbook.model.entity.UserEntity;
 import ninja.taskbook.model.network.thrift.service.TaskBookService;
 import ninja.taskbook.model.network.thrift.service.ThriftGroupInfo;
@@ -30,6 +34,13 @@ public class TaskBookServer {
         //UserTable table = (UserTable)mDatabaseManager.getTable(UserTable.class);
         //UserEntity entity = new UserEntity(-1, "test", "123456", "嘻嘻嘻嘻");
         //table.insert(entity);
+
+        //TaskTable table = (TaskTable)mDatabaseManager.getTable(TaskTable.class);
+        //TaskEntity entity = new TaskEntity(-1, 0, "Boss", "Task1", "嘻嘻嘻嘻嘻嘻嘻嘻嘻", "12345", 0.5f);
+        //table.insert(entity);
+
+        //TaskTable table = (TaskTable)mDatabaseManager.getTable(TaskTable.class);
+        //table.drop();
     }
 
     //----------------------------------------------------------------------------------------------------
@@ -80,11 +91,17 @@ public class TaskBookServer {
 
         @Override
         public ThriftGroupInfo groupInfo(int groupId) throws org.apache.thrift.TException {
-            return new ThriftGroupInfo(groupId, "Group0");
+            GroupTable table = (GroupTable)mDatabaseManager.getTable(GroupTable.class);
+            GroupEntity entity = table.queryEntity("group_id = '" + groupId  + "'");
+            if (entity != null) {
+                return new ThriftGroupInfo(entity.groupId, entity.groupName);
+            }
+            return null;
         }
 
         @Override
         public List<ThriftGroupInfo> groupInfos(int userId) throws org.apache.thrift.TException {
+            // Todo
             List<ThriftGroupInfo> groupInfos = new ArrayList<>();
             groupInfos.add(new ThriftGroupInfo(0, "Group0"));
             groupInfos.add(new ThriftGroupInfo(1, "Group1"));
@@ -96,11 +113,17 @@ public class TaskBookServer {
 
         @Override
         public ThriftTaskInfo taskInfo(int taskId) throws org.apache.thrift.TException {
-            return new ThriftTaskInfo(taskId, 0, "Task0", 0.5);
+            TaskTable table = (TaskTable)mDatabaseManager.getTable(TaskTable.class);
+            TaskEntity entity = table.queryEntity("task_id = '" + taskId  + "'");
+            if (entity != null) {
+                return new ThriftTaskInfo(entity.taskId, entity.taskGroupId, entity.taskName, entity.taskProgress);
+            }
+            return null;
         }
 
         @Override
         public List<ThriftTaskInfo> taskInfos(int userId) throws org.apache.thrift.TException {
+            // Todo
             List<ThriftTaskInfo> taskInfos = new ArrayList<>();
             taskInfos.add(new ThriftTaskInfo(0, 0, "Task0", 0.6));
             taskInfos.add(new ThriftTaskInfo(1, 0, "Task1", 0.5));

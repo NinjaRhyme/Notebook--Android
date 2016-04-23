@@ -54,4 +54,16 @@ public class DatabaseManager {
         }
         return null;
     }
+
+    //----------------------------------------------------------------------------------------------------
+    public synchronized void dropTable(Class<?> className) {
+        try {
+            TableBase table;
+            table = (TableBase)className.newInstance();
+            table.setConnection(getConnection());
+            table.drop();
+        } catch (InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
 }

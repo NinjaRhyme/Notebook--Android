@@ -3,25 +3,21 @@ package ninja.taskbook.model.database;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import ninja.taskbook.model.entity.TaskEntity;
+import ninja.taskbook.model.entity.UserTaskRelation;
 
 //----------------------------------------------------------------------------------------------------
-public class TaskTable extends TableBase<TaskEntity> {
+public class UserTaskTable extends TableBase<UserTaskRelation> {
 
     //----------------------------------------------------------------------------------------------------
-    public static final String TABLE_NAME = "task";
+    public static final String TABLE_NAME = "user_task";
     public static final String[] COLUMNS = {
-            "(task_id INTEGER PRIMARY KEY AUTOINCREMENT,",
-            "task_group_id INTEGER DEFAULT 0,",
-            "task_author VARCHAR(255) DEFAULT \"\",",
-            "task_name VARCHAR(255) DEFAULT \"\",",
-            "task_content VARCHAR(1023) DEFAULT \"\",",
-            "task_time VARCHAR(255) DEFAULT \"\",",
-            "task_progress FLOAT DEFAULT 0);",
+            "(user_task_id INTEGER PRIMARY KEY AUTOINCREMENT,",
+            "user_id INTEGER DEFAULT 0,",
+            "task_id INTEGER DEFAULT 0);",
     };
 
     //----------------------------------------------------------------------------------------------------
-    public TaskTable() {
+    public UserTaskTable() {
 
     }
 
@@ -45,16 +41,12 @@ public class TaskTable extends TableBase<TaskEntity> {
 
     //----------------------------------------------------------------------------------------------------
     @Override
-    public TaskEntity resultSetToEntity(ResultSet rs) {
+    public UserTaskRelation resultSetToEntity(ResultSet rs) {
         try {
-            TaskEntity entity = new TaskEntity();
+            UserTaskRelation entity = new UserTaskRelation();
+            entity.userTaskId = rs.getInt("user_task_id");
+            entity.userId = rs.getInt("user_id");
             entity.taskId = rs.getInt("task_id");
-            entity.taskGroupId = rs.getInt("task_group_id");
-            entity.taskAuthor = rs.getString("task_author");
-            entity.taskName = rs.getString("task_name");
-            entity.taskContent = rs.getString("task_content");
-            entity.taskTime = rs.getString("task_time");
-            entity.taskProgress = rs.getFloat("task_progress");
 
             return entity;
         } catch (SQLException e) {
@@ -65,15 +57,11 @@ public class TaskTable extends TableBase<TaskEntity> {
 
     //----------------------------------------------------------------------------------------------------
     @Override
-    public String entityToString(TaskEntity entity) {
+    public String entityToString(UserTaskRelation entity) {
         String result = "";
-        result += (entity.taskId < 0? "null" : "'" + entity.taskId + "'") + ",";
-        result += "'" + entity.taskGroupId + "',";
-        result += "'" + entity.taskAuthor + "',";
-        result += "'" + entity.taskName + "',";
-        result += "'" + entity.taskContent + "',";
-        result += "'" + entity.taskTime + "',";
-        result += "'" + entity.taskProgress + "'";
+        result += (entity.userTaskId < 0 ? "null" : "'" + entity.userTaskId + "'") + ",";
+        result += "'" + entity.userId + "',";
+        result += "'" + entity.taskId + "'";
 
         return result;
     }
