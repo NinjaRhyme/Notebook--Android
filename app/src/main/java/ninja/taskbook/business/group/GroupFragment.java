@@ -1,4 +1,4 @@
-package ninja.taskbook.controller.setting;
+package ninja.taskbook.business.group;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,9 +9,7 @@ import android.view.ViewGroup;
 import ninja.taskbook.R;
 
 //----------------------------------------------------------------------------------------------------
-public class SettingFragment extends Fragment {
-
-    //----------------------------------------------------------------------------------------------------
+public class GroupFragment extends Fragment {
 
     //----------------------------------------------------------------------------------------------------
     @Override
@@ -23,7 +21,7 @@ public class SettingFragment extends Fragment {
     //----------------------------------------------------------------------------------------------------
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.setting, container, false);
+        View rootView = inflater.inflate(R.layout.group, container, false);
 
         return rootView;
     }

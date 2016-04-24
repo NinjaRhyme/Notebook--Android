@@ -1,4 +1,4 @@
-package ninja.taskbook.controller.group;
+package ninja.taskbook.business.group;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -22,7 +22,7 @@ import lecho.lib.hellocharts.view.LineChartView;
 import ninja.taskbook.R;
 
 //----------------------------------------------------------------------------------------------------
-public class GroupTaskFragment extends Fragment {
+public class GroupTaskLineFragment extends Fragment {
 
     //----------------------------------------------------------------------------------------------------
     private LineChartView chart;
@@ -54,7 +54,7 @@ public class GroupTaskFragment extends Fragment {
     //----------------------------------------------------------------------------------------------------
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.group_task, container, false);
+        View rootView = inflater.inflate(R.layout.group_task_line, container, false);
 
         chart = (LineChartView)rootView.findViewById(R.id.chart);
         chart.setOnValueTouchListener(new ValueTouchListener());

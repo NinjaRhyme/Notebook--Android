@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 //----------------------------------------------------------------------------------------------------
-public class TBContentProvider extends ContentProvider {
+public class DatabaseManager extends ContentProvider {
 
     //----------------------------------------------------------------------------------------------------
     private final Map<String, SQLiteDatabase> mDatabaseMap;
@@ -22,7 +22,7 @@ public class TBContentProvider extends ContentProvider {
 
     // Init
     //----------------------------------------------------------------------------------------------------
-    public TBContentProvider() {
+    public DatabaseManager() {
         mDatabaseMap = new HashMap<>();
         mDatabaseLocks = new HashMap<>();
     }

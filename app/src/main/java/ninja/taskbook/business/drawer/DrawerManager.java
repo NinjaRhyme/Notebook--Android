@@ -1,4 +1,4 @@
-package ninja.taskbook.controller.drawer;
+package ninja.taskbook.business.drawer;
 
 import android.graphics.Color;
 import android.os.Handler;
@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ninja.taskbook.R;
-import ninja.taskbook.controller.MainActivity;
 
 //----------------------------------------------------------------------------------------------------
 public class DrawerManager {

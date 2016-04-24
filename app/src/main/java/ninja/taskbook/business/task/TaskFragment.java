@@ -1,4 +1,4 @@
-package ninja.taskbook.controller.task;
+package ninja.taskbook.business.task;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -19,12 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ninja.taskbook.R;
-import ninja.taskbook.controller.group.GroupTaskFragment;
+import ninja.taskbook.business.group.GroupTaskLineFragment;
+import ninja.taskbook.model.data.DataManager;
 import ninja.taskbook.model.entity.TaskEntity;
+import ninja.taskbook.model.entity.UserEntity;
 import ninja.taskbook.model.network.thrift.manager.ThriftManager;
 import ninja.taskbook.model.network.thrift.service.TaskBookService;
 import ninja.taskbook.model.network.thrift.service.ThriftTaskInfo;
-import ninja.taskbook.model.network.thrift.service.ThriftUserInfo;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -70,7 +71,13 @@ public class TaskFragment extends Fragment {
 
     //----------------------------------------------------------------------------------------------------
     private void loadTaskItems() {
-        Observable.just(1) // Todo: id
+        UserEntity entity = DataManager.getInstance().getUserInfo();
+        if (entity == null) {
+            // Error
+            return;
+        }
+
+        Observable.just(entity.userId) // Todo: id
                 .map(new Func1<Integer, List<ThriftTaskInfo>>() {
                     @Override
                     public List<ThriftTaskInfo> call(Integer userId) {
@@ -105,7 +112,7 @@ public class TaskFragment extends Fragment {
         Log.d("click", "" + id);
         getFragmentManager()
                 .beginTransaction()
-                .add(R.id.frame_layout, new GroupTaskFragment())
+                .add(R.id.frame_layout, new GroupTaskLineFragment())
                 .addToBackStack(null)
                 .commit();
     }

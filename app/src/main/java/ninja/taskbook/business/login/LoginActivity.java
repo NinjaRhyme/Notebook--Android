@@ -1,9 +1,9 @@
-package ninja.taskbook.controller.login;
+package ninja.taskbook.business.login;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -13,9 +13,10 @@ import android.widget.Toast;
 import org.apache.thrift.TException;
 
 import ninja.taskbook.R;
+import ninja.taskbook.model.data.DataManager;
+import ninja.taskbook.model.entity.UserEntity;
 import ninja.taskbook.model.network.thrift.manager.ThriftManager;
 import ninja.taskbook.model.network.thrift.service.TaskBookService;
-import ninja.taskbook.model.network.thrift.service.ThriftUserInfo;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -60,6 +61,13 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     //----------------------------------------------------------------------------------------------------
+    @Override
+    public void onBackPressed() {
+        Log.d("Login", "back");
+        System.exit(0);
+    }
+
+    //----------------------------------------------------------------------------------------------------
     private void login() {
         Observable.just(0)
                 .map(new Func1<Integer, Integer>() {
@@ -81,6 +89,10 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void call(Integer result) {
                         if (result >= 0) {
+                            UserEntity entity = new UserEntity();
+                            entity.userId = result;
+                            DataManager.getInstance().setUserInfo(entity);
+
                             setResult(RESULT_OK, null);
                             finish();
                         } else {

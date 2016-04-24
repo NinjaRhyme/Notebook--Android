@@ -1,4 +1,4 @@
-package ninja.taskbook.controller;
+package ninja.taskbook.business;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -19,13 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ninja.taskbook.R;
-import ninja.taskbook.controller.group.GroupFragment;
-import ninja.taskbook.controller.login.LoginActivity;
-import ninja.taskbook.controller.profile.ProfileFragment;
-import ninja.taskbook.controller.setting.SettingFragment;
-import ninja.taskbook.controller.task.TaskFragment;
-import ninja.taskbook.controller.drawer.DrawerManager;
-import ninja.taskbook.controller.drawer.DrawerItem;
+import ninja.taskbook.business.group.GroupFragment;
+import ninja.taskbook.business.login.LoginActivity;
+import ninja.taskbook.business.profile.ProfileFragment;
+import ninja.taskbook.business.setting.SettingFragment;
+import ninja.taskbook.business.task.TaskFragment;
+import ninja.taskbook.business.drawer.DrawerManager;
+import ninja.taskbook.business.drawer.DrawerItem;
 
 //----------------------------------------------------------------------------------------------------
 public class MainActivity extends AppCompatActivity implements DrawerManager.DrawerListener {
@@ -188,16 +188,17 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
     //----------------------------------------------------------------------------------------------------
     @Override
     public void onBackPressed() {
-        Log.d("back", "back");
+        Log.d("Main", "back");
         FragmentManager manager = getSupportFragmentManager();
-        if (0 < getSupportFragmentManager().getBackStackEntryCount()) {
-            getSupportFragmentManager().popBackStack();
+        if (0 < manager.getBackStackEntryCount()) {
+            manager.popBackStack();
         } else {
             login();
         }
     }
 
     //----------------------------------------------------------------------------------------------------
+    /*
     public Bitmap takeFrameScreenShot() {
         // Todo: Thread
         Bitmap bitmap = Bitmap.createBitmap(mFrameLayout.getWidth(), mFrameLayout.getHeight(), Bitmap.Config.ARGB_8888);
@@ -206,6 +207,7 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
 
         return bitmap;
     }
+    */
 
     // DrawerListener
     //----------------------------------------------------------------------------------------------------

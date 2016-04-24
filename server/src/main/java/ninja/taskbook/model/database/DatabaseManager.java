@@ -9,9 +9,6 @@ public class DatabaseManager {
     public static final String NAME = "jdbc:sqlite:data.sqlite";
 
     //----------------------------------------------------------------------------------------------------
-    //Connection mConnection;
-
-    //----------------------------------------------------------------------------------------------------
     public DatabaseManager() {
 
     }
@@ -38,6 +35,7 @@ public class DatabaseManager {
             TableBase table;
             table = (TableBase)className.newInstance();
             table.setConnection(getConnection());
+            table.create();
             return table;
         } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();

@@ -33,7 +33,6 @@ public abstract class TableBase<T> {
     //----------------------------------------------------------------------------------------------------
     public void setConnection(Connection connection) {
         mConnection = connection;
-        create();
     }
 
     //----------------------------------------------------------------------------------------------------
@@ -89,7 +88,7 @@ public abstract class TableBase<T> {
     }
 
     //----------------------------------------------------------------------------------------------------
-    private void create() {
+    public void create() {
         try {
             Statement stat = mConnection.createStatement();
             stat.executeUpdate(getCreationSQL());

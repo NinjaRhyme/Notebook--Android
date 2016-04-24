@@ -1,4 +1,4 @@
-package ninja.taskbook.controller.profile;
+package ninja.taskbook.business.profile;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,6 +10,8 @@ import android.widget.TextView;
 import org.apache.thrift.TException;
 
 import ninja.taskbook.R;
+import ninja.taskbook.model.data.DataManager;
+import ninja.taskbook.model.entity.UserEntity;
 import ninja.taskbook.model.network.thrift.manager.ThriftManager;
 import ninja.taskbook.model.network.thrift.service.TaskBookService;
 import ninja.taskbook.model.network.thrift.service.ThriftUserInfo;
@@ -54,12 +56,18 @@ public class ProfileFragment extends Fragment {
 
     //----------------------------------------------------------------------------------------------------
     private void loadProfileData() {
-        Observable.just(1) // Todo: id
+        UserEntity entity = DataManager.getInstance().getUserInfo();
+        if (entity == null) {
+            // Error
+            return;
+        }
+
+        Observable.just(entity.userId)
                 .map(new Func1<Integer, ThriftUserInfo>() {
                     @Override
                     public ThriftUserInfo call(Integer userId) {
                         try {
-                            TaskBookService.Client client = (TaskBookService.Client)ThriftManager.createClient(ThriftManager.ClientTypeEnum.CLIENT.toString());
+                            TaskBookService.Client client = (TaskBookService.Client) ThriftManager.createClient(ThriftManager.ClientTypeEnum.CLIENT.toString());
                             if (client != null)
                                 return client.userInfo(userId);
                         } catch (TException e) {
@@ -73,6 +81,8 @@ public class ProfileFragment extends Fragment {
                 .subscribe(new Action1<ThriftUserInfo>() {
                     @Override
                     public void call(ThriftUserInfo result) {
+                        DataManager.getInstance().setUserInfo(new UserEntity(result.userId, result.userName, result.userNickname));
+
                         mNameTextView.setText(result.getUserName());
                         mNicknameTextView.setText(result.getUserNickname());
                     }

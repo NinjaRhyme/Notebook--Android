@@ -1,4 +1,4 @@
-package ninja.taskbook.controller.drawer;
+package ninja.taskbook.business.drawer;
 
 //----------------------------------------------------------------------------------------------------
 public class DrawerItem {
