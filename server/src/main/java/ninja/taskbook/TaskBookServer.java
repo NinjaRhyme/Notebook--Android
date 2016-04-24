@@ -130,7 +130,7 @@ public class TaskBookServer {
 
         @Override
         public ThriftGroupInfo groupInfo(int userId, int groupId) throws org.apache.thrift.TException {
-            // Todo:userRole = 0;
+            // Todo:userRole = ?;
             GroupTable table = (GroupTable)mDatabaseManager.getTable(GroupTable.class);
             GroupEntity entity = table.queryEntity("group_id = '" + groupId + "'");
             if (entity != null) {
@@ -178,7 +178,7 @@ public class TaskBookServer {
 
         @Override
         public ThriftTaskInfo taskInfo(int userId, int taskId) throws org.apache.thrift.TException {
-            // Todo:userRole = 0;
+            // Todo:userRole = ?;
             TaskTable table = (TaskTable)mDatabaseManager.getTable(TaskTable.class);
             TaskEntity entity = table.queryEntity("task_id = '" + taskId + "'");
             if (entity != null) {

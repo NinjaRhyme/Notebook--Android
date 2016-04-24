@@ -75,8 +75,9 @@ public class LoginActivity extends AppCompatActivity {
                     public Integer call(Integer userId) {
                         try {
                             TaskBookService.Client client = (TaskBookService.Client) ThriftManager.createClient(ThriftManager.ClientTypeEnum.CLIENT.toString());
-                            if (client != null)
+                            if (client != null) {
                                 return client.login(mNameEditText.getText().toString(), mPasswordEditText.getText().toString());
+                            }
                         } catch (TException e) {
                             e.printStackTrace();
                         }

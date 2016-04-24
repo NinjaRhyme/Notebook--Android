@@ -1,5 +1,8 @@
 package ninja.taskbook.model.data;
 
+import java.util.List;
+
+import ninja.taskbook.model.entity.GroupEntity;
 import ninja.taskbook.model.entity.UserEntity;
 
 //----------------------------------------------------------------------------------------------------
@@ -9,6 +12,7 @@ public class DataManager {
 
     //----------------------------------------------------------------------------------------------------
     private UserEntity mUserInfo;
+    private List<GroupEntity> mGroupInfos;
 
     //----------------------------------------------------------------------------------------------------
     private DataManager() {
@@ -34,4 +38,11 @@ public class DataManager {
         this.mUserInfo = userInfo;
     }
 
+    public List<GroupEntity> getGroupInfos() {
+        return mGroupInfos;
+    }
+
+    public void setGroupInfos(List<GroupEntity> groupInfos) {
+        this.mGroupInfos = groupInfos;
+    }
 }
