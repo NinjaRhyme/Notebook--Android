@@ -1,7 +1,8 @@
 package ninja.taskbook.business.login;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -25,28 +26,25 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 //----------------------------------------------------------------------------------------------------
-public class LoginActivity extends AppCompatActivity {
-
-    //----------------------------------------------------------------------------------------------------
-    static final int REGISTER_ACTIVITY_CODE = 1;
+public class RegisterActivity extends AppCompatActivity {
 
     //----------------------------------------------------------------------------------------------------
     EditText mNameEditText;
     EditText mPasswordEditText;
+    EditText mPasswordAgainEditText;
+    EditText mNicknameEditText;
 
     //----------------------------------------------------------------------------------------------------
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-
-        // Toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.login_toolbar);
-        setSupportActionBar(toolbar);
+        setContentView(R.layout.activity_register);
 
         // EditText
         mNameEditText = (EditText)findViewById(R.id.name_edit_text);
         mPasswordEditText = (EditText)findViewById(R.id.password_edit_text);
+        mPasswordAgainEditText = (EditText)findViewById(R.id.password_again_edit_text);
+        mNicknameEditText = (EditText)findViewById(R.id.nickname_edit_text);
 
         // Register
         Button registerButton = (Button)findViewById(R.id.register_button);
@@ -56,35 +54,45 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        // Login
-        Button loginButton = (Button)findViewById(R.id.login_button);
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                login();
-            }
-        });
-    }
-
-    //----------------------------------------------------------------------------------------------------
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case REGISTER_ACTIVITY_CODE:
-                break;
-            default:
-                break;
-        }
+        // Toolbar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
     }
 
     //----------------------------------------------------------------------------------------------------
     @Override
     public void onBackPressed() {
-        Log.d("Login", "back");
-        System.exit(0);
+        setResult(RESULT_CANCELED, null);
+        finish();
     }
 
     //----------------------------------------------------------------------------------------------------
-    private void login() {
+    private void register() {
+        if (mNameEditText.getText().toString().isEmpty()) {
+            Toast toast = Toast.makeText(getApplicationContext(), "用户名不能为空", Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
+            return;
+        }
+        if (mPasswordEditText.getText().toString().isEmpty() || mPasswordAgainEditText.getText().toString().isEmpty()) {
+            Toast toast = Toast.makeText(getApplicationContext(), "密码不能为空", Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
+            return;
+        }
+        if (mNicknameEditText.getText().toString().isEmpty()) {
+            Toast toast = Toast.makeText(getApplicationContext(), "昵称不能为空", Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
+            return;
+        }
+        if (!mPasswordEditText.getText().toString().equals(mPasswordAgainEditText.getText().toString())) {
+            Toast toast = Toast.makeText(getApplicationContext(), "两次密码不相同", Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
+            return;
+        }
+
         Observable.just(0)
                 .map(new Func1<Integer, Integer>() {
                     @Override
@@ -92,7 +100,7 @@ public class LoginActivity extends AppCompatActivity {
                         try {
                             TaskBookService.Client client = (TaskBookService.Client) ThriftManager.createClient(ThriftManager.ClientTypeEnum.CLIENT.toString());
                             if (client != null) {
-                                return client.login(mNameEditText.getText().toString(), mPasswordEditText.getText().toString());
+                                return client.signup(mNameEditText.getText().toString(), mPasswordEditText.getText().toString(), mNicknameEditText.getText().toString());
                             }
                         } catch (TException e) {
                             e.printStackTrace();
@@ -113,17 +121,11 @@ public class LoginActivity extends AppCompatActivity {
                             setResult(RESULT_OK, null);
                             finish();
                         } else {
-                            Toast toast = Toast.makeText(getApplicationContext(), "用户名或密码错误", Toast.LENGTH_LONG);
+                            Toast toast = Toast.makeText(getApplicationContext(), "用户名已被占用", Toast.LENGTH_LONG);
                             toast.setGravity(Gravity.CENTER, 0, 0);
                             toast.show();
                         }
                     }
                 });
-    }
-
-    //----------------------------------------------------------------------------------------------------
-    private void register() {
-        Intent register = new Intent(LoginActivity.this, RegisterActivity.class);
-        startActivityForResult(register, REGISTER_ACTIVITY_CODE);
     }
 }

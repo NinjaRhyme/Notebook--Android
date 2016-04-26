@@ -7,5 +7,6 @@
     <string name="drawer_close">Drawer close</string>
     <string name="drawer_home">Home</string>
     <string name="title_activity_login">Login</string>
+    <string name="title_activity_register">RegisterActivity</string>
 
 </resources>

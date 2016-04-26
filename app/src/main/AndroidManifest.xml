@@ -40,6 +40,11 @@
             android:label="@string/title_activity_login"
             android:theme="@style/Base.Theme.Light" >
         </activity>
+        <activity
+            android:name=".business.login.RegisterActivity"
+            android:label="@string/title_activity_register"
+            android:theme="@style/Base.Theme.Light" >
+        </activity>
     </application>
 
 </manifest>

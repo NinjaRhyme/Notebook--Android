@@ -30,6 +30,7 @@ struct ThriftTaskInfo
 service TaskBookService
 {
 	i32 login(1: required string userName, 2: required string userPassword);
+	i32 signup(1: required string userName, 2: required string userNickname, 3: required string userPassword);
 	ThriftUserInfo userInfo(1: required i32 userId);
 
 	ThriftGroupInfo groupInfo(1: required i32 userId, 2: required i32 groupId);

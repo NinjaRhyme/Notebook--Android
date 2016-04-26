@@ -119,7 +119,21 @@ public class TaskBookServer {
             if (entity != null) {
                 return entity.userId;
             }
-            return -1;
+            return 0;
+        }
+
+        @Override
+        public int signup(String userName, String userNickname, String userPassword) throws org.apache.thrift.TException {
+            UserTable table = (UserTable)mDatabaseManager.getTable(UserTable.class);
+            UserEntity entity = table.queryEntity("user_name = '" + userName + "'");
+            if (entity == null) {
+                entity = new UserEntity(0, userName, userPassword, userNickname);
+                int userId = table.insert(entity);
+                if (0 < userId) {
+                    return userId;
+                }
+            }
+            return 0;
         }
 
         @Override
