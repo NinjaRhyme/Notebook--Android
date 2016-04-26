@@ -113,7 +113,7 @@ public class TaskFragment extends Fragment {
         Log.d("click", "" + id);
         getFragmentManager()
                 .beginTransaction()
-                .add(R.id.frame_layout, new GroupTaskLineFragment())
+                .add(R.id.frame_layout, new TaskCreatorFragment())
                 .addToBackStack(null)
                 .commit();
     }

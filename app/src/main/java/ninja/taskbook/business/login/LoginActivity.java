@@ -44,7 +44,7 @@ public class LoginActivity extends AppCompatActivity {
         mNameEditText = (EditText)findViewById(R.id.name_edit_text);
         mPasswordEditText = (EditText)findViewById(R.id.password_edit_text);
 
-        // Button
+        // Register
         Button registerButton = (Button)findViewById(R.id.register_button);
         registerButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -52,6 +52,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        // Login
         Button loginButton = (Button)findViewById(R.id.login_button);
         loginButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {

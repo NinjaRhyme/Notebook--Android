@@ -13,4 +13,5 @@
 
     <color name="task_background_color">#2c2c45</color>
     <color name="task_item_author_background_color">#d0e0c0</color>
+    <color name="task_text_color">#d0e0c0</color>
 </resources>

@@ -6,6 +6,8 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import org.apache.thrift.TException;
@@ -26,6 +28,9 @@ import rx.schedulers.Schedulers;
 public class GroupCreatorFragment extends Fragment {
 
     //----------------------------------------------------------------------------------------------------
+    EditText mNameEditText;
+
+    //----------------------------------------------------------------------------------------------------
     public GroupCreatorFragment() {
 
     }
@@ -42,12 +47,19 @@ public class GroupCreatorFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.group_creator, container, false);
 
+        // EditText
+        mNameEditText = (EditText)rootView.findViewById(R.id.name_edit_text);
+
+        // Create
+        Button createButton = (Button)rootView.findViewById(R.id.create_button);
+        createButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                createGroup();
+            }
+        });
 
         return rootView;
     }
-
-    //----------------------------------------------------------------------------------------------------
-
 
     //----------------------------------------------------------------------------------------------------
     private void createGroup() {
@@ -64,7 +76,7 @@ public class GroupCreatorFragment extends Fragment {
                         try {
                             TaskBookService.Client client = (TaskBookService.Client) ThriftManager.createClient(ThriftManager.ClientTypeEnum.CLIENT.toString());
                             if (client != null) {
-                                ThriftGroupInfo info = new ThriftGroupInfo(0, "group name");
+                                ThriftGroupInfo info = new ThriftGroupInfo(0, mNameEditText.getText().toString());
                                 return client.createGroup(userId, info);
                             }
                         } catch (TException e) {

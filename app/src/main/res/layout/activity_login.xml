@@ -102,14 +102,14 @@
             <Button style="?android:buttonBarButtonStyle"
                 android:id="@+id/login_button"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_weight="1"
                 android:text="login"/>
 
             <Button style="?android:buttonBarButtonStyle"
                 android:id="@+id/register_button"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_weight="1"
                 android:text="register"/>
         </LinearLayout>
