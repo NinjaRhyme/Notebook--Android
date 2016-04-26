@@ -84,7 +84,7 @@ public class TaskFragment extends Fragment {
                         try {
                             TaskBookService.Client client = (TaskBookService.Client) ThriftManager.createClient(ThriftManager.ClientTypeEnum.CLIENT.toString());
                             if (client != null) {
-                                return client.taskInfos(userId);
+                                return client.userTaskInfos(userId);
                             }
                         } catch (TException e) {
                             e.printStackTrace();
@@ -100,7 +100,7 @@ public class TaskFragment extends Fragment {
                         if (result != null) {
                             mTaskItems.clear();
                             for (ThriftTaskInfo info : result) {
-                                mTaskItems.add(new TaskEntity(info.taskId, info.groupId, info.taskName, info.taskName, info.taskName, info.taskName, (float) info.taskProgress));
+                                mTaskItems.add(new TaskEntity(info.taskId, info.groupId, info.taskAuthor, info.taskName, info.taskContent, info.taskTime, (float) info.taskProgress));
                             }
                             DataManager.getInstance().setTaskInfos(mTaskItems);
                             mRecyclerView.getAdapter().notifyDataSetChanged();

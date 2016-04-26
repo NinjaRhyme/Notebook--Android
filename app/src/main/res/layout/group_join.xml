@@ -21,11 +21,11 @@
             android:layout_height="match_parent"
             android:layout_weight="3"
             android:gravity="center_vertical|end"
-            android:labelFor="@+id/name_edit_text"
-            android:text="Group Name"
+            android:labelFor="@+id/id_edit_text"
+            android:text="Group Id"
             android:textColor="@color/task_text_color"/>
         <EditText
-            android:id="@+id/name_edit_text"
+            android:id="@+id/id_edit_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="6"
@@ -47,9 +47,10 @@
         android:gravity="center">
 
         <Button style="?android:buttonBarButtonStyle"
-            android:id="@+id/create_button"
+            android:id="@+id/join_button"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:text="create"/>
+            android:text="join"/>
     </LinearLayout>
+
 </LinearLayout>

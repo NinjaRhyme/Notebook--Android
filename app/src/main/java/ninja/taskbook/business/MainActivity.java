@@ -193,7 +193,7 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
         if (0 < manager.getBackStackEntryCount()) {
             manager.popBackStack();
         } else {
-            login();
+            login(); // Todo: exit
         }
     }
 

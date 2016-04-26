@@ -90,14 +90,18 @@ public class GroupFragment extends Fragment {
 
     //----------------------------------------------------------------------------------------------------
     private void join() {
-
+        getFragmentManager()
+                .beginTransaction()
+                .add(R.id.frame_layout, new GroupJoinFragment())
+                .addToBackStack(null)
+                .commit();
     }
 
     //----------------------------------------------------------------------------------------------------
     private void create() {
         getFragmentManager()
                 .beginTransaction()
-                .replace(R.id.frame_layout, new GroupCreatorFragment())
+                .add(R.id.frame_layout, new GroupCreatorFragment())
                 .addToBackStack(null)
                 .commit();
     }

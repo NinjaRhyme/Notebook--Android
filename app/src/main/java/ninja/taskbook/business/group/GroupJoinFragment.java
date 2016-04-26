@@ -6,16 +6,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 
 import ninja.taskbook.R;
-import ninja.taskbook.business.task.TaskCreatorFragment;
-import ninja.taskbook.model.entity.GroupEntity;
 
 //----------------------------------------------------------------------------------------------------
-public class GroupDetailFragment extends Fragment {
+public class GroupJoinFragment extends Fragment {
 
     //----------------------------------------------------------------------------------------------------
-    private GroupEntity mGroupEntity;
+    EditText mNameEditText;
+
+    //----------------------------------------------------------------------------------------------------
+    public GroupJoinFragment() {
+
+    }
 
     //----------------------------------------------------------------------------------------------------
     @Override
@@ -27,36 +31,24 @@ public class GroupDetailFragment extends Fragment {
     //----------------------------------------------------------------------------------------------------
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.group_detail, container, false);
+        View rootView = inflater.inflate(R.layout.group_join, container, false);
+
+        // EditText
+        mNameEditText = (EditText)rootView.findViewById(R.id.name_edit_text);
 
         // Create
-        Button createTaskButton = (Button)rootView.findViewById(R.id.create_task_button);
-        createTaskButton.setOnClickListener(new View.OnClickListener() {
+        Button joinButton = (Button)rootView.findViewById(R.id.join_button);
+        joinButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                createTask();
+                joinGroup();
             }
         });
-
-        // Load
-        loadChart();
 
         return rootView;
     }
 
     //----------------------------------------------------------------------------------------------------
-    private void loadChart() {
-        getChildFragmentManager()
-                .beginTransaction()
-                .replace(R.id.chart_frame_layout, new GroupTaskLineFragment())
-                .commit();
-    }
-
-    //----------------------------------------------------------------------------------------------------
-    private void createTask() {
-        getFragmentManager()
-                .beginTransaction()
-                .replace(R.id.frame_layout, new TaskCreatorFragment())
-                .addToBackStack(null)
-                .commit();
+    private void joinGroup() {
+        // Todo
     }
 }

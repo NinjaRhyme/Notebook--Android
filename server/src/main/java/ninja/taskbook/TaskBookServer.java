@@ -23,6 +23,7 @@ import ninja.taskbook.model.entity.UserGroupRelation;
 import ninja.taskbook.model.entity.UserTaskRelation;
 import ninja.taskbook.model.network.thrift.service.TaskBookService;
 import ninja.taskbook.model.network.thrift.service.ThriftGroupInfo;
+import ninja.taskbook.model.network.thrift.service.ThriftNotification;
 import ninja.taskbook.model.network.thrift.service.ThriftTaskInfo;
 import ninja.taskbook.model.network.thrift.service.ThriftUserInfo;
 
@@ -200,13 +201,13 @@ public class TaskBookServer {
             TaskTable table = (TaskTable)mDatabaseManager.getTable(TaskTable.class);
             TaskEntity entity = table.queryEntity("task_id = '" + taskId + "'");
             if (entity != null) {
-                return new ThriftTaskInfo(entity.taskId, entity.taskGroupId, entity.taskAuthor, entity.taskName, entity.taskContent, entity.taskTime, entity.taskProgress);
+                return new ThriftTaskInfo(entity.taskId, entity.taskGroupId, entity.taskAuthor, entity.taskName, entity.taskContent, entity.taskTime, entity.taskDeadline, entity.taskProgress);
             }
             return null;
         }
 
         @Override
-        public List<ThriftTaskInfo> taskInfos(int userId) throws org.apache.thrift.TException {
+        public List<ThriftTaskInfo> userTaskInfos(int userId) throws org.apache.thrift.TException {
             UserTaskTable userTaskTable = (UserTaskTable)mDatabaseManager.getTable(UserTaskTable.class);
             List<UserTaskRelation> relations = userTaskTable.queryEntities("user_id = '" + userId + "'");
             if (relations.size() > 0) {
@@ -221,7 +222,7 @@ public class TaskBookServer {
                 List<TaskEntity> entities = taskTable.queryEntities("task_id in " + idSet);
                 List<ThriftTaskInfo> taskInfos = new ArrayList<>();
                 for (TaskEntity entity : entities) {
-                    taskInfos.add(new ThriftTaskInfo(entity.taskId, entity.taskGroupId, entity.taskAuthor, entity.taskName, entity.taskContent, entity.taskTime, entity.taskProgress));
+                    taskInfos.add(new ThriftTaskInfo(entity.taskId, entity.taskGroupId, entity.taskAuthor, entity.taskName, entity.taskContent, entity.taskTime, entity.taskTime, entity.taskProgress)); // Todo: deadline
                 }
                 return taskInfos;
             }
@@ -229,9 +230,20 @@ public class TaskBookServer {
         }
 
         @Override
+        public List<ThriftTaskInfo> groupTaskInfos(int groupId) throws org.apache.thrift.TException {
+            TaskTable userTaskTable = (TaskTable)mDatabaseManager.getTable(TaskTable.class);
+            List<TaskEntity> entities = userTaskTable.queryEntities("task_group_id = '" + groupId + "'");
+            List<ThriftTaskInfo> taskInfos = new ArrayList<>();
+            for (TaskEntity entity : entities) {
+                taskInfos.add(new ThriftTaskInfo(entity.taskId, entity.taskGroupId, entity.taskAuthor, entity.taskName, entity.taskContent, entity.taskTime, entity.taskDeadline, entity.taskProgress));
+            }
+            return taskInfos;
+        }
+
+        @Override
         public ThriftTaskInfo createTask(int userId, ThriftTaskInfo taskInfo) throws org.apache.thrift.TException {
             TaskTable table = (TaskTable)mDatabaseManager.getTable(TaskTable.class);
-            TaskEntity entity = new TaskEntity(0, taskInfo.groupId, taskInfo.taskAuthor, taskInfo.taskName, taskInfo.taskContent, taskInfo.taskTime, (float)taskInfo.taskProgress);
+            TaskEntity entity = new TaskEntity(0, taskInfo.groupId, taskInfo.taskAuthor, taskInfo.taskName, taskInfo.taskContent, taskInfo.taskTime, taskInfo.taskDeadline, (float)taskInfo.taskProgress);
             int taskId = table.insert(entity);
             if (0 < taskId) {
                 UserTaskTable userTaskTable = (UserTaskTable)mDatabaseManager.getTable(UserTaskTable.class);
@@ -240,6 +252,14 @@ public class TaskBookServer {
                 return taskInfo(userId, taskId);
             }
             return null;
+        }
+
+        @Override
+        public List<ThriftNotification> notifications(int userId) throws org.apache.thrift.TException {
+            List<ThriftNotification> notifications = new ArrayList<>();
+            // Todo
+
+            return notifications;
         }
     }
 

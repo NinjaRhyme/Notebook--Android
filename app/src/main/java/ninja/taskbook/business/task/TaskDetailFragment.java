@@ -12,6 +12,11 @@ import ninja.taskbook.R;
 public class TaskDetailFragment extends Fragment {
 
     //----------------------------------------------------------------------------------------------------
+    public TaskDetailFragment() {
+
+    }
+
+    //----------------------------------------------------------------------------------------------------
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

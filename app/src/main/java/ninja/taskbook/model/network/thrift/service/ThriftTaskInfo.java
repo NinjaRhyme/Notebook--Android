@@ -44,8 +44,9 @@ public class ThriftTaskInfo implements org.apache.thrift.TBase<ThriftTaskInfo, T
   private static final org.apache.thrift.protocol.TField TASK_NAME_FIELD_DESC = new org.apache.thrift.protocol.TField("taskName", org.apache.thrift.protocol.TType.STRING, (short)4);
   private static final org.apache.thrift.protocol.TField TASK_CONTENT_FIELD_DESC = new org.apache.thrift.protocol.TField("taskContent", org.apache.thrift.protocol.TType.STRING, (short)5);
   private static final org.apache.thrift.protocol.TField TASK_TIME_FIELD_DESC = new org.apache.thrift.protocol.TField("taskTime", org.apache.thrift.protocol.TType.STRING, (short)6);
-  private static final org.apache.thrift.protocol.TField TASK_PROGRESS_FIELD_DESC = new org.apache.thrift.protocol.TField("taskProgress", org.apache.thrift.protocol.TType.DOUBLE, (short)7);
-  private static final org.apache.thrift.protocol.TField USER_ROLE_FIELD_DESC = new org.apache.thrift.protocol.TField("userRole", org.apache.thrift.protocol.TType.I32, (short)8);
+  private static final org.apache.thrift.protocol.TField TASK_DEADLINE_FIELD_DESC = new org.apache.thrift.protocol.TField("taskDeadline", org.apache.thrift.protocol.TType.STRING, (short)7);
+  private static final org.apache.thrift.protocol.TField TASK_PROGRESS_FIELD_DESC = new org.apache.thrift.protocol.TField("taskProgress", org.apache.thrift.protocol.TType.DOUBLE, (short)8);
+  private static final org.apache.thrift.protocol.TField USER_ROLE_FIELD_DESC = new org.apache.thrift.protocol.TField("userRole", org.apache.thrift.protocol.TType.I32, (short)9);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
@@ -59,6 +60,7 @@ public class ThriftTaskInfo implements org.apache.thrift.TBase<ThriftTaskInfo, T
   public String taskName; // required
   public String taskContent; // required
   public String taskTime; // required
+  public String taskDeadline; // required
   public double taskProgress; // required
   public int userRole; // optional
 
@@ -70,8 +72,9 @@ public class ThriftTaskInfo implements org.apache.thrift.TBase<ThriftTaskInfo, T
     TASK_NAME((short)4, "taskName"),
     TASK_CONTENT((short)5, "taskContent"),
     TASK_TIME((short)6, "taskTime"),
-    TASK_PROGRESS((short)7, "taskProgress"),
-    USER_ROLE((short)8, "userRole");
+    TASK_DEADLINE((short)7, "taskDeadline"),
+    TASK_PROGRESS((short)8, "taskProgress"),
+    USER_ROLE((short)9, "userRole");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -98,9 +101,11 @@ public class ThriftTaskInfo implements org.apache.thrift.TBase<ThriftTaskInfo, T
           return TASK_CONTENT;
         case 6: // TASK_TIME
           return TASK_TIME;
-        case 7: // TASK_PROGRESS
+        case 7: // TASK_DEADLINE
+          return TASK_DEADLINE;
+        case 8: // TASK_PROGRESS
           return TASK_PROGRESS;
-        case 8: // USER_ROLE
+        case 9: // USER_ROLE
           return USER_ROLE;
         default:
           return null;
@@ -163,6 +168,8 @@ public class ThriftTaskInfo implements org.apache.thrift.TBase<ThriftTaskInfo, T
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     tmpMap.put(_Fields.TASK_TIME, new org.apache.thrift.meta_data.FieldMetaData("taskTime", org.apache.thrift.TFieldRequirementType.REQUIRED, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+    tmpMap.put(_Fields.TASK_DEADLINE, new org.apache.thrift.meta_data.FieldMetaData("taskDeadline", org.apache.thrift.TFieldRequirementType.REQUIRED, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     tmpMap.put(_Fields.TASK_PROGRESS, new org.apache.thrift.meta_data.FieldMetaData("taskProgress", org.apache.thrift.TFieldRequirementType.REQUIRED, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.DOUBLE)));
     tmpMap.put(_Fields.USER_ROLE, new org.apache.thrift.meta_data.FieldMetaData("userRole", org.apache.thrift.TFieldRequirementType.OPTIONAL, 
@@ -181,6 +188,7 @@ public class ThriftTaskInfo implements org.apache.thrift.TBase<ThriftTaskInfo, T
     String taskName,
     String taskContent,
     String taskTime,
+    String taskDeadline,
     double taskProgress)
   {
     this();
@@ -192,6 +200,7 @@ public class ThriftTaskInfo implements org.apache.thrift.TBase<ThriftTaskInfo, T
     this.taskName = taskName;
     this.taskContent = taskContent;
     this.taskTime = taskTime;
+    this.taskDeadline = taskDeadline;
     this.taskProgress = taskProgress;
     setTaskProgressIsSet(true);
   }
@@ -215,6 +224,9 @@ public class ThriftTaskInfo implements org.apache.thrift.TBase<ThriftTaskInfo, T
     if (other.isSetTaskTime()) {
       this.taskTime = other.taskTime;
     }
+    if (other.isSetTaskDeadline()) {
+      this.taskDeadline = other.taskDeadline;
+    }
     this.taskProgress = other.taskProgress;
     this.userRole = other.userRole;
   }
@@ -233,6 +245,7 @@ public class ThriftTaskInfo implements org.apache.thrift.TBase<ThriftTaskInfo, T
     this.taskName = null;
     this.taskContent = null;
     this.taskTime = null;
+    this.taskDeadline = null;
     setTaskProgressIsSet(false);
     this.taskProgress = 0.0;
     setUserRoleIsSet(false);
@@ -381,6 +394,30 @@ public class ThriftTaskInfo implements org.apache.thrift.TBase<ThriftTaskInfo, T
     }
   }
 
+  public String getTaskDeadline() {
+    return this.taskDeadline;
+  }
+
+  public ThriftTaskInfo setTaskDeadline(String taskDeadline) {
+    this.taskDeadline = taskDeadline;
+    return this;
+  }
+
+  public void unsetTaskDeadline() {
+    this.taskDeadline = null;
+  }
+
+  /** Returns true if field taskDeadline is set (has been assigned a value) and false otherwise */
+  public boolean isSetTaskDeadline() {
+    return this.taskDeadline != null;
+  }
+
+  public void setTaskDeadlineIsSet(boolean value) {
+    if (!value) {
+      this.taskDeadline = null;
+    }
+  }
+
   public double getTaskProgress() {
     return this.taskProgress;
   }
@@ -477,6 +514,14 @@ public class ThriftTaskInfo implements org.apache.thrift.TBase<ThriftTaskInfo, T
       }
       break;
 
+    case TASK_DEADLINE:
+      if (value == null) {
+        unsetTaskDeadline();
+      } else {
+        setTaskDeadline((String)value);
+      }
+      break;
+
     case TASK_PROGRESS:
       if (value == null) {
         unsetTaskProgress();
@@ -516,6 +561,9 @@ public class ThriftTaskInfo implements org.apache.thrift.TBase<ThriftTaskInfo, T
     case TASK_TIME:
       return getTaskTime();
 
+    case TASK_DEADLINE:
+      return getTaskDeadline();
+
     case TASK_PROGRESS:
       return getTaskProgress();
 
@@ -545,6 +593,8 @@ public class ThriftTaskInfo implements org.apache.thrift.TBase<ThriftTaskInfo, T
       return isSetTaskContent();
     case TASK_TIME:
       return isSetTaskTime();
+    case TASK_DEADLINE:
+      return isSetTaskDeadline();
     case TASK_PROGRESS:
       return isSetTaskProgress();
     case USER_ROLE:
@@ -620,6 +670,15 @@ public class ThriftTaskInfo implements org.apache.thrift.TBase<ThriftTaskInfo, T
         return false;
     }
 
+    boolean this_present_taskDeadline = true && this.isSetTaskDeadline();
+    boolean that_present_taskDeadline = true && that.isSetTaskDeadline();
+    if (this_present_taskDeadline || that_present_taskDeadline) {
+      if (!(this_present_taskDeadline && that_present_taskDeadline))
+        return false;
+      if (!this.taskDeadline.equals(that.taskDeadline))
+        return false;
+    }
+
     boolean this_present_taskProgress = true;
     boolean that_present_taskProgress = true;
     if (this_present_taskProgress || that_present_taskProgress) {
@@ -674,6 +733,11 @@ public class ThriftTaskInfo implements org.apache.thrift.TBase<ThriftTaskInfo, T
     list.add(present_taskTime);
     if (present_taskTime)
       list.add(taskTime);
+
+    boolean present_taskDeadline = true && (isSetTaskDeadline());
+    list.add(present_taskDeadline);
+    if (present_taskDeadline)
+      list.add(taskDeadline);
 
     boolean present_taskProgress = true;
     list.add(present_taskProgress);
@@ -752,6 +816,16 @@ public class ThriftTaskInfo implements org.apache.thrift.TBase<ThriftTaskInfo, T
     }
     if (isSetTaskTime()) {
       lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.taskTime, other.taskTime);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
+    lastComparison = Boolean.valueOf(isSetTaskDeadline()).compareTo(other.isSetTaskDeadline());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetTaskDeadline()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.taskDeadline, other.taskDeadline);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -836,6 +910,14 @@ public class ThriftTaskInfo implements org.apache.thrift.TBase<ThriftTaskInfo, T
     }
     first = false;
     if (!first) sb.append(", ");
+    sb.append("taskDeadline:");
+    if (this.taskDeadline == null) {
+      sb.append("null");
+    } else {
+      sb.append(this.taskDeadline);
+    }
+    first = false;
+    if (!first) sb.append(", ");
     sb.append("taskProgress:");
     sb.append(this.taskProgress);
     first = false;
@@ -864,6 +946,9 @@ public class ThriftTaskInfo implements org.apache.thrift.TBase<ThriftTaskInfo, T
     }
     if (taskTime == null) {
       throw new org.apache.thrift.protocol.TProtocolException("Required field 'taskTime' was not present! Struct: " + toString());
+    }
+    if (taskDeadline == null) {
+      throw new org.apache.thrift.protocol.TProtocolException("Required field 'taskDeadline' was not present! Struct: " + toString());
     }
     // alas, we cannot check 'taskProgress' because it's a primitive and you chose the non-beans generator.
     // check for sub-struct validity
@@ -953,7 +1038,15 @@ public class ThriftTaskInfo implements org.apache.thrift.TBase<ThriftTaskInfo, T
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 7: // TASK_PROGRESS
+          case 7: // TASK_DEADLINE
+            if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+              struct.taskDeadline = iprot.readString();
+              struct.setTaskDeadlineIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
+          case 8: // TASK_PROGRESS
             if (schemeField.type == org.apache.thrift.protocol.TType.DOUBLE) {
               struct.taskProgress = iprot.readDouble();
               struct.setTaskProgressIsSet(true);
@@ -961,7 +1054,7 @@ public class ThriftTaskInfo implements org.apache.thrift.TBase<ThriftTaskInfo, T
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 8: // USER_ROLE
+          case 9: // USER_ROLE
             if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
               struct.userRole = iprot.readI32();
               struct.setUserRoleIsSet(true);
@@ -1019,6 +1112,11 @@ public class ThriftTaskInfo implements org.apache.thrift.TBase<ThriftTaskInfo, T
         oprot.writeString(struct.taskTime);
         oprot.writeFieldEnd();
       }
+      if (struct.taskDeadline != null) {
+        oprot.writeFieldBegin(TASK_DEADLINE_FIELD_DESC);
+        oprot.writeString(struct.taskDeadline);
+        oprot.writeFieldEnd();
+      }
       oprot.writeFieldBegin(TASK_PROGRESS_FIELD_DESC);
       oprot.writeDouble(struct.taskProgress);
       oprot.writeFieldEnd();
@@ -1050,6 +1148,7 @@ public class ThriftTaskInfo implements org.apache.thrift.TBase<ThriftTaskInfo, T
       oprot.writeString(struct.taskName);
       oprot.writeString(struct.taskContent);
       oprot.writeString(struct.taskTime);
+      oprot.writeString(struct.taskDeadline);
       oprot.writeDouble(struct.taskProgress);
       BitSet optionals = new BitSet();
       if (struct.isSetUserRole()) {
@@ -1076,6 +1175,8 @@ public class ThriftTaskInfo implements org.apache.thrift.TBase<ThriftTaskInfo, T
       struct.setTaskContentIsSet(true);
       struct.taskTime = iprot.readString();
       struct.setTaskTimeIsSet(true);
+      struct.taskDeadline = iprot.readString();
+      struct.setTaskDeadlineIsSet(true);
       struct.taskProgress = iprot.readDouble();
       struct.setTaskProgressIsSet(true);
       BitSet incoming = iprot.readBitSet(1);

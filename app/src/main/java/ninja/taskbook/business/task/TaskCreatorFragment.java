@@ -37,6 +37,7 @@ public class TaskCreatorFragment extends Fragment {
     EditText mTaskNameEditText;
     EditText mTaskContentEditText;
     EditText mTaskTimeEditText;
+    EditText mTaskDeadlineEditText;
 
     //----------------------------------------------------------------------------------------------------
     public TaskCreatorFragment() {
@@ -76,6 +77,24 @@ public class TaskCreatorFragment extends Fragment {
             }
         });
 
+        // Deadline
+        mTaskDeadlineEditText = (EditText)rootView.findViewById(R.id.task_deadline_edit_text);
+        mTaskDeadlineEditText.setInputType(InputType.TYPE_NULL);
+        final Calendar deadlineCalendar = Calendar.getInstance();
+        mTaskDeadlineEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickerDialog dialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        deadlineCalendar.set(year, monthOfYear, dayOfMonth);
+                        mTaskDeadlineEditText.setText(DateFormat.format("yyy-MM-dd", deadlineCalendar));
+                    }
+                }, deadlineCalendar.get(Calendar.YEAR), deadlineCalendar.get(Calendar.MONTH), deadlineCalendar.get(Calendar.DAY_OF_MONTH));
+                dialog.show();
+            }
+        });
+
         // Create
         Button createButton = (Button)rootView.findViewById(R.id.create_button);
         createButton.setOnClickListener(new View.OnClickListener() {
@@ -105,7 +124,7 @@ public class TaskCreatorFragment extends Fragment {
                         try {
                             TaskBookService.Client client = (TaskBookService.Client) ThriftManager.createClient(ThriftManager.ClientTypeEnum.CLIENT.toString());
                             if (client != null) {
-                                ThriftTaskInfo info = new ThriftTaskInfo(0, 0, entity.userName, mTaskNameEditText.getText().toString(), mTaskContentEditText.getText().toString(), mTaskTimeEditText.getText().toString(), 0.5);
+                                ThriftTaskInfo info = new ThriftTaskInfo(0, 0, entity.userName, mTaskNameEditText.getText().toString(), mTaskContentEditText.getText().toString(), mTaskTimeEditText.getText().toString(), mTaskDeadlineEditText.getText().toString(), 0.5);
                                 return client.createTask(userId, info);
                             }
                         } catch (TException e) {
