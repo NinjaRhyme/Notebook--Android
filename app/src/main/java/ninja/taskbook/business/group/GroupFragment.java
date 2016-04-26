@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import org.apache.thrift.TException;
@@ -60,15 +61,45 @@ public class GroupFragment extends Fragment {
         mRecyclerView.setLayoutManager(gridLayoutManager);
 
         // Decoration
-        //mRecyclerView.addItemDecoration(new TaskItemDecoration());
+        mRecyclerView.addItemDecoration(new GroupItemDecoration(getContext()));
 
         // Adapter
         mRecyclerView.setAdapter(new GroupItemAdapter());
+
+        // Join
+        Button joinButton = (Button)rootView.findViewById(R.id.join_button);
+        joinButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                join();
+            }
+        });
+
+        // Create
+        Button createButton = (Button)rootView.findViewById(R.id.create_button);
+        createButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                create();
+            }
+        });
 
         // Load
         loadProfileData();
 
         return rootView;
+    }
+
+    //----------------------------------------------------------------------------------------------------
+    private void join() {
+
+    }
+
+    //----------------------------------------------------------------------------------------------------
+    private void create() {
+        getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.frame_layout, new GroupCreatorFragment())
+                .addToBackStack(null)
+                .commit();
     }
 
     //----------------------------------------------------------------------------------------------------
@@ -103,7 +134,8 @@ public class GroupFragment extends Fragment {
                             GroupEntity entity = new GroupEntity(info.groupId, info.groupName);
                             mGroupItems.add(entity);
                         }
-                        DataManager.getInstance().setGroupInfos(mGroupItems); // Todo
+                        DataManager.getInstance().setGroupInfos(mGroupItems);
+                        mRecyclerView.getAdapter().notifyDataSetChanged();
                     }
                 });
     }
@@ -113,7 +145,7 @@ public class GroupFragment extends Fragment {
         Log.d("click", "" + id);
         getFragmentManager()
                 .beginTransaction()
-                .add(R.id.frame_layout, new GroupTaskLineFragment())
+                .add(R.id.frame_layout, new GroupDetailFragment())
                 .addToBackStack(null)
                 .commit();
     }

@@ -93,6 +93,8 @@ public class GroupCreatorFragment extends Fragment {
                         Toast toast = Toast.makeText(getActivity(), "创建成功", Toast.LENGTH_LONG);
                         toast.setGravity(Gravity.CENTER, 0, 0);
                         toast.show();
+
+                        getFragmentManager().popBackStack();
                     }
                 });
     }

@@ -102,6 +102,7 @@ public class TaskFragment extends Fragment {
                             for (ThriftTaskInfo info : result) {
                                 mTaskItems.add(new TaskEntity(info.taskId, info.groupId, info.taskName, info.taskName, info.taskName, info.taskName, (float) info.taskProgress));
                             }
+                            DataManager.getInstance().setTaskInfos(mTaskItems);
                             mRecyclerView.getAdapter().notifyDataSetChanged();
                         }
                     }
@@ -113,7 +114,7 @@ public class TaskFragment extends Fragment {
         Log.d("click", "" + id);
         getFragmentManager()
                 .beginTransaction()
-                .add(R.id.frame_layout, new TaskCreatorFragment())
+                .replace(R.id.frame_layout, new TaskDetailFragment())
                 .addToBackStack(null)
                 .commit();
     }

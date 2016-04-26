@@ -8,8 +8,8 @@
     <TextView
         android:id="@+id/item_title"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="80dp"
         android:layout_gravity="center"
         android:gravity="center"
-        android:textColor="#ffffff" />
+        android:textColor="@color/task_text_color"/>
 </LinearLayout>

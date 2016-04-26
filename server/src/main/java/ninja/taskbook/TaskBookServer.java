@@ -47,8 +47,18 @@ public class TaskBookServer {
         GroupTable groupTable = (GroupTable)mDatabaseManager.getTable(GroupTable.class);
         groupTable.drop();
         groupTable = (GroupTable)mDatabaseManager.getTable(GroupTable.class);
-        GroupEntity groupEntity = new GroupEntity(0, "Group1");
+        GroupEntity groupEntity = new GroupEntity(0, "Android 开发组");
         groupTable.insert(groupEntity);
+        groupEntity = new GroupEntity(0, "iOS 开发组");
+        groupTable.insert(groupEntity);
+
+        UserGroupTable userGroupTable = (UserGroupTable)mDatabaseManager.getTable(UserGroupTable.class);
+        userGroupTable.drop();
+        userGroupTable = (UserGroupTable)mDatabaseManager.getTable(UserGroupTable.class);
+        UserGroupRelation userGroupRelation = new UserGroupRelation(0, 1, 1, 0);
+        userGroupTable.insert(userGroupRelation);
+        userGroupRelation = new UserGroupRelation(0, 1, 2, 0);
+        userGroupTable.insert(userGroupRelation);
 
         TaskTable taskTable = (TaskTable)mDatabaseManager.getTable(TaskTable.class);
         taskTable.drop();
@@ -61,12 +71,6 @@ public class TaskBookServer {
         taskTable.insert(taskEntity);
         taskEntity = new TaskEntity(0, 1, "Boss2", "Task4", "嘻嘻嘻嘻嘻嘻嘻嘻嘻", "12345", 0.5f);
         taskTable.insert(taskEntity);
-
-        UserGroupTable userGroupTable = (UserGroupTable)mDatabaseManager.getTable(UserGroupTable.class);
-        userGroupTable.drop();
-        userGroupTable = (UserGroupTable)mDatabaseManager.getTable(UserGroupTable.class);
-        UserGroupRelation userGroupRelation = new UserGroupRelation(0, 1, 1, 0);
-        userGroupTable.insert(userGroupRelation);
 
         UserTaskTable userTaskTable = (UserTaskTable)mDatabaseManager.getTable(UserTaskTable.class);
         userTaskTable.drop();

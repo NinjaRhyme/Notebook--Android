@@ -122,6 +122,8 @@ public class TaskCreatorFragment extends Fragment {
                         Toast toast = Toast.makeText(getContext(), "创建成功", Toast.LENGTH_LONG);
                         toast.setGravity(Gravity.CENTER, 0, 0);
                         toast.show();
+
+                        getFragmentManager().popBackStack();
                     }
                 });
     }

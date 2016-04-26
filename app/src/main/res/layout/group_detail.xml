@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/drawer_background_color">
+    android:background="@color/task_background_color">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,23 +12,22 @@
         android:orientation="horizontal">
 
         <Button style="?android:buttonBarButtonStyle"
-            android:id="@+id/join_button"
+            android:id="@+id/invite_button"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_weight="1"
-            android:text="join"/>
+            android:text="invite"/>
 
         <Button style="?android:buttonBarButtonStyle"
-            android:id="@+id/create_button"
+            android:id="@+id/create_task_button"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_weight="1"
-            android:text="create"/>
+            android:text="create task"/>
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view"
+    <FrameLayout
+        android:id="@+id/chart_frame_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/task_background_color"/>
+        android:layout_height="match_parent"/>
 </LinearLayout>
