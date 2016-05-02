@@ -48,6 +48,25 @@ public class DataManager {
         this.mGroupInfos = groupInfos;
     }
 
+    public TaskEntity getTaskInfo(int id) {
+        if (mTaskInfos != null) {
+            int low = 0;
+            int high = mTaskInfos.size() - 1;
+            while (low <= high  && high <= mTaskInfos.size() - 1) {
+                int middle = (high + low) >> 1;
+                TaskEntity entity = mTaskInfos.get(middle);
+                if (entity.taskId == id) {
+                    return entity;
+                } else if (id < entity.taskId) {
+                    high = middle - 1;
+                } else {
+                    low = middle + 1;
+                }
+            }
+        }
+        return null;
+    }
+
     public List<TaskEntity> getTaskInfos() {
         return mTaskInfos;
     }

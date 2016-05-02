@@ -77,7 +77,7 @@ public class TaskFragment extends Fragment {
             return;
         }
 
-        Observable.just(entity.userId) // Todo: id
+        Observable.just(entity.userId)
                 .map(new Func1<Integer, List<ThriftTaskInfo>>() {
                     @Override
                     public List<ThriftTaskInfo> call(Integer userId) {
@@ -112,9 +112,13 @@ public class TaskFragment extends Fragment {
     //----------------------------------------------------------------------------------------------------
     void onTaskItemClicked(int id) {
         Log.d("click", "" + id);
+        TaskDetailFragment fragment = new TaskDetailFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt("id", id);
+        fragment.setArguments(bundle);
         getFragmentManager()
                 .beginTransaction()
-                .replace(R.id.frame_layout, new TaskDetailFragment())
+                .replace(R.id.frame_layout, fragment)
                 .addToBackStack(null)
                 .commit();
     }
