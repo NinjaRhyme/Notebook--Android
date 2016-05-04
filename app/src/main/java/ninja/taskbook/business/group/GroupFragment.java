@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ninja.taskbook.R;
+import ninja.taskbook.business.task.TaskDetailFragment;
 import ninja.taskbook.business.task.TaskItemDecoration;
 import ninja.taskbook.model.data.DataManager;
 import ninja.taskbook.model.entity.GroupEntity;
@@ -146,10 +147,13 @@ public class GroupFragment extends Fragment {
 
     //----------------------------------------------------------------------------------------------------
     void onGroupItemClicked(int id) {
-        Log.d("click", "" + id);
+        GroupDetailFragment fragment = new GroupDetailFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt("id", id);
+        fragment.setArguments(bundle);
         getFragmentManager()
                 .beginTransaction()
-                .add(R.id.frame_layout, new GroupDetailFragment())
+                .add(R.id.frame_layout, fragment)
                 .addToBackStack(null)
                 .commit();
     }

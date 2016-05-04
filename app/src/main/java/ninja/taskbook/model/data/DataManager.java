@@ -40,6 +40,25 @@ public class DataManager {
         this.mUserInfo = userInfo;
     }
 
+    public GroupEntity getGroupInfo(int id) {
+        if (mGroupInfos != null) {
+            int low = 0;
+            int high = mGroupInfos.size() - 1;
+            while (low <= high  && high <= mGroupInfos.size() - 1) {
+                int middle = (high + low) >> 1;
+                GroupEntity entity = mGroupInfos.get(middle);
+                if (entity.groupId == id) {
+                    return entity;
+                } else if (id < entity.groupId) {
+                    high = middle - 1;
+                } else {
+                    low = middle + 1;
+                }
+            }
+        }
+        return null;
+    }
+
     public List<GroupEntity> getGroupInfos() {
         return mGroupInfos;
     }

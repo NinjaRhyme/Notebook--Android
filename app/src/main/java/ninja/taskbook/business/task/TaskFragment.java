@@ -111,7 +111,6 @@ public class TaskFragment extends Fragment {
 
     //----------------------------------------------------------------------------------------------------
     void onTaskItemClicked(int id) {
-        Log.d("click", "" + id);
         TaskDetailFragment fragment = new TaskDetailFragment();
         Bundle bundle = new Bundle();
         bundle.putInt("id", id);
