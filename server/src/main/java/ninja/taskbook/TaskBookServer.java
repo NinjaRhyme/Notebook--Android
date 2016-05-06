@@ -12,11 +12,13 @@ import java.util.List;
 
 import ninja.taskbook.model.database.DatabaseManager;
 import ninja.taskbook.model.database.GroupTable;
+import ninja.taskbook.model.database.NotificationTable;
 import ninja.taskbook.model.database.TaskTable;
 import ninja.taskbook.model.database.UserGroupTable;
 import ninja.taskbook.model.database.UserTable;
 import ninja.taskbook.model.database.UserTaskTable;
 import ninja.taskbook.model.entity.GroupEntity;
+import ninja.taskbook.model.entity.NotificationEntity;
 import ninja.taskbook.model.entity.TaskEntity;
 import ninja.taskbook.model.entity.UserEntity;
 import ninja.taskbook.model.entity.UserGroupRelation;
@@ -24,6 +26,7 @@ import ninja.taskbook.model.entity.UserTaskRelation;
 import ninja.taskbook.model.network.thrift.service.TaskBookService;
 import ninja.taskbook.model.network.thrift.service.ThriftGroupInfo;
 import ninja.taskbook.model.network.thrift.service.ThriftNotification;
+import ninja.taskbook.model.network.thrift.service.ThriftNotificationType;
 import ninja.taskbook.model.network.thrift.service.ThriftTaskInfo;
 import ninja.taskbook.model.network.thrift.service.ThriftUserInfo;
 
@@ -140,7 +143,7 @@ public class TaskBookServer {
         @Override
         public ThriftUserInfo userInfo(int userId) throws org.apache.thrift.TException {
             UserTable table = (UserTable)mDatabaseManager.getTable(UserTable.class);
-            UserEntity entity = table.queryEntity("user_id = '" + userId  + "'");
+            UserEntity entity = table.queryEntity("user_id = '" + userId + "'");
             if (entity != null) {
                 return new ThriftUserInfo(entity.userId, entity.userName, entity.userNickname);
             }
@@ -255,10 +258,35 @@ public class TaskBookServer {
         }
 
         @Override
-        public List<ThriftNotification> notifications(int userId) throws org.apache.thrift.TException {
-            List<ThriftNotification> notifications = new ArrayList<>();
-            // Todo
+        public void sendNotification(int userId, ThriftNotification notification) throws org.apache.thrift.TException {
+            NotificationTable table = (NotificationTable)mDatabaseManager.getTable(NotificationTable.class);
+            NotificationEntity entity = new NotificationEntity(notification.notificationId, notification.notificationOwnerId, notification.notificationReceiverId, notification.notificationType.getValue(), notification.notificationData);
+            switch (notification.notificationType) {
+                case NOTIFICATION_JOIN:
+                case NOTIFICATION_INVITE:
+                    int notificationId = table.insert(entity);
+                    if (0 < notificationId) {
+                        // Success
+                    }
+                    break;
+                case NOTIFICATION_JOIN_ANSWER:
 
+                    break;
+                case NOTIFICATION_INVITE_ANSWER:
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        @Override
+        public List<ThriftNotification> notifications(int userId) throws org.apache.thrift.TException {
+            NotificationTable table = (NotificationTable)mDatabaseManager.getTable(NotificationTable.class);
+            List<NotificationEntity> entities = table.queryEntities("notification_receiver_id = '" + userId + "'");
+            List<ThriftNotification> notifications = new ArrayList<>();
+            for (NotificationEntity entity : entities) {
+                notifications.add(new ThriftNotification(entity.notificationId, entity.notificationOwnerId, entity.notificationReceiverId, ThriftNotificationType.findByValue(entity.notificationType), entity.notificationData));
+            }
             return notifications;
         }
     }

@@ -27,13 +27,21 @@ struct ThriftTaskInfo
 	9: optional i32 userRole
 }
 
+enum ThriftNotificationType 
+{
+	NOTIFICATION_JOIN = 0,
+	NOTIFICATION_JOIN_ANSWER,
+	NOTIFICATION_INVITE,
+	NOTIFICATION_INVITE_ANSWER
+}
+
 struct ThriftNotification
 {
-	1: required i32 notiId
-	2: required i32 ownerId
-	3: required i32 receiverId
-	4: required i32 notiType
-	5: required string notiData
+	1: required i32 notificationId
+	2: required i32 notificationOwnerId
+	3: required i32 notificationReceiverId
+	4: required ThriftNotificationType notificationType
+	5: required string notificationData
 }
 
 # Memo: userId -> Token
@@ -52,5 +60,6 @@ service TaskBookService
 	list<ThriftTaskInfo> groupTaskInfos(1: required i32 groupId);
 	ThriftTaskInfo createTask(1: required i32 userId, 2: required ThriftTaskInfo taskInfo);
 
+	void sendNotification(1: required i32 userId, 2: required ThriftNotification notification);
 	list<ThriftNotification> notifications(1: required i32 userId);
 }
