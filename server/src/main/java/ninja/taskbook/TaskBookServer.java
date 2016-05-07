@@ -191,7 +191,7 @@ public class TaskBookServer {
             int groupId = table.insert(entity);
             if (0 < groupId) {
                 UserGroupTable userGroupTable = (UserGroupTable)mDatabaseManager.getTable(UserGroupTable.class);
-                UserGroupRelation relation = new UserGroupRelation(0, userId, groupId, 0);
+                UserGroupRelation relation = new UserGroupRelation(0, userId, groupId, UserGroupRelation.UserGroupRole.USER_GROUP_ADMIN.ordinal());
                 userGroupTable.insert(relation);
                 return groupInfo(userId, groupId);
             }
@@ -258,25 +258,66 @@ public class TaskBookServer {
         }
 
         @Override
-        public void sendNotification(int userId, ThriftNotification notification) throws org.apache.thrift.TException {
+        public boolean join(int userId, int groupId) throws org.apache.thrift.TException {
+            UserGroupTable userGroupTable = (UserGroupTable)mDatabaseManager.getTable(UserGroupTable.class);
+            UserGroupRelation relation = userGroupTable.queryEntity("group_id = '" + groupId + "' and user_role = 0");
+            if (relation != null) {
+                ThriftNotification notification = new ThriftNotification(0, userId, relation.userId, ThriftNotificationType.NOTIFICATION_JOIN, String.valueOf(groupId));
+                return sendNotification(userId, notification);
+            }
+            return false;
+        }
+
+        @Override
+        public boolean invite(int userId, int groupId, int targetUserId) throws org.apache.thrift.TException {
+            // Todo: user's right
+            ThriftNotification notification = new ThriftNotification(0, userId, targetUserId, ThriftNotificationType.NOTIFICATION_INVITE, String.valueOf(groupId));
+            return sendNotification(userId, notification);
+        }
+
+        @Override
+        public boolean sendNotification(int userId, ThriftNotification notification) throws org.apache.thrift.TException {
+            // Todo: userId vs ownerId
             NotificationTable table = (NotificationTable)mDatabaseManager.getTable(NotificationTable.class);
-            NotificationEntity entity = new NotificationEntity(notification.notificationId, notification.notificationOwnerId, notification.notificationReceiverId, notification.notificationType.getValue(), notification.notificationData);
             switch (notification.notificationType) {
                 case NOTIFICATION_JOIN:
                 case NOTIFICATION_INVITE:
-                    int notificationId = table.insert(entity);
-                    if (0 < notificationId) {
-                        // Success
+                    if (notification.notificationId <= 0) {
+                        NotificationEntity entity = new NotificationEntity(notification.notificationId, notification.notificationOwnerId, notification.notificationReceiverId, notification.notificationType.getValue(), notification.notificationData);
+                        int notificationId = table.insert(entity);
+                        if (0 < notificationId) {
+                            return true;
+                        }
                     }
                     break;
                 case NOTIFICATION_JOIN_ANSWER:
-
+                    if (0 < notification.notificationId && notification.notificationData.equals("YES")) {
+                        int groupId = Integer.parseInt(notification.notificationData);
+                        if (0 < groupId) {
+                            UserGroupTable userGroupTable = (UserGroupTable)mDatabaseManager.getTable(UserGroupTable.class);
+                            UserGroupRelation relation = new UserGroupRelation(0, userId, groupId, UserGroupRelation.UserGroupRole.USER_GROUP_MEMBER.ordinal());
+                            userGroupTable.insert(relation);
+                            table.delete("notification_id = '" + notification.notificationId + "'");
+                            return true;
+                        }
+                    }
                     break;
                 case NOTIFICATION_INVITE_ANSWER:
+                    if (0 < notification.notificationId && notification.notificationData.equals("YES")) {
+                        int groupId = Integer.parseInt(notification.notificationData);
+                        if (0 < groupId) {
+                            UserGroupTable userGroupTable = (UserGroupTable)mDatabaseManager.getTable(UserGroupTable.class);
+                            UserGroupRelation relation = new UserGroupRelation(0, notification.notificationReceiverId, groupId, UserGroupRelation.UserGroupRole.USER_GROUP_MEMBER.ordinal());
+                            userGroupTable.insert(relation);
+                            table.delete("notification_id = '" + notification.notificationId + "'");
+                            return true;
+                        }
+                    }
                     break;
                 default:
                     break;
             }
+            return false;
         }
 
         @Override

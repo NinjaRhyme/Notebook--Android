@@ -63,9 +63,8 @@ public class GroupCreatorFragment extends Fragment {
 
     //----------------------------------------------------------------------------------------------------
     private void createGroup() {
-        UserEntity entity = DataManager.getInstance().getUserInfo();
+        UserEntity entity = DataManager.getInstance().getUserItem();
         if (entity == null) {
-            // Error
             return;
         }
 

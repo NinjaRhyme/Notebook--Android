@@ -42,6 +42,14 @@ public class GroupDetailFragment extends Fragment {
         mNameTextView = (TextView)rootView.findViewById(R.id.name_text_view);
         mNameTextView.setText("name");
 
+        // Invite
+        Button inviteTaskButton = (Button)rootView.findViewById(R.id.invite_button);
+        inviteTaskButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                invite();
+            }
+        });
+
         // Create
         Button createTaskButton = (Button)rootView.findViewById(R.id.create_task_button);
         createTaskButton.setOnClickListener(new View.OnClickListener() {
@@ -52,7 +60,7 @@ public class GroupDetailFragment extends Fragment {
 
         // Data
         mGroupId = getArguments().getInt("id");
-        mGroupInfo = DataManager.getInstance().getGroupInfo(mGroupId);
+        mGroupInfo = DataManager.getInstance().getGroupItem(mGroupId);
 
         // Load
         loadGroupData();
@@ -63,7 +71,7 @@ public class GroupDetailFragment extends Fragment {
     //----------------------------------------------------------------------------------------------------
     private void loadGroupData() {
         if (mGroupInfo != null) {
-            mIdTextView.setText(Integer.toString(mGroupInfo.groupId));
+            mIdTextView.setText(String.valueOf(mGroupInfo.groupId));
             mNameTextView.setText(mGroupInfo.groupName);
         }
 
@@ -75,6 +83,11 @@ public class GroupDetailFragment extends Fragment {
                 .beginTransaction()
                 .replace(R.id.chart_frame_layout, new GroupTaskLineFragment())
                 .commit();
+    }
+
+    //----------------------------------------------------------------------------------------------------
+    private void invite() {
+        // Todo: fragment
     }
 
     //----------------------------------------------------------------------------------------------------

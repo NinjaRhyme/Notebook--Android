@@ -21,6 +21,7 @@ import java.util.List;
 import ninja.taskbook.R;
 import ninja.taskbook.business.group.GroupFragment;
 import ninja.taskbook.business.login.LoginActivity;
+import ninja.taskbook.business.notification.NotificationFragment;
 import ninja.taskbook.business.profile.ProfileFragment;
 import ninja.taskbook.business.setting.SettingFragment;
 import ninja.taskbook.business.task.TaskFragment;
@@ -77,10 +78,12 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
         mDrawerItems.add(item1);
         DrawerItem item2 = new DrawerItem(R.mipmap.drawer_item_book);
         mDrawerItems.add(item2);
-        DrawerItem item3 = new DrawerItem(R.mipmap.drawer_item_picture);
+        DrawerItem item3 = new DrawerItem(R.mipmap.drawer_item_movie);
         mDrawerItems.add(item3);
-        DrawerItem item4 = new DrawerItem(R.mipmap.drawer_item_close);
+        DrawerItem item4 = new DrawerItem(R.mipmap.drawer_item_picture);
         mDrawerItems.add(item4);
+        DrawerItem item5 = new DrawerItem(R.mipmap.drawer_item_close);
+        mDrawerItems.add(item5);
 
         mDrawerManager = new DrawerManager(this, mCoordinatorLayout, mToolbar, mDrawerLayout, mDrawer, mDrawerItems, this);
     }
@@ -237,10 +240,16 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
                 case 3:
                     getSupportFragmentManager()
                             .beginTransaction()
-                            .replace(R.id.frame_layout, new SettingFragment())
+                            .replace(R.id.frame_layout, new NotificationFragment())
                             .commit();
                     break;
                 case 4:
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.frame_layout, new SettingFragment())
+                            .commit();
+                    break;
+                case 5:
                     login();
                     break;
                 default:

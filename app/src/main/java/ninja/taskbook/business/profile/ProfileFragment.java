@@ -56,7 +56,7 @@ public class ProfileFragment extends Fragment {
 
     //----------------------------------------------------------------------------------------------------
     private void loadProfileData() {
-        UserEntity entity = DataManager.getInstance().getUserInfo();
+        UserEntity entity = DataManager.getInstance().getUserItem();
         if (entity == null) {
             // Error
             return;
@@ -82,7 +82,7 @@ public class ProfileFragment extends Fragment {
                 .subscribe(new Action1<ThriftUserInfo>() {
                     @Override
                     public void call(ThriftUserInfo result) {
-                        DataManager.getInstance().setUserInfo(new UserEntity(result.userId, result.userName, result.userNickname));
+                        DataManager.getInstance().setUserItem(new UserEntity(result.userId, result.userName, result.userNickname));
 
                         mNameTextView.setText(result.getUserName());
                         mNicknameTextView.setText(result.getUserNickname());

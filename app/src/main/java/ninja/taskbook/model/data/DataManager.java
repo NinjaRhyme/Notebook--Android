@@ -3,6 +3,7 @@ package ninja.taskbook.model.data;
 import java.util.List;
 
 import ninja.taskbook.model.entity.GroupEntity;
+import ninja.taskbook.model.entity.NotificationEntity;
 import ninja.taskbook.model.entity.TaskEntity;
 import ninja.taskbook.model.entity.UserEntity;
 
@@ -12,9 +13,10 @@ public class DataManager {
     private static DataManager sInstance = null;
 
     //----------------------------------------------------------------------------------------------------
-    private UserEntity mUserInfo;
-    private List<GroupEntity> mGroupInfos;
-    private List<TaskEntity> mTaskInfos;
+    private UserEntity mUserItem;
+    private List<GroupEntity> mGroupItems;
+    private List<TaskEntity> mTaskItems;
+    private List<NotificationEntity> mNotificationItems;
 
     //----------------------------------------------------------------------------------------------------
     private DataManager() {
@@ -32,21 +34,22 @@ public class DataManager {
     }
 
     //----------------------------------------------------------------------------------------------------
-    public UserEntity getUserInfo() {
-        return mUserInfo;
+    public UserEntity getUserItem() {
+        return mUserItem;
     }
 
-    public void setUserInfo(UserEntity userInfo) {
-        this.mUserInfo = userInfo;
+    public void setUserItem(UserEntity userItem) {
+        this.mUserItem = userItem;
     }
 
-    public GroupEntity getGroupInfo(int id) {
-        if (mGroupInfos != null) {
+    //----------------------------------------------------------------------------------------------------
+    public GroupEntity getGroupItem(int id) {
+        if (mGroupItems != null) {
             int low = 0;
-            int high = mGroupInfos.size() - 1;
-            while (low <= high  && high <= mGroupInfos.size() - 1) {
+            int high = mGroupItems.size() - 1;
+            while (low <= high  && high <= mGroupItems.size() - 1) {
                 int middle = (high + low) >> 1;
-                GroupEntity entity = mGroupInfos.get(middle);
+                GroupEntity entity = mGroupItems.get(middle);
                 if (entity.groupId == id) {
                     return entity;
                 } else if (id < entity.groupId) {
@@ -59,21 +62,22 @@ public class DataManager {
         return null;
     }
 
-    public List<GroupEntity> getGroupInfos() {
-        return mGroupInfos;
+    public List<GroupEntity> getGroupItems() {
+        return mGroupItems;
     }
 
-    public void setGroupInfos(List<GroupEntity> groupInfos) {
-        this.mGroupInfos = groupInfos;
+    public void setGroupItems(List<GroupEntity> groupItems) {
+        this.mGroupItems = groupItems;
     }
 
-    public TaskEntity getTaskInfo(int id) {
-        if (mTaskInfos != null) {
+    //----------------------------------------------------------------------------------------------------
+    public TaskEntity getTaskItem(int id) {
+        if (mTaskItems != null) {
             int low = 0;
-            int high = mTaskInfos.size() - 1;
-            while (low <= high  && high <= mTaskInfos.size() - 1) {
+            int high = mTaskItems.size() - 1;
+            while (low <= high  && high <= mTaskItems.size() - 1) {
                 int middle = (high + low) >> 1;
-                TaskEntity entity = mTaskInfos.get(middle);
+                TaskEntity entity = mTaskItems.get(middle);
                 if (entity.taskId == id) {
                     return entity;
                 } else if (id < entity.taskId) {
@@ -86,11 +90,20 @@ public class DataManager {
         return null;
     }
 
-    public List<TaskEntity> getTaskInfos() {
-        return mTaskInfos;
+    public List<TaskEntity> getTaskItems() {
+        return mTaskItems;
     }
 
-    public void setTaskInfos(List<TaskEntity> taskInfos) {
-        this.mTaskInfos = taskInfos;
+    public void setTaskItems(List<TaskEntity> taskItems) {
+        this.mTaskItems = taskItems;
+    }
+
+    //----------------------------------------------------------------------------------------------------
+    public List<NotificationEntity> getNotificationItems() {
+        return mNotificationItems;
+    }
+
+    public void setNotificationItems(List<NotificationEntity> notificationItems) {
+        this.mNotificationItems = notificationItems;
     }
 }

@@ -108,7 +108,7 @@ public class LoginActivity extends AppCompatActivity {
                         if (0 < result) {
                             UserEntity entity = new UserEntity();
                             entity.userId = result;
-                            DataManager.getInstance().setUserInfo(entity);
+                            DataManager.getInstance().setUserItem(entity);
 
                             setResult(RESULT_OK, null);
                             finish();

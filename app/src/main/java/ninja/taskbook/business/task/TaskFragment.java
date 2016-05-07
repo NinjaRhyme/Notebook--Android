@@ -71,9 +71,8 @@ public class TaskFragment extends Fragment {
 
     //----------------------------------------------------------------------------------------------------
     private void loadTaskItems() {
-        UserEntity entity = DataManager.getInstance().getUserInfo();
+        UserEntity entity = DataManager.getInstance().getUserItem();
         if (entity == null) {
-            // Error
             return;
         }
 
@@ -102,7 +101,7 @@ public class TaskFragment extends Fragment {
                             for (ThriftTaskInfo info : result) {
                                 mTaskItems.add(new TaskEntity(info.taskId, info.groupId, info.taskAuthor, info.taskName, info.taskContent, info.taskTime, (float) info.taskProgress));
                             }
-                            DataManager.getInstance().setTaskInfos(mTaskItems);
+                            DataManager.getInstance().setTaskItems(mTaskItems);
                             mRecyclerView.getAdapter().notifyDataSetChanged();
                         }
                     }

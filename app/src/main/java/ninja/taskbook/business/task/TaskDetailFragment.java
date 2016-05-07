@@ -49,7 +49,7 @@ public class TaskDetailFragment extends Fragment {
 
         // Data
         mTaskId = getArguments().getInt("id");
-        mTaskInfo = DataManager.getInstance().getTaskInfo(mTaskId);
+        mTaskInfo = DataManager.getInstance().getTaskItem(mTaskId);
 
         // Load
         loadTaskData();

@@ -107,11 +107,8 @@ public class TaskCreatorFragment extends Fragment {
     }
 
     //----------------------------------------------------------------------------------------------------
-
-
-    //----------------------------------------------------------------------------------------------------
     private void createTask() {
-        final UserEntity entity = DataManager.getInstance().getUserInfo();
+        final UserEntity entity = DataManager.getInstance().getUserItem();
         if (entity == null) {
             // Error
             return;

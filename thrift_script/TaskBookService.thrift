@@ -54,12 +54,14 @@ service TaskBookService
 	ThriftGroupInfo groupInfo(1: required i32 userId, 2: required i32 groupId);
 	list<ThriftGroupInfo> groupInfos(1: required i32 userId);
 	ThriftGroupInfo createGroup(1: required i32 userId, 2: required ThriftGroupInfo groupInfo);
+	bool join(1: required i32 userId, 2: required i32 groupId);
+	bool invite(1: required i32 userId, 2: required i32 groupId, 3: required i32 targetUserId);
 	
 	ThriftTaskInfo taskInfo(1: required i32 userId, 2: required i32 taskId);
 	list<ThriftTaskInfo> userTaskInfos(1: required i32 userId);
 	list<ThriftTaskInfo> groupTaskInfos(1: required i32 groupId);
 	ThriftTaskInfo createTask(1: required i32 userId, 2: required ThriftTaskInfo taskInfo);
 
-	void sendNotification(1: required i32 userId, 2: required ThriftNotification notification);
+	bool sendNotification(1: required i32 userId, 2: required ThriftNotification notification);
 	list<ThriftNotification> notifications(1: required i32 userId);
 }

@@ -1,13 +1,10 @@
 package ninja.taskbook.business.group;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,16 +17,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ninja.taskbook.R;
-import ninja.taskbook.business.task.TaskDetailFragment;
-import ninja.taskbook.business.task.TaskItemDecoration;
 import ninja.taskbook.model.data.DataManager;
 import ninja.taskbook.model.entity.GroupEntity;
-import ninja.taskbook.model.entity.TaskEntity;
 import ninja.taskbook.model.entity.UserEntity;
 import ninja.taskbook.model.network.thrift.manager.ThriftManager;
 import ninja.taskbook.model.network.thrift.service.TaskBookService;
 import ninja.taskbook.model.network.thrift.service.ThriftGroupInfo;
-import ninja.taskbook.model.network.thrift.service.ThriftUserInfo;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -55,16 +48,12 @@ public class GroupFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.group, container, false);
 
-        // Recycler Layout
+        // Recycler View
         mRecyclerView = (RecyclerView)rootView.findViewById(R.id.recycler_view);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 1);
         gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(gridLayoutManager);
-
-        // Decoration
         mRecyclerView.addItemDecoration(new GroupItemDecoration(getContext()));
-
-        // Adapter
         mRecyclerView.setAdapter(new GroupItemAdapter());
 
         // Join
@@ -109,9 +98,8 @@ public class GroupFragment extends Fragment {
 
     //----------------------------------------------------------------------------------------------------
     private void loadProfileData() {
-        UserEntity entity = DataManager.getInstance().getUserInfo();
+        UserEntity entity = DataManager.getInstance().getUserItem();
         if (entity == null) {
-            // Errors
             return;
         }
 
@@ -139,7 +127,7 @@ public class GroupFragment extends Fragment {
                             GroupEntity entity = new GroupEntity(info.groupId, info.groupName);
                             mGroupItems.add(entity);
                         }
-                        DataManager.getInstance().setGroupInfos(mGroupItems);
+                        DataManager.getInstance().setGroupItems(mGroupItems);
                         mRecyclerView.getAdapter().notifyDataSetChanged();
                     }
                 });
@@ -199,5 +187,4 @@ public class GroupFragment extends Fragment {
             });
         }
     }
-
 }
