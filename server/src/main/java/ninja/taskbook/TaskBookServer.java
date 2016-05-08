@@ -1,11 +1,11 @@
 package ninja.taskbook;
 
-import org.apache.thrift.TException;
 import org.apache.thrift.TProcessor;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.transport.TServerSocket;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,11 +41,13 @@ public class TaskBookServer {
     public TaskBookServer() {
 
         // Demo
-        /*
+
         UserTable userTable = (UserTable)mDatabaseManager.getTable(UserTable.class);
         userTable.drop();
         userTable = (UserTable)mDatabaseManager.getTable(UserTable.class);
         UserEntity userEntity = new UserEntity(0, "test", "123456", "嘻嘻嘻嘻");
+        userTable.insert(userEntity);
+        userEntity = new UserEntity(0, "test1", "123456", "namenamename");
         userTable.insert(userEntity);
 
         GroupTable groupTable = (GroupTable)mDatabaseManager.getTable(GroupTable.class);
@@ -54,6 +56,8 @@ public class TaskBookServer {
         GroupEntity groupEntity = new GroupEntity(0, "Android 开发组");
         groupTable.insert(groupEntity);
         groupEntity = new GroupEntity(0, "iOS 开发组");
+        groupTable.insert(groupEntity);
+        groupEntity = new GroupEntity(0, "Test group");
         groupTable.insert(groupEntity);
 
         UserGroupTable userGroupTable = (UserGroupTable)mDatabaseManager.getTable(UserGroupTable.class);
@@ -67,13 +71,13 @@ public class TaskBookServer {
         TaskTable taskTable = (TaskTable)mDatabaseManager.getTable(TaskTable.class);
         taskTable.drop();
         taskTable = (TaskTable)mDatabaseManager.getTable(TaskTable.class);
-        TaskEntity taskEntity = new TaskEntity(0, 1, "Boss1", "Task1", "嘻嘻嘻嘻嘻嘻嘻嘻嘻", "12345", 1.f);
+        TaskEntity taskEntity = new TaskEntity(0, 1, "Boss1", "Task1", "嘻嘻嘻嘻嘻嘻嘻嘻嘻", "2016-04-10", "2016-04-15", 1.f);
         taskTable.insert(taskEntity);
-        taskEntity = new TaskEntity(0, 1, "Boss1", "Task2", "嘻嘻嘻嘻嘻嘻嘻嘻嘻", "12345", 0.5f);
+        taskEntity = new TaskEntity(0, 1, "Boss1", "Task2", "嘻嘻嘻嘻嘻嘻嘻嘻嘻", "2016-04-13", "2016-05-1", 0.5f);
         taskTable.insert(taskEntity);
-        taskEntity = new TaskEntity(0, 1, "Boss2", "Task3", "嘻嘻嘻嘻嘻嘻嘻嘻嘻", "12345", 0.3f);
+        taskEntity = new TaskEntity(0, 1, "Boss2", "Task3", "嘻嘻嘻嘻嘻嘻嘻嘻嘻", "2016-04-25", "2016-05-11",  0.3f);
         taskTable.insert(taskEntity);
-        taskEntity = new TaskEntity(0, 1, "Boss2", "Task4", "嘻嘻嘻嘻嘻嘻嘻嘻嘻", "12345", 0.5f);
+        taskEntity = new TaskEntity(0, 1, "Boss2", "Task4", "嘻嘻嘻嘻嘻嘻嘻嘻嘻", "2016-05-11", "2016-05-11",  0.5f);
         taskTable.insert(taskEntity);
 
         UserTaskTable userTaskTable = (UserTaskTable)mDatabaseManager.getTable(UserTaskTable.class);
@@ -87,7 +91,7 @@ public class TaskBookServer {
         userTaskTable.insert(userTaskRelation);
         userTaskRelation = new UserTaskRelation(0, 1, 4, 0);
         userTaskTable.insert(userTaskRelation);
-        */
+
     }
 
     //----------------------------------------------------------------------------------------------------
@@ -199,6 +203,28 @@ public class TaskBookServer {
         }
 
         @Override
+        public boolean join(int userId, int groupId) throws org.apache.thrift.TException {
+            UserGroupTable userGroupTable = (UserGroupTable)mDatabaseManager.getTable(UserGroupTable.class);
+            UserGroupRelation relation = userGroupTable.queryEntity("group_id = '" + groupId + "' and user_role = 0");
+            if (relation != null) {
+                JSONObject jsonData = new JSONObject();
+                jsonData.put("group_id", String.valueOf(groupId));
+                ThriftNotification notification = new ThriftNotification(0, userId, relation.userId, ThriftNotificationType.NOTIFICATION_JOIN, jsonData.toString());
+                return sendNotification(userId, notification);
+            }
+            return false;
+        }
+
+        @Override
+        public boolean invite(int userId, int groupId, int targetUserId) throws org.apache.thrift.TException {
+            // Todo: user's right
+            JSONObject jsonData = new JSONObject();
+            jsonData.put("group_id", String.valueOf(groupId));
+            ThriftNotification notification = new ThriftNotification(0, userId, targetUserId, ThriftNotificationType.NOTIFICATION_INVITE, jsonData.toString());
+            return sendNotification(userId, notification);
+        }
+
+        @Override
         public ThriftTaskInfo taskInfo(int userId, int taskId) throws org.apache.thrift.TException {
             // Todo:userRole = ?;
             TaskTable table = (TaskTable)mDatabaseManager.getTable(TaskTable.class);
@@ -250,7 +276,7 @@ public class TaskBookServer {
             int taskId = table.insert(entity);
             if (0 < taskId) {
                 UserTaskTable userTaskTable = (UserTaskTable)mDatabaseManager.getTable(UserTaskTable.class);
-                UserTaskRelation relation = new UserTaskRelation(0, userId, taskId, 0);
+                UserTaskRelation relation = new UserTaskRelation(0, userId, taskId, UserTaskRelation.UserTaskRole.USER_TASK_ADMIN.ordinal());
                 userTaskTable.insert(relation);
                 return taskInfo(userId, taskId);
             }
@@ -258,31 +284,14 @@ public class TaskBookServer {
         }
 
         @Override
-        public boolean join(int userId, int groupId) throws org.apache.thrift.TException {
-            UserGroupTable userGroupTable = (UserGroupTable)mDatabaseManager.getTable(UserGroupTable.class);
-            UserGroupRelation relation = userGroupTable.queryEntity("group_id = '" + groupId + "' and user_role = 0");
-            if (relation != null) {
-                ThriftNotification notification = new ThriftNotification(0, userId, relation.userId, ThriftNotificationType.NOTIFICATION_JOIN, String.valueOf(groupId));
-                return sendNotification(userId, notification);
-            }
-            return false;
-        }
-
-        @Override
-        public boolean invite(int userId, int groupId, int targetUserId) throws org.apache.thrift.TException {
-            // Todo: user's right
-            ThriftNotification notification = new ThriftNotification(0, userId, targetUserId, ThriftNotificationType.NOTIFICATION_INVITE, String.valueOf(groupId));
-            return sendNotification(userId, notification);
-        }
-
-        @Override
         public boolean sendNotification(int userId, ThriftNotification notification) throws org.apache.thrift.TException {
-            // Todo: userId vs ownerId
-            NotificationTable table = (NotificationTable)mDatabaseManager.getTable(NotificationTable.class);
+            // Todo: userId vs ownerId && Json
+            JSONObject jsonData = new JSONObject(notification.notificationData);
             switch (notification.notificationType) {
                 case NOTIFICATION_JOIN:
                 case NOTIFICATION_INVITE:
                     if (notification.notificationId <= 0) {
+                        NotificationTable table = (NotificationTable)mDatabaseManager.getTable(NotificationTable.class);
                         NotificationEntity entity = new NotificationEntity(notification.notificationId, notification.notificationOwnerId, notification.notificationReceiverId, notification.notificationType.getValue(), notification.notificationData);
                         int notificationId = table.insert(entity);
                         if (0 < notificationId) {
@@ -291,26 +300,32 @@ public class TaskBookServer {
                     }
                     break;
                 case NOTIFICATION_JOIN_ANSWER:
-                    if (0 < notification.notificationId && notification.notificationData.equals("YES")) {
-                        int groupId = Integer.parseInt(notification.notificationData);
-                        if (0 < groupId) {
-                            UserGroupTable userGroupTable = (UserGroupTable)mDatabaseManager.getTable(UserGroupTable.class);
-                            UserGroupRelation relation = new UserGroupRelation(0, userId, groupId, UserGroupRelation.UserGroupRole.USER_GROUP_MEMBER.ordinal());
-                            userGroupTable.insert(relation);
-                            table.delete("notification_id = '" + notification.notificationId + "'");
-                            return true;
+                    if (0 < notification.notificationId && jsonData.has("result")) {
+                        if (jsonData.getString("result").equals("YES")) {
+                            NotificationTable table = (NotificationTable) mDatabaseManager.getTable(NotificationTable.class);
+                            int groupId = jsonData.has("group_id") ? jsonData.getInt("group_id") : 0;
+                            if (0 < groupId) {
+                                UserGroupTable userGroupTable = (UserGroupTable) mDatabaseManager.getTable(UserGroupTable.class);
+                                UserGroupRelation relation = new UserGroupRelation(0, userId, groupId, UserGroupRelation.UserGroupRole.USER_GROUP_MEMBER.ordinal());
+                                userGroupTable.insert(relation);
+                                table.delete("notification_id = '" + notification.notificationId + "'");
+                                return true;
+                            }
                         }
                     }
                     break;
                 case NOTIFICATION_INVITE_ANSWER:
-                    if (0 < notification.notificationId && notification.notificationData.equals("YES")) {
-                        int groupId = Integer.parseInt(notification.notificationData);
-                        if (0 < groupId) {
-                            UserGroupTable userGroupTable = (UserGroupTable)mDatabaseManager.getTable(UserGroupTable.class);
-                            UserGroupRelation relation = new UserGroupRelation(0, notification.notificationReceiverId, groupId, UserGroupRelation.UserGroupRole.USER_GROUP_MEMBER.ordinal());
-                            userGroupTable.insert(relation);
-                            table.delete("notification_id = '" + notification.notificationId + "'");
-                            return true;
+                    if (0 < notification.notificationId && jsonData.has("result")) {
+                        if (jsonData.getString("result").equals("YES")) {
+                            NotificationTable table = (NotificationTable) mDatabaseManager.getTable(NotificationTable.class);
+                            int groupId = jsonData.has("group_id") ? jsonData.getInt("group_id") : 0;
+                            if (0 < groupId) {
+                                UserGroupTable userGroupTable = (UserGroupTable) mDatabaseManager.getTable(UserGroupTable.class);
+                                UserGroupRelation relation = new UserGroupRelation(0, notification.notificationReceiverId, groupId, UserGroupRelation.UserGroupRole.USER_GROUP_MEMBER.ordinal());
+                                userGroupTable.insert(relation);
+                                table.delete("notification_id = '" + notification.notificationId + "'");
+                                return true;
+                            }
                         }
                     }
                     break;

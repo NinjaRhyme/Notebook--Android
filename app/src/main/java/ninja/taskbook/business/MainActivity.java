@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
     private List<DrawerItem> mDrawerItems = new ArrayList<>();
     private DrawerManager mDrawerManager;
     private int mDrawerIndex = 0;
-    private FrameLayout mFrameLayout;
 
     // Init
     //----------------------------------------------------------------------------------------------------
@@ -89,8 +88,6 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
     }
 
     private void initContent() {
-        mFrameLayout = (FrameLayout)findViewById(R.id.frame_layout);
-
         mDrawerIndex = 0;
         getSupportFragmentManager()
                 .beginTransaction()
@@ -216,6 +213,13 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
     //----------------------------------------------------------------------------------------------------
     @Override
     public void onDrawerItemClicked(int index) {
+        FragmentManager manager = getSupportFragmentManager();
+        int count = getSupportFragmentManager().getBackStackEntryCount();
+        Log.d("Main", "drawer:" + count);
+        for (int i = 0; i < count; i++) {
+            manager.popBackStack();
+        }
+
         if (mDrawerIndex != index) {
             // Todo: animation & save fragment
             switch (index) {

@@ -96,14 +96,14 @@ public class TaskFragment extends Fragment {
                 .subscribe(new Action1<List<ThriftTaskInfo>>() {
                     @Override
                     public void call(List<ThriftTaskInfo> result) {
+                        mTaskItems.clear();
                         if (result != null) {
-                            mTaskItems.clear();
                             for (ThriftTaskInfo info : result) {
                                 mTaskItems.add(new TaskEntity(info.taskId, info.groupId, info.taskAuthor, info.taskName, info.taskContent, info.taskTime, (float) info.taskProgress));
                             }
-                            DataManager.getInstance().setTaskItems(mTaskItems);
-                            mRecyclerView.getAdapter().notifyDataSetChanged();
                         }
+                        DataManager.getInstance().setTaskItems(mTaskItems);
+                        mRecyclerView.getAdapter().notifyDataSetChanged();
                     }
                 });
     }

@@ -48,7 +48,7 @@ public class GroupJoinFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.group_join, container, false);
 
         // EditText
-        mIdEditText = (EditText)rootView.findViewById(R.id.name_edit_text);
+        mIdEditText = (EditText)rootView.findViewById(R.id.id_edit_text);
 
         // Create
         Button joinButton = (Button)rootView.findViewById(R.id.join_button);

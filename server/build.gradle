@@ -6,4 +6,5 @@ dependencies {
     compile 'org.apache.thrift:libthrift:0.9.3'
     compile 'org.slf4j:slf4j-android:1.7.16'
     compile 'org.xerial:sqlite-jdbc:3.8.11.2'
+    compile 'org.json:json:20160212'
 }

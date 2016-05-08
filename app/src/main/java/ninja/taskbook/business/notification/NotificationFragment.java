@@ -1,7 +1,9 @@
 package ninja.taskbook.business.notification;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -100,7 +102,22 @@ public class NotificationFragment  extends Fragment {
 
     //----------------------------------------------------------------------------------------------------
     void onNotificationItemClicked(int id) {
+        new AlertDialog.Builder(getContext())
+                .setMessage("你确定?")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
 
+                    }
+                })
+                .setNegativeButton("拒绝", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .setCancelable(true)
+                .show();
     }
 
     // NotificationItemHolder
@@ -135,6 +152,7 @@ public class NotificationFragment  extends Fragment {
         @Override
         public void onBindViewHolder(NotificationItemHolder holder, final int position) {
             View view = holder.itemView;
+            holder.itemTitleTextView.setText(mNotificationItems.get(position).notificationData);
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

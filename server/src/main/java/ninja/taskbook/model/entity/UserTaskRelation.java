@@ -4,6 +4,12 @@ package ninja.taskbook.model.entity;
 public class UserTaskRelation {
 
     //----------------------------------------------------------------------------------------------------
+    public enum UserTaskRole {
+        USER_TASK_ADMIN,
+        USER_TASK_MEMBER,
+    }
+
+    //----------------------------------------------------------------------------------------------------
     public int userTaskId;
     public int userId;
     public int taskId;

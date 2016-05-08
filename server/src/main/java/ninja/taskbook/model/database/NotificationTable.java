@@ -15,7 +15,7 @@ public class NotificationTable extends TableBase<NotificationEntity> {
             "notification_owner_id INTEGER DEFAULT 0,",
             "notification_receiver_id INTEGER DEFAULT 0,",
             "notification_type VARCHAR(255) DEFAULT \"\",",
-            "notification_data VARCHAR(255) DEFAULT \"\";",
+            "notification_data VARCHAR(255) DEFAULT \"\");",
     };
 
     //----------------------------------------------------------------------------------------------------

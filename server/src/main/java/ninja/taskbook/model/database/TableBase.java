@@ -140,8 +140,8 @@ public abstract class TableBase<T> {
     //----------------------------------------------------------------------------------------------------
     public T queryEntity(String where) {
         try{
-            String sql = "select * from " + getTableName() + " where " + where + ";";
-            return executeQuery(sql).get(0);
+            List<T> entities = queryEntities(where);
+            return 0 < entities.size() ? entities.get(0) : null;
         }catch (Exception e) {
             e.printStackTrace();
             return null;

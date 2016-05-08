@@ -87,14 +87,26 @@ public class GroupDetailFragment extends Fragment {
 
     //----------------------------------------------------------------------------------------------------
     private void invite() {
-        // Todo: fragment
+        GroupInviteFragment fragment = new GroupInviteFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt("id", mGroupId);
+        fragment.setArguments(bundle);
+        getFragmentManager()
+                .beginTransaction()
+                .add(R.id.frame_layout, fragment)
+                .addToBackStack(null)
+                .commit();
     }
 
     //----------------------------------------------------------------------------------------------------
     private void createTask() {
+        TaskCreatorFragment fragment = new TaskCreatorFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt("id", mGroupId);
+        fragment.setArguments(bundle);
         getFragmentManager()
                 .beginTransaction()
-                .replace(R.id.frame_layout, new TaskCreatorFragment())
+                .replace(R.id.frame_layout, fragment)
                 .addToBackStack(null)
                 .commit();
     }

@@ -123,9 +123,11 @@ public class GroupFragment extends Fragment {
                     @Override
                     public void call(List<ThriftGroupInfo> result) {
                         mGroupItems.clear();
-                        for (ThriftGroupInfo info : result) {
-                            GroupEntity entity = new GroupEntity(info.groupId, info.groupName);
-                            mGroupItems.add(entity);
+                        if (result != null) {
+                            for (ThriftGroupInfo info : result) {
+                                GroupEntity entity = new GroupEntity(info.groupId, info.groupName);
+                                mGroupItems.add(entity);
+                            }
                         }
                         DataManager.getInstance().setGroupItems(mGroupItems);
                         mRecyclerView.getAdapter().notifyDataSetChanged();

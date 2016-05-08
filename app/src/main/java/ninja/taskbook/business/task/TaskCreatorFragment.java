@@ -38,6 +38,7 @@ public class TaskCreatorFragment extends Fragment {
     EditText mTaskContentEditText;
     EditText mTaskTimeEditText;
     EditText mTaskDeadlineEditText;
+    int mGroupId = 0;
 
     //----------------------------------------------------------------------------------------------------
     public TaskCreatorFragment() {
@@ -58,6 +59,9 @@ public class TaskCreatorFragment extends Fragment {
 
         // Name
         mTaskNameEditText = (EditText)rootView.findViewById(R.id.task_name_edit_text);
+
+        // Content
+        mTaskContentEditText = (EditText)rootView.findViewById(R.id.task_content_edit_text);
 
         // Time
         mTaskTimeEditText = (EditText)rootView.findViewById(R.id.task_time_edit_text);
@@ -95,6 +99,9 @@ public class TaskCreatorFragment extends Fragment {
             }
         });
 
+        // Data
+        mGroupId = getArguments().getInt("id");
+
         // Create
         Button createButton = (Button)rootView.findViewById(R.id.create_button);
         createButton.setOnClickListener(new View.OnClickListener() {
@@ -110,7 +117,6 @@ public class TaskCreatorFragment extends Fragment {
     private void createTask() {
         final UserEntity entity = DataManager.getInstance().getUserItem();
         if (entity == null) {
-            // Error
             return;
         }
 
@@ -121,7 +127,7 @@ public class TaskCreatorFragment extends Fragment {
                         try {
                             TaskBookService.Client client = (TaskBookService.Client) ThriftManager.createClient(ThriftManager.ClientTypeEnum.CLIENT.toString());
                             if (client != null) {
-                                ThriftTaskInfo info = new ThriftTaskInfo(0, 0, entity.userName, mTaskNameEditText.getText().toString(), mTaskContentEditText.getText().toString(), mTaskTimeEditText.getText().toString(), mTaskDeadlineEditText.getText().toString(), 0.5);
+                                ThriftTaskInfo info = new ThriftTaskInfo(0, mGroupId, entity.userName, mTaskNameEditText.getText().toString(), mTaskContentEditText.getText().toString(), mTaskTimeEditText.getText().toString(), mTaskDeadlineEditText.getText().toString(), 0.5);
                                 return client.createTask(userId, info);
                             }
                         } catch (TException e) {

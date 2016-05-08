@@ -7,14 +7,23 @@
     android:background="@color/task_background_color">
 
     <TextView
-        android:id="@+id/name_text_view"
+        android:id="@+id/id_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Medium Text"
         android:textColor="@color/profile_name_color"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="200dp" />
+        android:layout_marginTop="200dp"/>
+
+    <TextView
+        android:id="@+id/name_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Medium Text"
+        android:textColor="@color/profile_name_color"
+        android:layout_gravity="center_horizontal"/>
 
     <TextView
         android:id="@+id/nickname_text_view"
@@ -23,5 +32,5 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Medium Text"
         android:textColor="@color/profile_nickname_color"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"/>
 </LinearLayout>

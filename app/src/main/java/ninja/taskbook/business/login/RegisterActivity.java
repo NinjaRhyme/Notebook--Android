@@ -100,7 +100,7 @@ public class RegisterActivity extends AppCompatActivity {
                         try {
                             TaskBookService.Client client = (TaskBookService.Client) ThriftManager.createClient(ThriftManager.ClientTypeEnum.CLIENT.toString());
                             if (client != null) {
-                                return client.signup(mNameEditText.getText().toString(), mPasswordEditText.getText().toString(), mNicknameEditText.getText().toString());
+                                return client.signup(mNameEditText.getText().toString(), mNicknameEditText.getText().toString(), mPasswordEditText.getText().toString());
                             }
                         } catch (TException e) {
                             e.printStackTrace();
