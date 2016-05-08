@@ -17,6 +17,7 @@ import ninja.taskbook.model.entity.TaskEntity;
 public class TaskDetailFragment extends Fragment {
 
     //----------------------------------------------------------------------------------------------------
+    TextView mIdTextView;
     TextView mNameTextView;
     TextView mContentTextView;
     int mTaskId = 0;
@@ -39,6 +40,10 @@ public class TaskDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.task_detail, container, false);
 
+        // Id
+        mIdTextView = (TextView)rootView.findViewById(R.id.id_text_view);
+        mIdTextView.setText("id");
+
         // Name
         mNameTextView = (TextView)rootView.findViewById(R.id.name_text_view);
         mNameTextView.setText("name");
@@ -60,6 +65,7 @@ public class TaskDetailFragment extends Fragment {
     //----------------------------------------------------------------------------------------------------
     private void loadTaskData() {
         if (mTaskInfo != null) {
+            mIdTextView.setText(String.valueOf(mTaskInfo.taskId));
             mNameTextView.setText(mTaskInfo.taskName);
             mContentTextView.setText(mTaskInfo.taskContent);
         }

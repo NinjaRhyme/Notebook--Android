@@ -9,8 +9,11 @@ import android.widget.TextView;
 
 import org.apache.thrift.TException;
 
+import java.util.List;
+
 import ninja.taskbook.R;
 import ninja.taskbook.model.data.DataManager;
+import ninja.taskbook.model.entity.GroupEntity;
 import ninja.taskbook.model.entity.UserEntity;
 import ninja.taskbook.model.network.thrift.manager.ThriftManager;
 import ninja.taskbook.model.network.thrift.service.TaskBookService;
@@ -61,37 +64,15 @@ public class ProfileFragment extends Fragment {
 
     //----------------------------------------------------------------------------------------------------
     private void loadProfileData() {
-        UserEntity entity = DataManager.getInstance().getUserItem();
-        if (entity == null) {
-            return;
-        }
-
-        Observable.just(entity.userId)
-                .map(new Func1<Integer, ThriftUserInfo>() {
+        DataManager.getInstance().requestUserItem(
+                new DataManager.RequestCallback<UserEntity>() {
                     @Override
-                    public ThriftUserInfo call(Integer userId) {
-                        try {
-                            TaskBookService.Client client = (TaskBookService.Client) ThriftManager.createClient(ThriftManager.ClientTypeEnum.CLIENT.toString());
-                            if (client != null) {
-                                return client.userInfo(userId);
-                            }
-                        } catch (TException e) {
-                            e.printStackTrace();
-                        }
-                        return null;
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<ThriftUserInfo>() {
-                    @Override
-                    public void call(ThriftUserInfo result) {
-                        DataManager.getInstance().setUserItem(new UserEntity(result.userId, result.userName, result.userNickname));
-
+                    public void onResult(UserEntity result) {
                         mIdTextView.setText(String.valueOf(result.userId));
-                        mNameTextView.setText(result.getUserName());
-                        mNicknameTextView.setText(result.getUserNickname());
+                        mNameTextView.setText(result.userName);
+                        mNicknameTextView.setText(result.userNickname);
                     }
-                });
+                }
+        );
     }
 }

@@ -73,7 +73,7 @@ public class GroupFragment extends Fragment {
         });
 
         // Load
-        loadProfileData();
+        loadGroupData();
 
         return rootView;
     }
@@ -97,42 +97,16 @@ public class GroupFragment extends Fragment {
     }
 
     //----------------------------------------------------------------------------------------------------
-    private void loadProfileData() {
-        UserEntity entity = DataManager.getInstance().getUserItem();
-        if (entity == null) {
-            return;
-        }
-
-        Observable.just(entity.userId)
-                .map(new Func1<Integer, List<ThriftGroupInfo>>() {
+    private void loadGroupData() {
+        DataManager.getInstance().requestGroupItems(
+                new DataManager.RequestCallback<List<GroupEntity>>() {
                     @Override
-                    public List<ThriftGroupInfo> call(Integer userId) {
-                        try {
-                            TaskBookService.Client client = (TaskBookService.Client) ThriftManager.createClient(ThriftManager.ClientTypeEnum.CLIENT.toString());
-                            if (client != null)
-                                return client.groupInfos(userId);
-                        } catch (TException e) {
-                            e.printStackTrace();
-                        }
-                        return null;
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<List<ThriftGroupInfo>>() {
-                    @Override
-                    public void call(List<ThriftGroupInfo> result) {
-                        mGroupItems.clear();
-                        if (result != null) {
-                            for (ThriftGroupInfo info : result) {
-                                GroupEntity entity = new GroupEntity(info.groupId, info.groupName);
-                                mGroupItems.add(entity);
-                            }
-                        }
-                        DataManager.getInstance().setGroupItems(mGroupItems);
+                    public void onResult(List<GroupEntity> result) {
+                        mGroupItems = result;
                         mRecyclerView.getAdapter().notifyDataSetChanged();
                     }
-                });
+                }
+        );
     }
 
     //----------------------------------------------------------------------------------------------------
@@ -151,11 +125,11 @@ public class GroupFragment extends Fragment {
     // GroupItemHolder
     //----------------------------------------------------------------------------------------------------
     class GroupItemHolder extends RecyclerView.ViewHolder {
-        public TextView itemTitleTextView;
+        public TextView groupNameTextView;
 
         public GroupItemHolder(View itemView) {
             super(itemView);
-            itemTitleTextView = (TextView)itemView.findViewById(R.id.item_title);
+            groupNameTextView = (TextView)itemView.findViewById(R.id.group_name_text_view);
         }
     }
 
@@ -180,7 +154,7 @@ public class GroupFragment extends Fragment {
         @Override
         public void onBindViewHolder(GroupItemHolder holder, final int position) {
             View view = holder.itemView;
-            holder.itemTitleTextView.setText(mGroupItems.get(position).groupName);
+            holder.groupNameTextView.setText(mGroupItems.get(position).groupName);
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

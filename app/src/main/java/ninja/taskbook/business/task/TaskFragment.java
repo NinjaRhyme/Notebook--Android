@@ -21,6 +21,7 @@ import java.util.List;
 import ninja.taskbook.R;
 import ninja.taskbook.business.group.GroupTaskLineFragment;
 import ninja.taskbook.model.data.DataManager;
+import ninja.taskbook.model.entity.GroupEntity;
 import ninja.taskbook.model.entity.TaskEntity;
 import ninja.taskbook.model.entity.UserEntity;
 import ninja.taskbook.model.network.thrift.manager.ThriftManager;
@@ -64,48 +65,22 @@ public class TaskFragment extends Fragment {
         mRecyclerView.setAdapter(new TaskItemAdapter());
 
         // Load
-        loadTaskItems();
+        loadTaskData();
 
         return rootView;
     }
 
     //----------------------------------------------------------------------------------------------------
-    private void loadTaskItems() {
-        UserEntity entity = DataManager.getInstance().getUserItem();
-        if (entity == null) {
-            return;
-        }
-
-        Observable.just(entity.userId)
-                .map(new Func1<Integer, List<ThriftTaskInfo>>() {
+    private void loadTaskData() {
+        DataManager.getInstance().requestTaskItems(
+                new DataManager.RequestCallback<List<TaskEntity>>() {
                     @Override
-                    public List<ThriftTaskInfo> call(Integer userId) {
-                        try {
-                            TaskBookService.Client client = (TaskBookService.Client) ThriftManager.createClient(ThriftManager.ClientTypeEnum.CLIENT.toString());
-                            if (client != null) {
-                                return client.userTaskInfos(userId);
-                            }
-                        } catch (TException e) {
-                            e.printStackTrace();
-                        }
-                        return null;
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<List<ThriftTaskInfo>>() {
-                    @Override
-                    public void call(List<ThriftTaskInfo> result) {
-                        mTaskItems.clear();
-                        if (result != null) {
-                            for (ThriftTaskInfo info : result) {
-                                mTaskItems.add(new TaskEntity(info.taskId, info.groupId, info.taskAuthor, info.taskName, info.taskContent, info.taskTime, (float) info.taskProgress));
-                            }
-                        }
-                        DataManager.getInstance().setTaskItems(mTaskItems);
+                    public void onResult(List<TaskEntity> result) {
+                        mTaskItems = result;
                         mRecyclerView.getAdapter().notifyDataSetChanged();
                     }
-                });
+                }
+        );
     }
 
     //----------------------------------------------------------------------------------------------------
@@ -124,13 +99,15 @@ public class TaskFragment extends Fragment {
     // TaskItemHolder
     //----------------------------------------------------------------------------------------------------
     class TaskItemHolder extends RecyclerView.ViewHolder {
-        public TextView itemTitleTextView;
-        public TextView itemAuthorTextView;
+        public TextView titleTextView;
+        public TextView groupNameTextView;
+        public TextView authorTextView;
 
         public TaskItemHolder(View itemView) {
             super(itemView);
-            itemTitleTextView = (TextView)itemView.findViewById(R.id.item_title);
-            itemAuthorTextView = (TextView)itemView.findViewById(R.id.item_author);
+            titleTextView = (TextView)itemView.findViewById(R.id.title_text_view);
+            groupNameTextView = (TextView)itemView.findViewById(R.id.group_name_text_view);
+            authorTextView = (TextView)itemView.findViewById(R.id.author_text_view);
         }
     }
 
@@ -169,12 +146,15 @@ public class TaskFragment extends Fragment {
                     cardView.setCardBackgroundColor(Color.parseColor("#657DC1"));
                     break;
             }
-            holder.itemTitleTextView.setText(mTaskItems.get(position).taskName);
-            holder.itemAuthorTextView.setText(mTaskItems.get(position).taskAuthor);
+            final TaskEntity taskEntity = mTaskItems.get(position);
+            final GroupEntity groupEntity = DataManager.getInstance().getGroupItem(taskEntity.taskGroupId); // Todo !!!
+            holder.titleTextView.setText(taskEntity.taskName);
+            holder.groupNameTextView.setText(groupEntity.groupName);
+            holder.authorTextView.setText(taskEntity.taskAuthor);
             cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    onTaskItemClicked(mTaskItems.get(position).taskId);
+                    onTaskItemClicked(taskEntity.taskId);
                 }
             });
         }

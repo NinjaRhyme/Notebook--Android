@@ -20,6 +20,7 @@ import java.util.List;
 import ninja.taskbook.R;
 import ninja.taskbook.model.data.DataManager;
 import ninja.taskbook.model.entity.NotificationEntity;
+import ninja.taskbook.model.entity.TaskEntity;
 import ninja.taskbook.model.entity.UserEntity;
 import ninja.taskbook.model.network.thrift.manager.ThriftManager;
 import ninja.taskbook.model.network.thrift.service.TaskBookService;
@@ -65,39 +66,15 @@ public class NotificationFragment  extends Fragment {
 
     //----------------------------------------------------------------------------------------------------
     private void loadNotificationData() {
-        UserEntity entity = DataManager.getInstance().getUserItem();
-        if (entity == null) {
-            return;
-        }
-
-        Observable.just(entity.userId)
-                .map(new Func1<Integer, List<ThriftNotification>>() {
+        DataManager.getInstance().requestNotificationItems(
+                new DataManager.RequestCallback<List<NotificationEntity>>() {
                     @Override
-                    public List<ThriftNotification> call(Integer userId) {
-                        try {
-                            TaskBookService.Client client = (TaskBookService.Client)ThriftManager.createClient(ThriftManager.ClientTypeEnum.CLIENT.toString());
-                            if (client != null)
-                                return client.notifications(userId);
-                        } catch (TException e) {
-                            e.printStackTrace();
-                        }
-                        return null;
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<List<ThriftNotification>>() {
-                    @Override
-                    public void call(List<ThriftNotification> result) {
-                        mNotificationItems.clear();
-                        for (ThriftNotification item : result) {
-                            NotificationEntity entity = new NotificationEntity(item.notificationId, item.notificationOwnerId, item.notificationReceiverId, item.notificationType.getValue(), item.notificationData);
-                            mNotificationItems.add(entity);
-                        }
-                        DataManager.getInstance().setNotificationItems(mNotificationItems);
+                    public void onResult(List<NotificationEntity> result) {
+                        mNotificationItems = result;
                         mRecyclerView.getAdapter().notifyDataSetChanged();
                     }
-                });
+                }
+        );
     }
 
     //----------------------------------------------------------------------------------------------------
@@ -123,11 +100,11 @@ public class NotificationFragment  extends Fragment {
     // NotificationItemHolder
     //----------------------------------------------------------------------------------------------------
     class NotificationItemHolder extends RecyclerView.ViewHolder {
-        public TextView itemTitleTextView;
+        public TextView titleTextView;
 
         public NotificationItemHolder(View itemView) {
             super(itemView);
-            itemTitleTextView = (TextView)itemView.findViewById(R.id.item_title);
+            titleTextView = (TextView)itemView.findViewById(R.id.title_text_view);
         }
     }
 
@@ -152,7 +129,7 @@ public class NotificationFragment  extends Fragment {
         @Override
         public void onBindViewHolder(NotificationItemHolder holder, final int position) {
             View view = holder.itemView;
-            holder.itemTitleTextView.setText(mNotificationItems.get(position).notificationData);
+            holder.titleTextView.setText(mNotificationItems.get(position).notificationData);
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

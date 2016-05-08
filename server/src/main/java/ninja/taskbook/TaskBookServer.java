@@ -41,7 +41,7 @@ public class TaskBookServer {
     public TaskBookServer() {
 
         // Demo
-
+        /*
         UserTable userTable = (UserTable)mDatabaseManager.getTable(UserTable.class);
         userTable.drop();
         userTable = (UserTable)mDatabaseManager.getTable(UserTable.class);
@@ -91,7 +91,7 @@ public class TaskBookServer {
         userTaskTable.insert(userTaskRelation);
         userTaskRelation = new UserTaskRelation(0, 1, 4, 0);
         userTaskTable.insert(userTaskRelation);
-
+        */
     }
 
     //----------------------------------------------------------------------------------------------------
