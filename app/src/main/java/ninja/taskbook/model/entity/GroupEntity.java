@@ -6,6 +6,7 @@ public class GroupEntity {
     //----------------------------------------------------------------------------------------------------
     public int groupId;
     public String groupName;
+    public int groupUserRole;
 
     //----------------------------------------------------------------------------------------------------
     public GroupEntity() {
@@ -13,8 +14,9 @@ public class GroupEntity {
     }
 
     //----------------------------------------------------------------------------------------------------
-    public GroupEntity(int id, String name) {
+    public GroupEntity(int id, String name, int userRole) {
         groupId = id;
         groupName = name;
+        groupUserRole = userRole;
     }
 }

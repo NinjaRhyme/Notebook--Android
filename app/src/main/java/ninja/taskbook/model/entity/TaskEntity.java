@@ -11,6 +11,7 @@ public class TaskEntity {
     public String taskContent;
     public String taskTime;
     public float taskProgress;
+    public int taskUserRole;
 
     //----------------------------------------------------------------------------------------------------
     public TaskEntity() {
@@ -18,7 +19,7 @@ public class TaskEntity {
     }
 
     //----------------------------------------------------------------------------------------------------
-    public TaskEntity(int id, int groupId, String author, String name, String content, String time, float progress) {
+    public TaskEntity(int id, int groupId, String author, String name, String content, String time, float progress, int userRole) {
         taskId = id;
         taskGroupId = groupId;
         taskAuthor = author;
@@ -26,5 +27,6 @@ public class TaskEntity {
         taskContent = content;
         taskTime = time;
         taskProgress = progress;
+        taskUserRole = userRole;
     }
 }

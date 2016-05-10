@@ -3,7 +3,9 @@ package ninja.taskbook.model.database;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import ninja.taskbook.model.entity.TaskEntity;
 import ninja.taskbook.model.entity.UserTaskRelation;
+import ninja.taskbook.util.pair.Pair;
 
 //----------------------------------------------------------------------------------------------------
 public class UserTaskTable extends TableBase<UserTaskRelation> {
@@ -30,6 +32,12 @@ public class UserTaskTable extends TableBase<UserTaskRelation> {
 
     //----------------------------------------------------------------------------------------------------
     @Override
+    public String getRelationTableName() {
+        return TABLE_NAME + " inner join " + TaskTable.TABLE_NAME;
+    }
+
+    //----------------------------------------------------------------------------------------------------
+    @Override
     public String getCreationSQL() {
         StringBuilder builder = new StringBuilder("CREATE TABLE IF NOT EXISTS ");
         builder.append(TABLE_NAME);
@@ -51,6 +59,24 @@ public class UserTaskTable extends TableBase<UserTaskRelation> {
             entity.userRole = rs.getInt("user_role");
 
             return entity;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    //----------------------------------------------------------------------------------------------------
+    @Override
+    public Pair<?, ?> resultSetToRelationEntity(ResultSet rs) {
+        try {
+            UserTaskRelation relation = new UserTaskRelation();
+            relation.userTaskId = rs.getInt("user_task_id");
+            relation.userId = rs.getInt("user_id");
+            relation.taskId = rs.getInt("task_id");
+            relation.userRole = rs.getInt("user_role");
+            TaskEntity entity = (new TaskTable()).resultSetToEntity(rs);
+
+            return new Pair<>(relation, entity);
         } catch (SQLException e) {
             e.printStackTrace();
         }

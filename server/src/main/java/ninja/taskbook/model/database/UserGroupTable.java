@@ -3,7 +3,9 @@ package ninja.taskbook.model.database;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import ninja.taskbook.model.entity.GroupEntity;
 import ninja.taskbook.model.entity.UserGroupRelation;
+import ninja.taskbook.util.pair.Pair;
 
 public class UserGroupTable extends TableBase<UserGroupRelation> {
 
@@ -29,6 +31,12 @@ public class UserGroupTable extends TableBase<UserGroupRelation> {
 
     //----------------------------------------------------------------------------------------------------
     @Override
+    public String getRelationTableName() {
+        return TABLE_NAME + " inner join " + GroupTable.TABLE_NAME;
+    }
+
+    //----------------------------------------------------------------------------------------------------
+    @Override
     public String getCreationSQL() {
         StringBuilder builder = new StringBuilder("CREATE TABLE IF NOT EXISTS ");
         builder.append(TABLE_NAME);
@@ -50,6 +58,24 @@ public class UserGroupTable extends TableBase<UserGroupRelation> {
             entity.userRole = rs.getInt("user_role");
 
             return entity;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    //----------------------------------------------------------------------------------------------------
+    @Override
+    public Pair<?, ?> resultSetToRelationEntity(ResultSet rs) {
+        try {
+            UserGroupRelation relation = new UserGroupRelation();
+            relation.userGroupId = rs.getInt("user_group_id");
+            relation.userId = rs.getInt("user_id");
+            relation.groupId = rs.getInt("group_id");
+            relation.userRole = rs.getInt("user_role");
+            GroupEntity entity = (new GroupTable()).resultSetToEntity(rs);
+
+            return new Pair<>(relation, entity);
         } catch (SQLException e) {
             e.printStackTrace();
         }

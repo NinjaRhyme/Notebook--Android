@@ -6,6 +6,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import ninja.taskbook.util.pair.Pair;
+
 // Todo: rollback
 //----------------------------------------------------------------------------------------------------
 public abstract class TableBase<T> {
@@ -37,8 +39,14 @@ public abstract class TableBase<T> {
 
     //----------------------------------------------------------------------------------------------------
     public abstract String getTableName();
+    public String getRelationTableName() {
+        return getTableName();
+    }
     public abstract String getCreationSQL();
     public abstract T resultSetToEntity(ResultSet rs);
+    public Pair<?, ?> resultSetToRelationEntity(ResultSet rs) {
+        return null;
+    }
     public abstract String entityToString(T entity);
 
     //----------------------------------------------------------------------------------------------------
@@ -62,6 +70,23 @@ public abstract class TableBase<T> {
             ResultSet resultSet = stat.executeQuery(sql);
             while (resultSet.next()) {
                 result.add(resultSetToEntity(resultSet));
+            }
+            stat.close();
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    //----------------------------------------------------------------------------------------------------
+    public List<Pair<?, ?>> executeRelationQuery(String sql) {
+        try {
+            List<Pair<?, ?>> result = new ArrayList<>();
+            Statement stat = mConnection.createStatement();
+            ResultSet resultSet = stat.executeQuery(sql);
+            while (resultSet.next()) {
+                result.add(resultSetToRelationEntity(resultSet));
             }
             stat.close();
             return result;
@@ -148,11 +173,30 @@ public abstract class TableBase<T> {
         }
     }
 
-    //----------------------------------------------------------------------------------------------------
     public List<T> queryEntities(String where) {
         try{
             String sql = "select * from " + getTableName() + " where " + where + ";";
             return executeQuery(sql);
+        }catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Pair<?, ?> queryRelationEntity(String on) {
+        try{
+            List<Pair<?, ?>> entities = queryRelationEntities(on);
+            return 0 < entities.size() ? entities.get(0) : null;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public List<Pair<?, ?>> queryRelationEntities(String on) {
+        try{
+            String sql = "select * from " + getRelationTableName() + " on " + on + ";";
+            return executeRelationQuery(sql);
         }catch (Exception e) {
             e.printStackTrace();
             return null;

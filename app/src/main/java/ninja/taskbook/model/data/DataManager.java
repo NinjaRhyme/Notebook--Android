@@ -157,7 +157,7 @@ public class DataManager {
                         mGroupItems.clear();
                         if (result != null) {
                             for (ThriftGroupInfo info : result) {
-                                GroupEntity entity = new GroupEntity(info.groupId, info.groupName);
+                                GroupEntity entity = new GroupEntity(info.groupId, info.groupName, info.userRole);
                                 mGroupItems.add(entity);
                             }
                         }
@@ -228,7 +228,7 @@ public class DataManager {
                         mTaskItems.clear();
                         if (result != null) {
                             for (ThriftTaskInfo info : result) {
-                                mTaskItems.add(new TaskEntity(info.taskId, info.groupId, info.taskAuthor, info.taskName, info.taskContent, info.taskTime, (float) info.taskProgress));
+                                mTaskItems.add(new TaskEntity(info.taskId, info.groupId, info.taskAuthor, info.taskName, info.taskContent, info.taskTime, (float)info.taskProgress, info.userRole));
                             }
                         }
                         if (callback != null) {

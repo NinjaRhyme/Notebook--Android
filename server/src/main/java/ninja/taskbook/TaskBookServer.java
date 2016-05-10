@@ -29,6 +29,7 @@ import ninja.taskbook.model.network.thrift.service.ThriftNotification;
 import ninja.taskbook.model.network.thrift.service.ThriftNotificationType;
 import ninja.taskbook.model.network.thrift.service.ThriftTaskInfo;
 import ninja.taskbook.model.network.thrift.service.ThriftUserInfo;
+import ninja.taskbook.util.pair.Pair;
 
 //----------------------------------------------------------------------------------------------------
 public class TaskBookServer {
@@ -67,6 +68,8 @@ public class TaskBookServer {
         userGroupTable.insert(userGroupRelation);
         userGroupRelation = new UserGroupRelation(0, 1, 2, 0);
         userGroupTable.insert(userGroupRelation);
+        userGroupRelation = new UserGroupRelation(0, 1, 3, 0);
+        userGroupTable.insert(userGroupRelation);
 
         TaskTable taskTable = (TaskTable)mDatabaseManager.getTable(TaskTable.class);
         taskTable.drop();
@@ -92,6 +95,9 @@ public class TaskBookServer {
         userTaskRelation = new UserTaskRelation(0, 1, 4, 0);
         userTaskTable.insert(userTaskRelation);
         */
+
+        //UserGroupTable userGroupTable = (UserGroupTable)mDatabaseManager.getTable(UserGroupTable.class);
+        //List<?> tmp = userGroupTable.queryRelationEntities("user_id = '" + 1 + "' and user_group.group_id = 'group'.group_id and user_group.group_id = '" + 1 + "'");
     }
 
     //----------------------------------------------------------------------------------------------------
@@ -120,6 +126,7 @@ public class TaskBookServer {
         public ServiceImpl() {
         }
 
+        //----------------------------------------------------------------------------------------------------
         @Override
         public int login(String userName, String userPassword) throws org.apache.thrift.TException {
             UserTable table = (UserTable)mDatabaseManager.getTable(UserTable.class);
@@ -144,6 +151,7 @@ public class TaskBookServer {
             return 0;
         }
 
+        //----------------------------------------------------------------------------------------------------
         @Override
         public ThriftUserInfo userInfo(int userId) throws org.apache.thrift.TException {
             UserTable table = (UserTable)mDatabaseManager.getTable(UserTable.class);
@@ -154,13 +162,17 @@ public class TaskBookServer {
             return null;
         }
 
+        //----------------------------------------------------------------------------------------------------
         @Override
         public ThriftGroupInfo groupInfo(int userId, int groupId) throws org.apache.thrift.TException {
-            // Todo:userRole = ?;
-            GroupTable table = (GroupTable)mDatabaseManager.getTable(GroupTable.class);
-            GroupEntity entity = table.queryEntity("group_id = '" + groupId + "'");
-            if (entity != null) {
-                return new ThriftGroupInfo(entity.groupId, entity.groupName);
+            UserGroupTable userGroupTable = (UserGroupTable)mDatabaseManager.getTable(UserGroupTable.class);
+            Pair<?, ?> pair = userGroupTable.queryRelationEntity("user_id = '" + userId + "' and user_group.group_id = 'group'.group_id and user_group.group_id = '" + groupId + "'");
+            if (pair != null) {
+                UserGroupRelation relation = (UserGroupRelation)pair.first;
+                GroupEntity entity = (GroupEntity)pair.second;
+                ThriftGroupInfo groupInfo = new ThriftGroupInfo(entity.groupId, entity.groupName);
+                groupInfo.userRole = relation.userRole;
+                return groupInfo;
             }
             return null;
         }
@@ -168,20 +180,15 @@ public class TaskBookServer {
         @Override
         public List<ThriftGroupInfo> groupInfos(int userId) throws org.apache.thrift.TException {
             UserGroupTable userGroupTable = (UserGroupTable)mDatabaseManager.getTable(UserGroupTable.class);
-            List<UserGroupRelation> relations = userGroupTable.queryEntities("user_id = '" + userId + "'");
-            if (relations.size() > 0) {
-                String idSet = "(";
-                for (UserGroupRelation relation : relations) {
-                    idSet += relation.groupId + ",";
-                }
-                idSet = idSet.substring(0, idSet.length() - 1);
-                idSet += ")";
-
-                GroupTable groupTable = (GroupTable)mDatabaseManager.getTable(GroupTable.class);
-                List<GroupEntity> entities = groupTable.queryEntities("group_id in " + idSet);
+            List<Pair<?, ?>> pairs = userGroupTable.queryRelationEntities("user_id = '" + userId + "' and user_group.group_id = 'group'.group_id");
+            if (pairs != null) {
                 List<ThriftGroupInfo> groupInfos = new ArrayList<>();
-                for (GroupEntity entity : entities) {
-                    groupInfos.add(new ThriftGroupInfo(entity.groupId, entity.groupName));
+                for (Pair<?, ?> pair : pairs) {
+                    UserGroupRelation relation = (UserGroupRelation)pair.first;
+                    GroupEntity entity = (GroupEntity)pair.second;
+                    ThriftGroupInfo info = new ThriftGroupInfo(entity.groupId, entity.groupName);
+                    info.userRole = relation.userRole;
+                    groupInfos.add(info);
                 }
                 return groupInfos;
             }
@@ -217,20 +224,24 @@ public class TaskBookServer {
 
         @Override
         public boolean invite(int userId, int groupId, int targetUserId) throws org.apache.thrift.TException {
-            // Todo: user's right
+            // Todo: user's rights
             JSONObject jsonData = new JSONObject();
             jsonData.put("group_id", String.valueOf(groupId));
             ThriftNotification notification = new ThriftNotification(0, userId, targetUserId, ThriftNotificationType.NOTIFICATION_INVITE, jsonData.toString());
             return sendNotification(userId, notification);
         }
 
+        //----------------------------------------------------------------------------------------------------
         @Override
         public ThriftTaskInfo taskInfo(int userId, int taskId) throws org.apache.thrift.TException {
-            // Todo:userRole = ?;
-            TaskTable table = (TaskTable)mDatabaseManager.getTable(TaskTable.class);
-            TaskEntity entity = table.queryEntity("task_id = '" + taskId + "'");
-            if (entity != null) {
-                return new ThriftTaskInfo(entity.taskId, entity.taskGroupId, entity.taskAuthor, entity.taskName, entity.taskContent, entity.taskTime, entity.taskDeadline, entity.taskProgress);
+            UserTaskTable userTaskTable = (UserTaskTable)mDatabaseManager.getTable(UserTaskTable.class);
+            Pair<?, ?> pair = userTaskTable.queryRelationEntity("user_id = '" + userId + "' and user_task.task_id = task.task_id and user_task.task_id = '" + taskId + "'");
+            if (pair != null) {
+                UserTaskRelation relation = (UserTaskRelation)pair.first;
+                TaskEntity entity = (TaskEntity)pair.second;
+                ThriftTaskInfo taskInfo = new ThriftTaskInfo(entity.taskId, entity.taskGroupId, entity.taskAuthor, entity.taskName, entity.taskContent, entity.taskTime, entity.taskDeadline, entity.taskProgress);
+                taskInfo.userRole = relation.userRole;
+                return taskInfo;
             }
             return null;
         }
@@ -238,20 +249,15 @@ public class TaskBookServer {
         @Override
         public List<ThriftTaskInfo> userTaskInfos(int userId) throws org.apache.thrift.TException {
             UserTaskTable userTaskTable = (UserTaskTable)mDatabaseManager.getTable(UserTaskTable.class);
-            List<UserTaskRelation> relations = userTaskTable.queryEntities("user_id = '" + userId + "'");
-            if (relations.size() > 0) {
-                String idSet = "(";
-                for (UserTaskRelation relation : relations) {
-                    idSet += relation.taskId + ",";
-                }
-                idSet = idSet.substring(0, idSet.length() - 1);
-                idSet += ")";
-
-                TaskTable taskTable = (TaskTable)mDatabaseManager.getTable(TaskTable.class);
-                List<TaskEntity> entities = taskTable.queryEntities("task_id in " + idSet);
+            List<Pair<?, ?>> pairs = userTaskTable.queryRelationEntities("user_id = '" + userId + "' and user_task.task_id = task.task_id");
+            if (pairs != null) {
                 List<ThriftTaskInfo> taskInfos = new ArrayList<>();
-                for (TaskEntity entity : entities) {
-                    taskInfos.add(new ThriftTaskInfo(entity.taskId, entity.taskGroupId, entity.taskAuthor, entity.taskName, entity.taskContent, entity.taskTime, entity.taskTime, entity.taskProgress)); // Todo: deadline
+                for (Pair<?, ?> pair : pairs) {
+                    UserTaskRelation relation = (UserTaskRelation)pair.first;
+                    TaskEntity entity = (TaskEntity)pair.second;
+                    ThriftTaskInfo taskInfo = new ThriftTaskInfo(entity.taskId, entity.taskGroupId, entity.taskAuthor, entity.taskName, entity.taskContent, entity.taskTime, entity.taskDeadline, entity.taskProgress);
+                    taskInfo.userRole = relation.userRole;
+                    taskInfos.add(taskInfo);
                 }
                 return taskInfos;
             }
@@ -283,6 +289,7 @@ public class TaskBookServer {
             return null;
         }
 
+        //----------------------------------------------------------------------------------------------------
         @Override
         public boolean sendNotification(int userId, ThriftNotification notification) throws org.apache.thrift.TException {
             // Todo: userId vs ownerId && Json
@@ -302,10 +309,10 @@ public class TaskBookServer {
                 case NOTIFICATION_JOIN_ANSWER:
                     if (0 < notification.notificationId && jsonData.has("result")) {
                         if (jsonData.getString("result").equals("YES")) {
-                            NotificationTable table = (NotificationTable) mDatabaseManager.getTable(NotificationTable.class);
+                            NotificationTable table = (NotificationTable)mDatabaseManager.getTable(NotificationTable.class);
                             int groupId = jsonData.has("group_id") ? jsonData.getInt("group_id") : 0;
                             if (0 < groupId) {
-                                UserGroupTable userGroupTable = (UserGroupTable) mDatabaseManager.getTable(UserGroupTable.class);
+                                UserGroupTable userGroupTable = (UserGroupTable)mDatabaseManager.getTable(UserGroupTable.class);
                                 UserGroupRelation relation = new UserGroupRelation(0, userId, groupId, UserGroupRelation.UserGroupRole.USER_GROUP_MEMBER.ordinal());
                                 userGroupTable.insert(relation);
                                 table.delete("notification_id = '" + notification.notificationId + "'");
@@ -317,7 +324,7 @@ public class TaskBookServer {
                 case NOTIFICATION_INVITE_ANSWER:
                     if (0 < notification.notificationId && jsonData.has("result")) {
                         if (jsonData.getString("result").equals("YES")) {
-                            NotificationTable table = (NotificationTable) mDatabaseManager.getTable(NotificationTable.class);
+                            NotificationTable table = (NotificationTable)mDatabaseManager.getTable(NotificationTable.class);
                             int groupId = jsonData.has("group_id") ? jsonData.getInt("group_id") : 0;
                             if (0 < groupId) {
                                 UserGroupTable userGroupTable = (UserGroupTable) mDatabaseManager.getTable(UserGroupTable.class);
