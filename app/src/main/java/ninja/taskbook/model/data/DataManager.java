@@ -228,7 +228,7 @@ public class DataManager {
                         mTaskItems.clear();
                         if (result != null) {
                             for (ThriftTaskInfo info : result) {
-                                mTaskItems.add(new TaskEntity(info.taskId, info.groupId, info.taskAuthor, info.taskName, info.taskContent, info.taskTime, (float)info.taskProgress, info.userRole));
+                                mTaskItems.add(new TaskEntity(info.taskId, info.groupId, info.taskAuthor, info.taskName, info.taskContent, info.taskBeginning, (float)info.taskProgress, info.userRole));
                             }
                         }
                         if (callback != null) {

@@ -16,7 +16,7 @@ public class TaskTable extends TableBase<TaskEntity> {
             "task_author VARCHAR(255) DEFAULT \"\",",
             "task_name VARCHAR(255) DEFAULT \"\",",
             "task_content VARCHAR(1023) DEFAULT \"\",",
-            "task_time VARCHAR(255) DEFAULT \"\",",
+            "task_beginning VARCHAR(255) DEFAULT \"\",",
             "task_deadline VARCHAR(255) DEFAULT \"\",",
             "task_progress FLOAT DEFAULT 0);",
     };
@@ -54,7 +54,7 @@ public class TaskTable extends TableBase<TaskEntity> {
             entity.taskAuthor = rs.getString("task_author");
             entity.taskName = rs.getString("task_name");
             entity.taskContent = rs.getString("task_content");
-            entity.taskTime = rs.getString("task_time");
+            entity.taskBeginning = rs.getString("task_beginning");
             entity.taskDeadline = rs.getString("task_deadline");
             entity.taskProgress = rs.getFloat("task_progress");
 
@@ -74,7 +74,7 @@ public class TaskTable extends TableBase<TaskEntity> {
         result += "'" + entity.taskAuthor + "',";
         result += "'" + entity.taskName + "',";
         result += "'" + entity.taskContent + "',";
-        result += "'" + entity.taskTime + "',";
+        result += "'" + entity.taskBeginning + "',";
         result += "'" + entity.taskDeadline + "',";
         result += "'" + entity.taskProgress + "'";
 

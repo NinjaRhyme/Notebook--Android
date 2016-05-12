@@ -239,7 +239,7 @@ public class TaskBookServer {
             if (pair != null) {
                 UserTaskRelation relation = (UserTaskRelation)pair.first;
                 TaskEntity entity = (TaskEntity)pair.second;
-                ThriftTaskInfo taskInfo = new ThriftTaskInfo(entity.taskId, entity.taskGroupId, entity.taskAuthor, entity.taskName, entity.taskContent, entity.taskTime, entity.taskDeadline, entity.taskProgress);
+                ThriftTaskInfo taskInfo = new ThriftTaskInfo(entity.taskId, entity.taskGroupId, entity.taskAuthor, entity.taskName, entity.taskContent, entity.taskBeginning, entity.taskDeadline, entity.taskProgress);
                 taskInfo.userRole = relation.userRole;
                 return taskInfo;
             }
@@ -255,7 +255,7 @@ public class TaskBookServer {
                 for (Pair<?, ?> pair : pairs) {
                     UserTaskRelation relation = (UserTaskRelation)pair.first;
                     TaskEntity entity = (TaskEntity)pair.second;
-                    ThriftTaskInfo taskInfo = new ThriftTaskInfo(entity.taskId, entity.taskGroupId, entity.taskAuthor, entity.taskName, entity.taskContent, entity.taskTime, entity.taskDeadline, entity.taskProgress);
+                    ThriftTaskInfo taskInfo = new ThriftTaskInfo(entity.taskId, entity.taskGroupId, entity.taskAuthor, entity.taskName, entity.taskContent, entity.taskBeginning, entity.taskDeadline, entity.taskProgress);
                     taskInfo.userRole = relation.userRole;
                     taskInfos.add(taskInfo);
                 }
@@ -270,7 +270,7 @@ public class TaskBookServer {
             List<TaskEntity> entities = userTaskTable.queryEntities("task_group_id = '" + groupId + "'");
             List<ThriftTaskInfo> taskInfos = new ArrayList<>();
             for (TaskEntity entity : entities) {
-                taskInfos.add(new ThriftTaskInfo(entity.taskId, entity.taskGroupId, entity.taskAuthor, entity.taskName, entity.taskContent, entity.taskTime, entity.taskDeadline, entity.taskProgress));
+                taskInfos.add(new ThriftTaskInfo(entity.taskId, entity.taskGroupId, entity.taskAuthor, entity.taskName, entity.taskContent, entity.taskBeginning, entity.taskDeadline, entity.taskProgress));
             }
             return taskInfos;
         }
@@ -278,7 +278,7 @@ public class TaskBookServer {
         @Override
         public ThriftTaskInfo createTask(int userId, ThriftTaskInfo taskInfo) throws org.apache.thrift.TException {
             TaskTable table = (TaskTable)mDatabaseManager.getTable(TaskTable.class);
-            TaskEntity entity = new TaskEntity(0, taskInfo.groupId, taskInfo.taskAuthor, taskInfo.taskName, taskInfo.taskContent, taskInfo.taskTime, taskInfo.taskDeadline, (float)taskInfo.taskProgress);
+            TaskEntity entity = new TaskEntity(0, taskInfo.groupId, taskInfo.taskAuthor, taskInfo.taskName, taskInfo.taskContent, taskInfo.taskBeginning, taskInfo.taskDeadline, (float)taskInfo.taskProgress);
             int taskId = table.insert(entity);
             if (0 < taskId) {
                 UserTaskTable userTaskTable = (UserTaskTable)mDatabaseManager.getTable(UserTaskTable.class);

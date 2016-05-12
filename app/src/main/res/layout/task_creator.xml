@@ -56,10 +56,33 @@
                 android:layout_height="match_parent"
                 android:layout_weight="3"
                 android:gravity="center_vertical|end"
-                android:text="Task Time"
+                android:text="Task Beginning"
                 android:textColor="@color/task_text_color"/>
             <EditText
-                android:id="@+id/task_time_edit_text"
+                android:id="@+id/task_beginning_calendar_edit_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="6"
+                android:ems="10"
+                android:text=""
+                android:inputType="none"
+                android:textColor="@color/task_text_color"
+                android:backgroundTint="@color/task_text_color"/>
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="4"/>
+            <EditText
+                android:id="@+id/task_beginning_time_edit_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="6"
@@ -90,7 +113,30 @@
                 android:text="Task Deadline"
                 android:textColor="@color/task_text_color"/>
             <EditText
-                android:id="@+id/task_deadline_edit_text"
+                android:id="@+id/task_deadline_calendar_edit_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="6"
+                android:ems="10"
+                android:text=""
+                android:inputType="none"
+                android:textColor="@color/task_text_color"
+                android:backgroundTint="@color/task_text_color"/>
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="4"/>
+            <EditText
+                android:id="@+id/task_deadline_time_edit_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="6"

@@ -1,6 +1,7 @@
 package ninja.taskbook.business.task;
 
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.text.InputType;
@@ -12,9 +13,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import org.apache.thrift.TException;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Calendar;
 
@@ -36,8 +40,10 @@ public class TaskCreatorFragment extends Fragment {
     //----------------------------------------------------------------------------------------------------
     EditText mTaskNameEditText;
     EditText mTaskContentEditText;
-    EditText mTaskTimeEditText;
-    EditText mTaskDeadlineEditText;
+    EditText mTaskBeginningCalendarEditText;
+    EditText mTaskBeginningTimeEditText;
+    EditText mTaskDeadlineCalendarEditText;
+    EditText mTaskDeadlineTimeEditText;
     int mGroupId = 0;
 
     //----------------------------------------------------------------------------------------------------
@@ -63,38 +69,69 @@ public class TaskCreatorFragment extends Fragment {
         // Content
         mTaskContentEditText = (EditText)rootView.findViewById(R.id.task_content_edit_text);
 
-        // Time
-        mTaskTimeEditText = (EditText)rootView.findViewById(R.id.task_time_edit_text);
-        mTaskTimeEditText.setInputType(InputType.TYPE_NULL);
+        // Beginning
         final Calendar calendar = Calendar.getInstance();
-        mTaskTimeEditText.setOnClickListener(new View.OnClickListener() {
+        mTaskBeginningCalendarEditText = (EditText)rootView.findViewById(R.id.task_beginning_calendar_edit_text);
+        mTaskBeginningCalendarEditText.setInputType(InputType.TYPE_NULL);
+        mTaskBeginningCalendarEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 DatePickerDialog dialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        calendar.set(year, monthOfYear, dayOfMonth);
-                        mTaskTimeEditText.setText(DateFormat.format("yyy-MM-dd", calendar));
+                        Calendar tmpCalendar = Calendar.getInstance();
+                        tmpCalendar.set(year, monthOfYear, dayOfMonth);
+                        mTaskBeginningCalendarEditText.setText(DateFormat.format("yyy-MM-dd", tmpCalendar));
                     }
                 }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
                 dialog.show();
             }
         });
+        mTaskBeginningTimeEditText = (EditText)rootView.findViewById(R.id.task_beginning_time_edit_text);
+        mTaskBeginningTimeEditText.setInputType(InputType.TYPE_NULL);
+        mTaskBeginningTimeEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TimePickerDialog dialog = new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        Calendar tmpCalendar = Calendar.getInstance();
+                        tmpCalendar.set(0, 0, 0, hourOfDay, minute);
+                        mTaskBeginningTimeEditText.setText(DateFormat.format("HH:mm", tmpCalendar));
+                    }
+                }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
+                dialog.show();
+            }
+        });
 
         // Deadline
-        mTaskDeadlineEditText = (EditText)rootView.findViewById(R.id.task_deadline_edit_text);
-        mTaskDeadlineEditText.setInputType(InputType.TYPE_NULL);
-        final Calendar deadlineCalendar = Calendar.getInstance();
-        mTaskDeadlineEditText.setOnClickListener(new View.OnClickListener() {
+        mTaskDeadlineCalendarEditText = (EditText)rootView.findViewById(R.id.task_deadline_calendar_edit_text);
+        mTaskDeadlineCalendarEditText.setInputType(InputType.TYPE_NULL);
+        mTaskDeadlineCalendarEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 DatePickerDialog dialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        deadlineCalendar.set(year, monthOfYear, dayOfMonth);
-                        mTaskDeadlineEditText.setText(DateFormat.format("yyy-MM-dd", deadlineCalendar));
+                        Calendar tmpCalendar = Calendar.getInstance();
+                        tmpCalendar.set(year, monthOfYear, dayOfMonth);
+                        mTaskDeadlineCalendarEditText.setText(DateFormat.format("yyy-MM-dd", tmpCalendar));
                     }
-                }, deadlineCalendar.get(Calendar.YEAR), deadlineCalendar.get(Calendar.MONTH), deadlineCalendar.get(Calendar.DAY_OF_MONTH));
+                }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+                dialog.show();
+            }
+        });
+        mTaskDeadlineTimeEditText = (EditText)rootView.findViewById(R.id.task_deadline_time_edit_text);
+        mTaskDeadlineTimeEditText.setInputType(InputType.TYPE_NULL);
+        mTaskDeadlineTimeEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TimePickerDialog dialog = new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        Calendar tmpCalendar = Calendar.getInstance();
+                        tmpCalendar.set(0, 0, 0, hourOfDay, minute);
+                        mTaskDeadlineTimeEditText.setText(DateFormat.format("HH:mm", tmpCalendar));
+                    }
+                }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
                 dialog.show();
             }
         });
@@ -127,10 +164,14 @@ public class TaskCreatorFragment extends Fragment {
                         try {
                             TaskBookService.Client client = (TaskBookService.Client) ThriftManager.createClient(ThriftManager.ClientTypeEnum.CLIENT.toString());
                             if (client != null) {
-                                ThriftTaskInfo info = new ThriftTaskInfo(0, mGroupId, entity.userName, mTaskNameEditText.getText().toString(), mTaskContentEditText.getText().toString(), mTaskTimeEditText.getText().toString(), mTaskDeadlineEditText.getText().toString(), 0.5);
+                                JSONObject timeJsonData = new JSONObject();
+                                timeJsonData.put("calendar", mTaskBeginningTimeEditText.getText().toString());
+                                JSONObject deadlineJsonData = new JSONObject();
+                                deadlineJsonData.put("calendar", mTaskDeadlineTimeEditText.getText().toString());
+                                ThriftTaskInfo info = new ThriftTaskInfo(0, mGroupId, entity.userName, mTaskNameEditText.getText().toString(), mTaskContentEditText.getText().toString(), timeJsonData.toString(), deadlineJsonData.toString(), 0);
                                 return client.createTask(userId, info);
                             }
-                        } catch (TException e) {
+                        } catch (TException | JSONException e) {
                             e.printStackTrace();
                         }
                         return null;

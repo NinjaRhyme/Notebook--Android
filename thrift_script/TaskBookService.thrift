@@ -21,7 +21,7 @@ struct ThriftTaskInfo
 	3: required string taskAuthor
 	4: required string taskName
 	5: required string taskContent
-	6: required string taskTime
+	6: required string taskBeginning
 	7: required string taskDeadline
 	8: required double taskProgress
 	9: optional i32 userRole
