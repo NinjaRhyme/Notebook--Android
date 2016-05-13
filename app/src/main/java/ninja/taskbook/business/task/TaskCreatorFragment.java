@@ -40,11 +40,11 @@ public class TaskCreatorFragment extends Fragment {
 
     //----------------------------------------------------------------------------------------------------
     EditText mTaskNameEditText;
-    EditText mTaskContentEditText;
     EditText mTaskBeginningCalendarEditText;
     EditText mTaskBeginningTimeEditText;
     EditText mTaskDeadlineCalendarEditText;
     EditText mTaskDeadlineTimeEditText;
+    EditText mTaskContentEditText;
     int mGroupId = 0;
 
     //----------------------------------------------------------------------------------------------------

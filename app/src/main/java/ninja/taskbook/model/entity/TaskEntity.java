@@ -10,6 +10,7 @@ public class TaskEntity {
     public String taskName;
     public String taskContent;
     public String taskBeginning;
+    public String taskDeadline;
     public float taskProgress;
     public int taskUserRole;
 
@@ -19,13 +20,14 @@ public class TaskEntity {
     }
 
     //----------------------------------------------------------------------------------------------------
-    public TaskEntity(int id, int groupId, String author, String name, String content, String beginning, float progress, int userRole) {
+    public TaskEntity(int id, int groupId, String author, String name, String content, String beginning, String deadline, float progress, int userRole) {
         taskId = id;
         taskGroupId = groupId;
         taskAuthor = author;
         taskName = name;
         taskContent = content;
         taskBeginning = beginning;
+        taskDeadline = deadline;
         taskProgress = progress;
         taskUserRole = userRole;
     }

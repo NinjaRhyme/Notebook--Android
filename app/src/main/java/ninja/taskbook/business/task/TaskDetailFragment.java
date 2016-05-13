@@ -7,6 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
 
 import ninja.taskbook.R;
@@ -19,7 +22,12 @@ public class TaskDetailFragment extends Fragment {
     //----------------------------------------------------------------------------------------------------
     TextView mIdTextView;
     TextView mNameTextView;
+    TextView mTaskBeginningCalendarTextView;
+    TextView mTaskBeginningTimeTextView;
+    TextView mTaskDeadlineCalendarTextView;
+    TextView mTaskDeadlineTimeTextView;
     TextView mContentTextView;
+    TextView mProgressTextView;
     int mTaskId = 0;
     TaskEntity mTaskInfo = null;
 
@@ -48,9 +56,25 @@ public class TaskDetailFragment extends Fragment {
         mNameTextView = (TextView)rootView.findViewById(R.id.name_text_view);
         mNameTextView.setText("name");
 
+        // Beginning
+        mTaskBeginningCalendarTextView = (TextView)rootView.findViewById(R.id.beginning_calendar_text_view);
+        mTaskBeginningCalendarTextView.setText("beginning");
+        mTaskBeginningTimeTextView = (TextView)rootView.findViewById(R.id.beginning_time_text_view);
+        mTaskBeginningTimeTextView.setText("beginning");
+
+        // Deadline
+        mTaskDeadlineCalendarTextView = (TextView)rootView.findViewById(R.id.deadline_calendar_text_view);
+        mTaskDeadlineCalendarTextView.setText("deadline");
+        mTaskDeadlineTimeTextView = (TextView)rootView.findViewById(R.id.deadline_time_text_view);
+        mTaskDeadlineTimeTextView.setText("deadline");
+
         // Content
         mContentTextView = (TextView)rootView.findViewById(R.id.content_text_view);
         mContentTextView.setText("content");
+
+        // Progress
+        mProgressTextView = (TextView)rootView.findViewById(R.id.progress_text_view);
+        mProgressTextView.setText("progress");
 
         // Data
         mTaskId = getArguments().getInt("id");
@@ -67,7 +91,18 @@ public class TaskDetailFragment extends Fragment {
         if (mTaskInfo != null) {
             mIdTextView.setText(String.valueOf(mTaskInfo.taskId));
             mNameTextView.setText(mTaskInfo.taskName);
+            try {
+                JSONObject beginningJsonData = new JSONObject(mTaskInfo.taskBeginning);
+                mTaskBeginningCalendarTextView.setText(beginningJsonData.getString("calendar"));
+                mTaskBeginningTimeTextView.setText(beginningJsonData.getString("time"));
+                JSONObject deadlineJsonData = new JSONObject(mTaskInfo.taskDeadline);
+                mTaskDeadlineCalendarTextView.setText(deadlineJsonData.getString("calendar"));
+                mTaskDeadlineTimeTextView.setText(deadlineJsonData.getString("time"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             mContentTextView.setText(mTaskInfo.taskContent);
+            mProgressTextView.setText(String.valueOf(mTaskInfo.taskProgress));
         }
     }
 }
