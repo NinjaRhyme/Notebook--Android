@@ -74,13 +74,13 @@ public class TaskBookServer {
         TaskTable taskTable = (TaskTable)mDatabaseManager.getTable(TaskTable.class);
         taskTable.drop();
         taskTable = (TaskTable)mDatabaseManager.getTable(TaskTable.class);
-        TaskEntity taskEntity = new TaskEntity(0, 1, "Boss1", "Task1", "嘻嘻嘻嘻嘻嘻嘻嘻嘻", "2016-04-10", "2016-04-15", 1.f);
+        TaskEntity taskEntity = new TaskEntity(0, 1, "Boss1", "Task1", "嘻嘻嘻嘻嘻嘻嘻嘻嘻", "{\"calendar\":\"2016-04-10\", \"time\":\"08:00\"}", "{\"calendar\":\"2016-04-15\", \"time\":\"08:00\"}", 1.f);
         taskTable.insert(taskEntity);
-        taskEntity = new TaskEntity(0, 1, "Boss1", "Task2", "嘻嘻嘻嘻嘻嘻嘻嘻嘻", "2016-04-13", "2016-05-1", 0.5f);
+        taskEntity = new TaskEntity(0, 1, "Boss1", "Task2", "嘻嘻嘻嘻嘻嘻嘻嘻嘻", "{\"calendar\":\"2016-04-13\", \"time\":\"08:00\"}", "{\"calendar\":\"2016-05-1\", \"time\":\"08:00\"}", 0.5f);
         taskTable.insert(taskEntity);
-        taskEntity = new TaskEntity(0, 1, "Boss2", "Task3", "嘻嘻嘻嘻嘻嘻嘻嘻嘻", "2016-04-25", "2016-05-11",  0.3f);
+        taskEntity = new TaskEntity(0, 1, "Boss2", "Task3", "嘻嘻嘻嘻嘻嘻嘻嘻嘻", "{\"calendar\":\"2016-04-25\", \"time\":\"08:00\"}", "{\"calendar\":\"2016-05-11\", \"time\":\"08:00\"}",  0.3f);
         taskTable.insert(taskEntity);
-        taskEntity = new TaskEntity(0, 1, "Boss2", "Task4", "嘻嘻嘻嘻嘻嘻嘻嘻嘻", "2016-05-11", "2016-05-11",  0.5f);
+        taskEntity = new TaskEntity(0, 1, "Boss2", "Task4", "嘻嘻嘻嘻嘻嘻嘻嘻嘻", "{\"calendar\":\"2016-05-11\", \"time\":\"08:00\"}", "{\"calendar\":\"2016-05-12\", \"time\":\"08:00\"}",  0.5f);
         taskTable.insert(taskEntity);
 
         UserTaskTable userTaskTable = (UserTaskTable)mDatabaseManager.getTable(UserTaskTable.class);
@@ -215,7 +215,7 @@ public class TaskBookServer {
             UserGroupRelation relation = userGroupTable.queryEntity("group_id = '" + groupId + "' and user_role = 0");
             if (relation != null) {
                 JSONObject jsonData = new JSONObject();
-                jsonData.put("group_id", String.valueOf(groupId));
+                jsonData.put("group_id", groupId);
                 ThriftNotification notification = new ThriftNotification(0, userId, relation.userId, ThriftNotificationType.NOTIFICATION_JOIN, jsonData.toString());
                 return sendNotification(userId, notification);
             }
@@ -226,7 +226,7 @@ public class TaskBookServer {
         public boolean invite(int userId, int groupId, int targetUserId) throws org.apache.thrift.TException {
             // Todo: user's rights
             JSONObject jsonData = new JSONObject();
-            jsonData.put("group_id", String.valueOf(groupId));
+            jsonData.put("group_id", groupId);
             ThriftNotification notification = new ThriftNotification(0, userId, targetUserId, ThriftNotificationType.NOTIFICATION_INVITE, jsonData.toString());
             return sendNotification(userId, notification);
         }

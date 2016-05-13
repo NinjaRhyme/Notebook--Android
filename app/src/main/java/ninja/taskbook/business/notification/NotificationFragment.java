@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.apache.thrift.TException;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +27,7 @@ import ninja.taskbook.model.entity.UserEntity;
 import ninja.taskbook.model.network.thrift.manager.ThriftManager;
 import ninja.taskbook.model.network.thrift.service.TaskBookService;
 import ninja.taskbook.model.network.thrift.service.ThriftNotification;
+import ninja.taskbook.model.network.thrift.service.ThriftNotificationType;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -129,7 +132,36 @@ public class NotificationFragment  extends Fragment {
         @Override
         public void onBindViewHolder(NotificationItemHolder holder, final int position) {
             View view = holder.itemView;
-            holder.titleTextView.setText(mNotificationItems.get(position).notificationData);
+            NotificationEntity entity = mNotificationItems.get(position);
+            ThriftNotificationType type = ThriftNotificationType.findByValue(entity.notificationType);
+            if (type != null) {
+                switch (type) {
+                    case NOTIFICATION_JOIN:
+                        try {
+                            JSONObject jsonData = new JSONObject(entity.notificationData);
+                            String text = "邀请您加入群组:" + jsonData.getInt("group_id");
+                            holder.titleTextView.setText(text);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    case NOTIFICATION_INVITE:
+                        try {
+                            JSONObject jsonData = new JSONObject(entity.notificationData);
+                            String text = "" + entity.notificationOwnerId + "申请加入群组:" + jsonData.getInt("group_id");
+                            holder.titleTextView.setText(text);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    case NOTIFICATION_JOIN_ANSWER:
+                        break;
+                    case NOTIFICATION_INVITE_ANSWER:
+                        break;
+                    default:
+                        break;
+                }
+            }
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

@@ -28,6 +28,7 @@ import ninja.taskbook.model.entity.UserEntity;
 import ninja.taskbook.model.network.thrift.manager.ThriftManager;
 import ninja.taskbook.model.network.thrift.service.TaskBookService;
 import ninja.taskbook.model.network.thrift.service.ThriftTaskInfo;
+import ninja.taskbook.util.helper.Helper;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -73,6 +74,7 @@ public class TaskCreatorFragment extends Fragment {
         final Calendar calendar = Calendar.getInstance();
         mTaskBeginningCalendarEditText = (EditText)rootView.findViewById(R.id.task_beginning_calendar_edit_text);
         mTaskBeginningCalendarEditText.setInputType(InputType.TYPE_NULL);
+        mTaskBeginningCalendarEditText.setText(Helper.calendarToDateString(calendar));
         mTaskBeginningCalendarEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,7 +83,7 @@ public class TaskCreatorFragment extends Fragment {
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                         Calendar tmpCalendar = Calendar.getInstance();
                         tmpCalendar.set(year, monthOfYear, dayOfMonth);
-                        mTaskBeginningCalendarEditText.setText(DateFormat.format("yyy-MM-dd", tmpCalendar));
+                        mTaskBeginningCalendarEditText.setText(Helper.calendarToDateString(tmpCalendar));
                     }
                 }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
                 dialog.show();
@@ -89,6 +91,7 @@ public class TaskCreatorFragment extends Fragment {
         });
         mTaskBeginningTimeEditText = (EditText)rootView.findViewById(R.id.task_beginning_time_edit_text);
         mTaskBeginningTimeEditText.setInputType(InputType.TYPE_NULL);
+        mTaskBeginningTimeEditText.setText(Helper.calendarToTimeString(calendar));
         mTaskBeginningTimeEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,7 +99,7 @@ public class TaskCreatorFragment extends Fragment {
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                         Calendar tmpCalendar = Calendar.getInstance();
                         tmpCalendar.set(0, 0, 0, hourOfDay, minute);
-                        mTaskBeginningTimeEditText.setText(DateFormat.format("HH:mm", tmpCalendar));
+                        mTaskBeginningTimeEditText.setText(Helper.calendarToTimeString(tmpCalendar));
                     }
                 }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
                 dialog.show();
@@ -106,6 +109,7 @@ public class TaskCreatorFragment extends Fragment {
         // Deadline
         mTaskDeadlineCalendarEditText = (EditText)rootView.findViewById(R.id.task_deadline_calendar_edit_text);
         mTaskDeadlineCalendarEditText.setInputType(InputType.TYPE_NULL);
+        mTaskDeadlineCalendarEditText.setText(Helper.calendarToDateString(calendar));
         mTaskDeadlineCalendarEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -114,7 +118,7 @@ public class TaskCreatorFragment extends Fragment {
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                         Calendar tmpCalendar = Calendar.getInstance();
                         tmpCalendar.set(year, monthOfYear, dayOfMonth);
-                        mTaskDeadlineCalendarEditText.setText(DateFormat.format("yyy-MM-dd", tmpCalendar));
+                        mTaskDeadlineCalendarEditText.setText(Helper.calendarToDateString(tmpCalendar));
                     }
                 }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
                 dialog.show();
@@ -122,6 +126,7 @@ public class TaskCreatorFragment extends Fragment {
         });
         mTaskDeadlineTimeEditText = (EditText)rootView.findViewById(R.id.task_deadline_time_edit_text);
         mTaskDeadlineTimeEditText.setInputType(InputType.TYPE_NULL);
+        mTaskDeadlineTimeEditText.setText(Helper.calendarToTimeString(calendar));
         mTaskDeadlineTimeEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -129,7 +134,7 @@ public class TaskCreatorFragment extends Fragment {
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                         Calendar tmpCalendar = Calendar.getInstance();
                         tmpCalendar.set(0, 0, 0, hourOfDay, minute);
-                        mTaskDeadlineTimeEditText.setText(DateFormat.format("HH:mm", tmpCalendar));
+                        mTaskDeadlineTimeEditText.setText(Helper.calendarToTimeString(tmpCalendar));
                     }
                 }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
                 dialog.show();
@@ -165,9 +170,11 @@ public class TaskCreatorFragment extends Fragment {
                             TaskBookService.Client client = (TaskBookService.Client) ThriftManager.createClient(ThriftManager.ClientTypeEnum.CLIENT.toString());
                             if (client != null) {
                                 JSONObject timeJsonData = new JSONObject();
-                                timeJsonData.put("calendar", mTaskBeginningTimeEditText.getText().toString());
+                                timeJsonData.put("calendar", mTaskBeginningCalendarEditText.getText().toString());
+                                timeJsonData.put("time", mTaskBeginningTimeEditText.getText().toString());
                                 JSONObject deadlineJsonData = new JSONObject();
-                                deadlineJsonData.put("calendar", mTaskDeadlineTimeEditText.getText().toString());
+                                deadlineJsonData.put("calendar", mTaskDeadlineCalendarEditText.getText().toString());
+                                deadlineJsonData.put("time", mTaskDeadlineTimeEditText.getText().toString());
                                 ThriftTaskInfo info = new ThriftTaskInfo(0, mGroupId, entity.userName, mTaskNameEditText.getText().toString(), mTaskContentEditText.getText().toString(), timeJsonData.toString(), deadlineJsonData.toString(), 0);
                                 return client.createTask(userId, info);
                             }
