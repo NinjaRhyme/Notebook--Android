@@ -289,6 +289,13 @@ public class TaskBookServer {
             return null;
         }
 
+        @Override
+        public boolean editTask(int userId, ThriftTaskInfo taskInfo) throws org.apache.thrift.TException {
+            // Todo: dangerous
+            TaskTable table = (TaskTable)mDatabaseManager.getTable(TaskTable.class);
+            return table.update(new TaskEntity(0, taskInfo.groupId, taskInfo.taskAuthor, taskInfo.taskName, taskInfo.taskContent, taskInfo.taskBeginning, taskInfo.taskDeadline, (float)taskInfo.taskProgress), "task_id = '" + taskInfo.taskId + "'");
+        }
+
         //----------------------------------------------------------------------------------------------------
         @Override
         public boolean sendNotification(int userId, ThriftNotification notification) throws org.apache.thrift.TException {

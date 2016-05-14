@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import org.json.JSONException;
@@ -76,6 +77,14 @@ public class TaskDetailFragment extends Fragment {
         mProgressTextView = (TextView)rootView.findViewById(R.id.progress_text_view);
         mProgressTextView.setText("progress");
 
+        // Edit
+        Button editButton = (Button)rootView.findViewById(R.id.edit_task_button);
+        editButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                edit();
+            }
+        });
+
         // Data
         mTaskId = getArguments().getInt("id");
         mTaskInfo = DataManager.getInstance().getTaskItem(mTaskId);
@@ -104,5 +113,10 @@ public class TaskDetailFragment extends Fragment {
             mContentTextView.setText(mTaskInfo.taskContent);
             mProgressTextView.setText(String.valueOf(mTaskInfo.taskProgress));
         }
+    }
+
+    //----------------------------------------------------------------------------------------------------
+    private void edit() {
+
     }
 }

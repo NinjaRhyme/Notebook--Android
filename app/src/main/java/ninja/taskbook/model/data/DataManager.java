@@ -3,6 +3,7 @@ package ninja.taskbook.model.data;
 import org.apache.thrift.TException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import ninja.taskbook.model.entity.GroupEntity;
@@ -35,7 +36,10 @@ public class DataManager {
     private UserEntity mUserItem;
     private List<GroupEntity> mGroupItems;
     private List<TaskEntity> mTaskItems;
+    private List<TaskEntity> mAdminTaskItems;
+    private List<TaskEntity> mMemberTaskItems;
     private List<NotificationEntity> mNotificationItems;
+    private HashMap<String, String> mSettingItems = new HashMap<>(); // Memo: Local
 
     //----------------------------------------------------------------------------------------------------
     private DataManager() {
@@ -59,6 +63,67 @@ public class DataManager {
 
     public void setUserItem(UserEntity userItem) {
         this.mUserItem = userItem;
+    }
+
+    public void RequestLogin(final String userName, final String password, final RequestCallback<Integer> callback) {
+        Observable.just(0)
+                .map(new Func1<Integer, Integer>() {
+                    @Override
+                    public Integer call(Integer userId) {
+                        try {
+                            TaskBookService.Client client = (TaskBookService.Client) ThriftManager.createClient(ThriftManager.ClientTypeEnum.CLIENT.toString());
+                            if (client != null) {
+                                return client.login(userName, password);
+                            }
+                        } catch (TException e) {
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Integer>() {
+                    @Override
+                    public void call(Integer result) {
+                        if (0 < result) {
+                            UserEntity entity = new UserEntity();
+                            entity.userId = result;
+                            DataManager.getInstance().setUserItem(entity);
+                        }
+                        if (callback != null) {
+                            callback.onResult(result);
+                        }
+                    }
+                });
+    }
+
+    public void RequestSignup(final String userName, final String userNickname, final String password, final RequestCallback<Integer> callback) {
+        Observable.just(0)
+                .map(new Func1<Integer, Integer>() {
+                    @Override
+                    public Integer call(Integer userId) {
+                        try {
+                            TaskBookService.Client client = (TaskBookService.Client) ThriftManager.createClient(ThriftManager.ClientTypeEnum.CLIENT.toString());
+                            if (client != null) {
+                                return client.signup(userName, userNickname, password);
+                            }
+                        } catch (TException e) {
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Integer>() {
+                    @Override
+                    public void call(Integer result) {
+                        if (callback != null) {
+                            callback.onResult(result);
+                        }
+                    }
+                });
     }
 
     public void requestUserItem(final RequestCallback<UserEntity> callback) {
@@ -87,7 +152,7 @@ public class DataManager {
                 .subscribe(new Action1<ThriftUserInfo>() {
                     @Override
                     public void call(ThriftUserInfo result) {
-                        setUserItem(new UserEntity(result.userId, result.userName, result.userNickname));
+                        mUserItem = new UserEntity(result.userId, result.userName, result.userNickname);
                         if (callback != null) {
                             callback.onResult(mUserItem);
                         }
@@ -226,9 +291,23 @@ public class DataManager {
                             mTaskItems = new ArrayList<>();
                         }
                         mTaskItems.clear();
+                        if (mAdminTaskItems == null) {
+                            mAdminTaskItems = new ArrayList<>();
+                        }
+                        mAdminTaskItems.clear();
+                        if (mMemberTaskItems == null) {
+                            mMemberTaskItems = new ArrayList<>();
+                        }
+                        mMemberTaskItems.clear();
                         if (result != null) {
                             for (ThriftTaskInfo info : result) {
-                                mTaskItems.add(new TaskEntity(info.taskId, info.groupId, info.taskAuthor, info.taskName, info.taskContent, info.taskBeginning, info.taskDeadline, (float)info.taskProgress, info.userRole));
+                                TaskEntity entity = new TaskEntity(info.taskId, info.groupId, info.taskAuthor, info.taskName, info.taskContent, info.taskBeginning, info.taskDeadline, (float)info.taskProgress, info.userRole);
+                                mTaskItems.add(entity);
+                                if (info.userRole == 0) {
+                                    mAdminTaskItems.add(entity);
+                                } else {
+                                    mMemberTaskItems.add(entity);
+                                }
                             }
                         }
                         if (callback != null) {
@@ -287,5 +366,14 @@ public class DataManager {
                         }
                     }
                 });
+    }
+
+    //----------------------------------------------------------------------------------------------------
+    public HashMap<String, String> getSettingItems() {
+        return mSettingItems;
+    }
+
+    public void setSettingItems(HashMap<String, String> settingItems) {
+        this.mSettingItems = settingItems;
     }
 }

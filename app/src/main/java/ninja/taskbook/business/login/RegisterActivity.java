@@ -93,31 +93,11 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        Observable.just(0)
-                .map(new Func1<Integer, Integer>() {
+        DataManager.getInstance().RequestSignup(mNameEditText.getText().toString(), mNicknameEditText.getText().toString(), mPasswordEditText.getText().toString(),
+                new DataManager.RequestCallback<Integer>() {
                     @Override
-                    public Integer call(Integer userId) {
-                        try {
-                            TaskBookService.Client client = (TaskBookService.Client) ThriftManager.createClient(ThriftManager.ClientTypeEnum.CLIENT.toString());
-                            if (client != null) {
-                                return client.signup(mNameEditText.getText().toString(), mNicknameEditText.getText().toString(), mPasswordEditText.getText().toString());
-                            }
-                        } catch (TException e) {
-                            e.printStackTrace();
-                        }
-                        return null;
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<Integer>() {
-                    @Override
-                    public void call(Integer result) {
+                    public void onResult(Integer result) {
                         if (0 < result) {
-                            UserEntity entity = new UserEntity();
-                            entity.userId = result;
-                            DataManager.getInstance().setUserItem(entity);
-
                             setResult(RESULT_OK, null);
                             finish();
                         } else {
@@ -126,6 +106,7 @@ public class RegisterActivity extends AppCompatActivity {
                             toast.show();
                         }
                     }
-                });
+                }
+        );
     }
 }

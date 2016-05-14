@@ -69,7 +69,7 @@ public class TaskTable extends TableBase<TaskEntity> {
     @Override
     public String entityToString(TaskEntity entity) {
         String result = "";
-        result += (entity.taskId <= 0? "null" : "'" + entity.taskId + "'") + ",";
+        result += (entity.taskId <= 0 ? "null" : "'" + entity.taskId + "'") + ",";
         result += "'" + entity.taskGroupId + "',";
         result += "'" + entity.taskAuthor + "',";
         result += "'" + entity.taskName + "',";
@@ -77,6 +77,21 @@ public class TaskTable extends TableBase<TaskEntity> {
         result += "'" + entity.taskBeginning + "',";
         result += "'" + entity.taskDeadline + "',";
         result += "'" + entity.taskProgress + "'";
+
+        return result;
+    }
+
+    //----------------------------------------------------------------------------------------------------
+    @Override
+    public String entityToUpdateString(TaskEntity entity) {
+        String result = "";
+        result += "task_group_id = '" + entity.taskGroupId + "',";
+        result += "task_author = '" + entity.taskAuthor + "',";
+        result += "task_name = '" + entity.taskName + "',";
+        result += "task_content = '" + entity.taskContent + "',";
+        result += "task_beginning = '" + entity.taskBeginning + "',";
+        result += "task_deadline = '" + entity.taskDeadline + "',";
+        result += "task_progress = '" + entity.taskProgress + "'";
 
         return result;
     }

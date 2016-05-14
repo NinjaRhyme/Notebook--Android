@@ -85,31 +85,11 @@ public class LoginActivity extends AppCompatActivity {
 
     //----------------------------------------------------------------------------------------------------
     private void login() {
-        Observable.just(0)
-                .map(new Func1<Integer, Integer>() {
+        DataManager.getInstance().RequestLogin(mNameEditText.getText().toString(), mPasswordEditText.getText().toString(),
+                new DataManager.RequestCallback<Integer>() {
                     @Override
-                    public Integer call(Integer userId) {
-                        try {
-                            TaskBookService.Client client = (TaskBookService.Client) ThriftManager.createClient(ThriftManager.ClientTypeEnum.CLIENT.toString());
-                            if (client != null) {
-                                return client.login(mNameEditText.getText().toString(), mPasswordEditText.getText().toString());
-                            }
-                        } catch (TException e) {
-                            e.printStackTrace();
-                        }
-                        return null;
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<Integer>() {
-                    @Override
-                    public void call(Integer result) {
+                    public void onResult(Integer result) {
                         if (0 < result) {
-                            UserEntity entity = new UserEntity();
-                            entity.userId = result;
-                            DataManager.getInstance().setUserItem(entity);
-
                             setResult(RESULT_OK, null);
                             finish();
                         } else {
@@ -118,7 +98,8 @@ public class LoginActivity extends AppCompatActivity {
                             toast.show();
                         }
                     }
-                });
+                }
+        );
     }
 
     //----------------------------------------------------------------------------------------------------

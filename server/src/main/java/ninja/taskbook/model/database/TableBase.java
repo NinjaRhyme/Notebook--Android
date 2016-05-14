@@ -6,6 +6,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import ninja.taskbook.model.entity.TaskEntity;
 import ninja.taskbook.util.pair.Pair;
 
 // Todo: rollback
@@ -48,6 +49,7 @@ public abstract class TableBase<T> {
         return null;
     }
     public abstract String entityToString(T entity);
+    public String entityToUpdateString(T entity) { return null; }
 
     //----------------------------------------------------------------------------------------------------
     public boolean executeUpdate(String sql) {
@@ -154,6 +156,18 @@ public abstract class TableBase<T> {
     public boolean update(String set, String where) {
         try{
             String sql = "update " + getTableName() + " set " + set + " where " + where + ";";
+            executeUpdate(sql);
+            return true ;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return false ;
+        }
+    }
+
+    //----------------------------------------------------------------------------------------------------
+    public boolean update(T entity, String where) {
+        try{
+            String sql = "update " + getTableName() + " set " + entityToUpdateString(entity) + " where " + where + ";";
             executeUpdate(sql);
             return true ;
         }catch (Exception e) {
