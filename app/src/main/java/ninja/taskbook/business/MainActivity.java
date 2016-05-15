@@ -1,6 +1,8 @@
 package ninja.taskbook.business;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Bundle;
@@ -27,6 +29,9 @@ import ninja.taskbook.business.setting.SettingFragment;
 import ninja.taskbook.business.task.TaskFragment;
 import ninja.taskbook.business.drawer.DrawerManager;
 import ninja.taskbook.business.drawer.DrawerItem;
+import ninja.taskbook.model.data.DataManager;
+import ninja.taskbook.model.database.DatabaseInfo;
+import ninja.taskbook.model.entity.UserEntity;
 
 //----------------------------------------------------------------------------------------------------
 public class MainActivity extends AppCompatActivity implements DrawerManager.DrawerListener {
@@ -50,15 +55,19 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        initDatabase();
         initToolbar();
         initDrawer();
 
-        login();
+        if (DataManager.getInstance().getUserItem() == null) {
+            login();
+        } else {
+            initContent();
+        }
     }
 
-    private void login() {
-        Intent login = new Intent(MainActivity.this, LoginActivity.class);
-        startActivityForResult(login, LOGIN_ACTIVITY_CODE);
+    private void initDatabase() {
+        DataManager.getInstance().init(getContentResolver());
     }
 
     private void initToolbar() {
@@ -93,6 +102,11 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
                 .beginTransaction()
                 .replace(R.id.frame_layout, new ProfileFragment())
                 .commitAllowingStateLoss();
+    }
+
+    private void login() {
+        Intent login = new Intent(MainActivity.this, LoginActivity.class);
+        startActivityForResult(login, LOGIN_ACTIVITY_CODE);
     }
 
     //----------------------------------------------------------------------------------------------------
@@ -153,18 +167,24 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
                     });
                     */
             /*
-            NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
-            Notification notify = new Notification.Builder(this)
-                    .setSmallIcon(R.drawable.useless0)
-                    .setTicker("TickerText:" + "xi xi xi")
-                    .setContentTitle("Notification Title")
-                    .setContentText("This is the notification message")
-                    .setContentIntent(pendingIntent)
-                    .setNumber(1)
-                    .build();
-            notify.flags |= Notification.FLAG_AUTO_CANCEL;
-            manager.notify(1, notify);
+            new Handler().postDelayed(new Runnable() {
+            public void run() {
+                NotificationManager manager = (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+                PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0, new Intent(getContext(), MainActivity.class), 0);
+                Notification notify = new Notification.Builder(getContext())
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setTicker("TickerText")
+                        .setContentTitle("Notification Title")
+                        .setContentText("This is the notification message")
+                        .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE | Notification.DEFAULT_LIGHTS)
+                        .setContentIntent(pendingIntent)
+                        .setWhen(System.currentTimeMillis())
+                        .setNumber(1)
+                        .build();
+                notify.flags |= Notification.FLAG_AUTO_CANCEL;
+                manager.notify(1, notify);
+            }
+        }, 5000);
             */
 
             return true;
@@ -254,6 +274,7 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
                             .commit();
                     break;
                 case 5:
+                    DataManager.getInstance().clear();
                     login();
                     break;
                 default:

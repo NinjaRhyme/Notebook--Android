@@ -1,11 +1,16 @@
 package ninja.taskbook.model.data;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.database.Cursor;
+
 import org.apache.thrift.TException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import ninja.taskbook.model.database.DatabaseInfo;
 import ninja.taskbook.model.entity.GroupEntity;
 import ninja.taskbook.model.entity.NotificationEntity;
 import ninja.taskbook.model.entity.TaskEntity;
@@ -33,6 +38,7 @@ public class DataManager {
     private static DataManager sInstance = null;
 
     //----------------------------------------------------------------------------------------------------
+    private ContentResolver mResolver;
     private UserEntity mUserItem;
     private List<GroupEntity> mGroupItems;
     private List<TaskEntity> mTaskItems;
@@ -54,6 +60,30 @@ public class DataManager {
             }
         }
         return sInstance;
+    }
+
+    //----------------------------------------------------------------------------------------------------
+    public void init(ContentResolver resolver) {
+        mResolver = resolver;
+        if (mResolver != null) {
+            Cursor cursor = mResolver.query(DatabaseInfo.UserTable.CONTENT_URI, null, null, null, null);
+            if (cursor != null && cursor.moveToNext()) {
+                int userId = cursor.getInt(0);
+
+                UserEntity entity = new UserEntity();
+                entity.userId = userId;
+                mUserItem = entity;
+
+                cursor.close();
+            }
+        }
+    }
+
+    //----------------------------------------------------------------------------------------------------
+    public void clear() {
+        if (mResolver != null) {
+            mResolver.delete(DatabaseInfo.UserTable.CONTENT_URI, null, null);
+        }
     }
 
     //----------------------------------------------------------------------------------------------------
@@ -87,9 +117,16 @@ public class DataManager {
                     @Override
                     public void call(Integer result) {
                         if (0 < result) {
+                            clear();
+                            if (mResolver != null) {
+                                ContentValues values = new ContentValues();
+                                values.put("user_id", result);
+                                mResolver.insert(DatabaseInfo.UserTable.CONTENT_URI, values);
+                            }
+
                             UserEntity entity = new UserEntity();
                             entity.userId = result;
-                            DataManager.getInstance().setUserItem(entity);
+                            mUserItem = entity;
                         }
                         if (callback != null) {
                             callback.onResult(result);

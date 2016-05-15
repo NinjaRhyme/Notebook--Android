@@ -7,7 +7,7 @@ public class DatabaseInfo {
 
     //----------------------------------------------------------------------------------------------------
     public static final String AUTHORITY = "database";
-    public static final Uri BASE_URI = new Uri.Builder().scheme("task").authority(AUTHORITY).build();
+    public static final Uri BASE_URI = new Uri.Builder().scheme("content").authority(AUTHORITY).build();
 
     // Databases
     //----------------------------------------------------------------------------------------------------
@@ -23,7 +23,6 @@ public class DatabaseInfo {
         public static final String[] COLUMNS = {
                 "(user_id INTEGER PRIMARY KEY AUTOINCREMENT,",
                 "user_name VARCHAR(255) DEFAULT \"\",",
-                //"user_password VARCHAR(255) DEFAULT \"\");",
                 "user_nickname VARCHAR(255) DEFAULT \"\");",
         };
     }
