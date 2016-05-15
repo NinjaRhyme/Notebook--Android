@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Base.Theme.Light" >
         <provider
-            android:name=".model.database.DatabaseManager"
+            android:name=".model.database.DatabaseProvider"
             android:authorities="database" >
         </provider>
 

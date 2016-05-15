@@ -31,6 +31,7 @@ public class ThriftManager {
         }
     }
 
+    //----------------------------------------------------------------------------------------------------
     public static final String THRIFT_HOST = "10.0.2.22";
     public static final int THRIFT_PORT = 8090;
 

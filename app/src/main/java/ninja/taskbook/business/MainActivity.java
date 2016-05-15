@@ -1,10 +1,6 @@
 package ninja.taskbook.business;
 
-import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.FragmentManager;
@@ -14,7 +10,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
@@ -30,8 +25,7 @@ import ninja.taskbook.business.task.TaskFragment;
 import ninja.taskbook.business.drawer.DrawerManager;
 import ninja.taskbook.business.drawer.DrawerItem;
 import ninja.taskbook.model.data.DataManager;
-import ninja.taskbook.model.database.DatabaseInfo;
-import ninja.taskbook.model.entity.UserEntity;
+import ninja.taskbook.model.database.DatabaseManager;
 
 //----------------------------------------------------------------------------------------------------
 public class MainActivity extends AppCompatActivity implements DrawerManager.DrawerListener {
@@ -55,19 +49,15 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        initDatabase();
+        initData();
         initToolbar();
         initDrawer();
 
-        if (DataManager.getInstance().getUserItem() == null) {
-            login();
-        } else {
-            initContent();
-        }
+        login();
     }
 
-    private void initDatabase() {
-        DataManager.getInstance().init(getContentResolver());
+    private void initData() {
+        DatabaseManager.init(getContentResolver());
     }
 
     private void initToolbar() {
@@ -274,7 +264,7 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
                             .commit();
                     break;
                 case 5:
-                    DataManager.getInstance().clear();
+                    DatabaseManager.clear();
                     login();
                     break;
                 default:

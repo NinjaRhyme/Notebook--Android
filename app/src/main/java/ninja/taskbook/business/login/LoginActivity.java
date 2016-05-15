@@ -11,18 +11,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import org.apache.thrift.TException;
-
 import ninja.taskbook.R;
 import ninja.taskbook.model.data.DataManager;
+import ninja.taskbook.model.database.DatabaseManager;
 import ninja.taskbook.model.entity.UserEntity;
-import ninja.taskbook.model.network.thrift.manager.ThriftManager;
-import ninja.taskbook.model.network.thrift.service.TaskBookService;
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 
 //----------------------------------------------------------------------------------------------------
 public class LoginActivity extends AppCompatActivity {
@@ -63,6 +55,13 @@ public class LoginActivity extends AppCompatActivity {
                 login();
             }
         });
+
+        UserEntity entity = DatabaseManager.getUserEntity();
+        if (entity != null) {
+            DataManager.getInstance().setUserItem(entity);
+            setResult(RESULT_OK, null);
+            finish();
+        }
     }
 
     //----------------------------------------------------------------------------------------------------
@@ -90,6 +89,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onResult(Integer result) {
                         if (0 < result) {
+                            DatabaseManager.setUserId(result);
                             setResult(RESULT_OK, null);
                             finish();
                         } else {
