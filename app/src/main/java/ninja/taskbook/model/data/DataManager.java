@@ -44,6 +44,7 @@ public class DataManager {
     private List<TaskEntity> mAdminTaskItems;
     private List<TaskEntity> mMemberTaskItems;
     private List<NotificationEntity> mNotificationItems;
+    private List<NotificationEntity> mNewNotificationItems;
     private HashMap<String, String> mSettingItems = new HashMap<>(); // Memo: Local
 
     //----------------------------------------------------------------------------------------------------
@@ -362,12 +363,54 @@ public class DataManager {
                         mNotificationItems.clear();
                         if (result != null) {
                             for (ThriftNotification item : result) {
-                                NotificationEntity entity = new NotificationEntity(item.notificationId, item.notificationOwnerId, item.notificationReceiverId, item.notificationType.getValue(), item.notificationData);
+                                NotificationEntity entity = new NotificationEntity(item.notificationId, item.notificationOwnerId, item.notificationReceiverId, item.notificationType.getValue(), item.notificationData, item.notificationIsNew);
                                 mNotificationItems.add(entity);
                             }
                         }
                         if (callback != null) {
                             callback.onResult(mNotificationItems);
+                        }
+                    }
+                });
+    }
+
+    public void requestNewNotificationItems(final RequestCallback<List<NotificationEntity>> callback) {
+        UserEntity entity = getUserItem();
+        if (entity == null || entity.userId <= 0) {
+            return;
+        }
+
+        Observable.just(entity.userId)
+                .map(new Func1<Integer, List<ThriftNotification>>() {
+                    @Override
+                    public List<ThriftNotification> call(Integer userId) {
+                        try {
+                            TaskBookService.Client client = (TaskBookService.Client)ThriftManager.createClient(ThriftManager.ClientTypeEnum.CLIENT.toString());
+                            if (client != null)
+                                return client.newNotifications(userId);
+                        } catch (TException e) {
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<List<ThriftNotification>>() {
+                    @Override
+                    public void call(List<ThriftNotification> result) {
+                        if (mNewNotificationItems == null) {
+                            mNewNotificationItems = new ArrayList<>();
+                        }
+                        mNewNotificationItems.clear();
+                        if (result != null) {
+                            for (ThriftNotification item : result) {
+                                NotificationEntity entity = new NotificationEntity(item.notificationId, item.notificationOwnerId, item.notificationReceiverId, item.notificationType.getValue(), item.notificationData, item.notificationIsNew);
+                                mNewNotificationItems.add(entity);
+                            }
+                        }
+                        if (callback != null) {
+                            callback.onResult(mNewNotificationItems);
                         }
                     }
                 });

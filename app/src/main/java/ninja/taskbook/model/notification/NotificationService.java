@@ -1,20 +1,24 @@
 package ninja.taskbook.model.notification;
 
-import java.io.IOException;
-
-import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+
+import android.os.Handler;
 import android.os.IBinder;
-import android.util.Log;
+
+import java.util.List;
+
+import ninja.taskbook.R;
+import ninja.taskbook.business.MainActivity;
+import ninja.taskbook.model.data.DataManager;
+import ninja.taskbook.model.database.DatabaseManager;
+import ninja.taskbook.model.entity.NotificationEntity;
+import ninja.taskbook.model.entity.UserEntity;
 
 //----------------------------------------------------------------------------------------------------
 public class NotificationService extends Service {
@@ -26,6 +30,7 @@ public class NotificationService extends Service {
 
     //----------------------------------------------------------------------------------------------------
     private long mStartTime;
+    private Handler mHandler = new Handler();
     ConnectivityManager mConnectivityManager;
     NotificationManager mNotificationManager;
     private int mUserId;
@@ -65,16 +70,30 @@ public class NotificationService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
 
-        if (intent.getAction().equals(ACTION_START)) {
-            start();
-        } else if (intent.getAction().equals(ACTION_STOP)) {
-            stop();
-        } else if (intent.getAction().equals(ACTION_KEEP_ALIVE)) {
-            //keepAlive();
-        } else if (intent.getAction().equals(ACTION_RECONNECT)) {
-            //reconnectIfNecessary();
+        if (intent != null) {
+            mUserId = intent.getIntExtra("user_id", 0);
+            if (intent.getAction().equals(ACTION_START)) {
+                start();
+            } else if (intent.getAction().equals(ACTION_STOP)) {
+                stop();
+            } else if (intent.getAction().equals(ACTION_KEEP_ALIVE)) {
+                //keepAlive();
+            } else if (intent.getAction().equals(ACTION_RECONNECT)) {
+                //reconnectIfNecessary();
+            }
+        } else {
+            DatabaseManager.init(getContentResolver());
+            UserEntity entity = DatabaseManager.getUserEntity();
+            if (entity == null || entity.userId <= 0) {
+                stop();
+            } else {
+                mUserId = entity.userId;
+                DataManager.getInstance().setUserItem(entity);
+                NotificationService.actionStart(getApplicationContext(), entity.userId);
+                start();
+            }
         }
-        mUserId = intent.getIntExtra("user_id", 0);
+
         return START_STICKY;
     }
 
@@ -91,7 +110,34 @@ public class NotificationService extends Service {
 
     //----------------------------------------------------------------------------------------------------
     private synchronized void start() {
+        Runnable task = new Runnable() {
+            public void run() {
+                DataManager.getInstance().requestNewNotificationItems(
+                        new DataManager.RequestCallback<List<NotificationEntity>>() {
+                            @Override
+                            public void onResult(List<NotificationEntity> result) {
+                                for (NotificationEntity entity : result) {
+                                    PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, new Intent(getApplicationContext(), MainActivity.class), 0);
+                                    Notification notify = new Notification.Builder(getApplicationContext())
+                                            .setSmallIcon(R.mipmap.ic_launcher)
+                                            .setContentTitle("Task Book")
+                                            .setContentText("This is the notification message")
+                                            .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE | Notification.DEFAULT_LIGHTS)
+                                            .setContentIntent(pendingIntent)
+                                            .setWhen(System.currentTimeMillis())
+                                            .setNumber(1)
+                                            .build();
+                                    notify.flags |= Notification.FLAG_AUTO_CANCEL;
+                                    mNotificationManager.notify(entity.notificationId, notify);
+                                }
+                            }
+                        }
+                );
 
+                mHandler.postDelayed(this, 5000);
+            }
+        };
+        mHandler.post(task);
     }
 
     //----------------------------------------------------------------------------------------------------

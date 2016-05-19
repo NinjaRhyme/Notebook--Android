@@ -15,6 +15,7 @@ import ninja.taskbook.R;
 import ninja.taskbook.model.data.DataManager;
 import ninja.taskbook.model.database.DatabaseManager;
 import ninja.taskbook.model.entity.UserEntity;
+import ninja.taskbook.model.notification.NotificationService;
 
 //----------------------------------------------------------------------------------------------------
 public class LoginActivity extends AppCompatActivity {
@@ -59,6 +60,7 @@ public class LoginActivity extends AppCompatActivity {
         UserEntity entity = DatabaseManager.getUserEntity();
         if (entity != null) {
             DataManager.getInstance().setUserItem(entity);
+            NotificationService.actionStart(getApplicationContext(), entity.userId);
             setResult(RESULT_OK, null);
             finish();
         }
@@ -90,6 +92,7 @@ public class LoginActivity extends AppCompatActivity {
                     public void onResult(Integer result) {
                         if (0 < result) {
                             DatabaseManager.setUserId(result);
+                            NotificationService.actionStart(getApplicationContext(), result);
                             setResult(RESULT_OK, null);
                             finish();
                         } else {

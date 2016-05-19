@@ -15,7 +15,8 @@ public enum ThriftNotificationType implements org.apache.thrift.TEnum {
   NOTIFICATION_JOIN(0),
   NOTIFICATION_JOIN_ANSWER(1),
   NOTIFICATION_INVITE(2),
-  NOTIFICATION_INVITE_ANSWER(3);
+  NOTIFICATION_INVITE_ANSWER(3),
+  NOTIFICATION_ALERT(4);
 
   private final int value;
 
@@ -44,6 +45,8 @@ public enum ThriftNotificationType implements org.apache.thrift.TEnum {
         return NOTIFICATION_INVITE;
       case 3:
         return NOTIFICATION_INVITE_ANSWER;
+      case 4:
+        return NOTIFICATION_ALERT;
       default:
         return null;
     }

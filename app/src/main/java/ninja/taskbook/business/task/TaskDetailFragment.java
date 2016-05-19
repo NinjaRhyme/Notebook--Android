@@ -77,6 +77,14 @@ public class TaskDetailFragment extends Fragment {
         mProgressTextView = (TextView)rootView.findViewById(R.id.progress_text_view);
         mProgressTextView.setText("progress");
 
+        // Alert
+        Button alertButton = (Button)rootView.findViewById(R.id.alert_task_button);
+        alertButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                alert();
+            }
+        });
+
         // Edit
         Button editButton = (Button)rootView.findViewById(R.id.edit_task_button);
         editButton.setOnClickListener(new View.OnClickListener() {
@@ -88,6 +96,10 @@ public class TaskDetailFragment extends Fragment {
         // Data
         mTaskId = getArguments().getInt("id");
         mTaskInfo = DataManager.getInstance().getTaskItem(mTaskId);
+        if (mTaskInfo == null || mTaskInfo.taskUserRole != 0)
+        {
+            alertButton.setVisibility(View.INVISIBLE);
+        }
 
         // Load
         loadTaskData();
@@ -113,6 +125,11 @@ public class TaskDetailFragment extends Fragment {
             mContentTextView.setText(mTaskInfo.taskContent);
             mProgressTextView.setText(String.valueOf(mTaskInfo.taskProgress));
         }
+    }
+
+    //----------------------------------------------------------------------------------------------------
+    private void alert() {
+
     }
 
     //----------------------------------------------------------------------------------------------------

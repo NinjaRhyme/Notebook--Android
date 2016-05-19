@@ -11,10 +11,12 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <Space
+        <Button style="?android:buttonBarButtonStyle"
+            android:id="@+id/alert_task_button"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:text="alert"/>
 
         <Button style="?android:buttonBarButtonStyle"
             android:id="@+id/edit_task_button"

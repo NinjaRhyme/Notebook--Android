@@ -43,6 +43,7 @@ struct ThriftNotification
 	3: required i32 notificationReceiverId
 	4: required ThriftNotificationType notificationType
 	5: required string notificationData
+	6: required bool notificationIsNew
 }
 
 # Memo: userId -> Token
@@ -63,7 +64,9 @@ service TaskBookService
 	list<ThriftTaskInfo> groupTaskInfos(1: required i32 groupId);
 	ThriftTaskInfo createTask(1: required i32 userId, 2: required ThriftTaskInfo taskInfo);
 	bool editTask(1: required i32 userId, 2: required ThriftTaskInfo taskInfo);
+	bool alertTask(1: required i32 userId, 2: required ThriftTaskInfo taskInfo);
 
 	bool sendNotification(1: required i32 userId, 2: required ThriftNotification notification);
 	list<ThriftNotification> notifications(1: required i32 userId);
+	list<ThriftNotification> newNotifications(1: required i32 userId);
 }

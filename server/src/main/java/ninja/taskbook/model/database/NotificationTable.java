@@ -15,7 +15,8 @@ public class NotificationTable extends TableBase<NotificationEntity> {
             "notification_owner_id INTEGER DEFAULT 0,",
             "notification_receiver_id INTEGER DEFAULT 0,",
             "notification_type VARCHAR(255) DEFAULT \"\",",
-            "notification_data VARCHAR(255) DEFAULT \"\");",
+            "notification_data VARCHAR(255) DEFAULT \"\",",
+            "notification_is_new INTEGER DEFAULT 1);",
     };
 
     //----------------------------------------------------------------------------------------------------
@@ -51,6 +52,7 @@ public class NotificationTable extends TableBase<NotificationEntity> {
             entity.notificationReceiverId = rs.getInt("notification_receiver_id");
             entity.notificationType = rs.getInt("notification_type");
             entity.notificationData = rs.getString("notification_data");
+            entity.notificationIsNew = rs.getBoolean("notification_is_new");
 
             return entity;
         } catch (SQLException e) {
@@ -67,7 +69,8 @@ public class NotificationTable extends TableBase<NotificationEntity> {
         result += "'" + entity.notificationOwnerId + "',";
         result += "'" + entity.notificationReceiverId + "',";
         result += "'" + entity.notificationType + "',";
-        result += "'" + entity.notificationData + "'";
+        result += "'" + entity.notificationData + "',";
+        result += "'" + entity.notificationIsNew + "'";
 
         return result;
     }

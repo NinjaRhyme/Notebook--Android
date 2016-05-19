@@ -9,6 +9,7 @@ public class NotificationEntity {
     public int notificationReceiverId;
     public int notificationType;
     public String notificationData;
+    public boolean notificationIsNew;
 
     //----------------------------------------------------------------------------------------------------
     public NotificationEntity() {
@@ -16,11 +17,12 @@ public class NotificationEntity {
     }
 
     //----------------------------------------------------------------------------------------------------
-    public NotificationEntity(int _notificationId, int _notificationOwnerId, int _notificationReceiverId, int _notificationType, String _notificationData) {
+    public NotificationEntity(int _notificationId, int _notificationOwnerId, int _notificationReceiverId, int _notificationType, String _notificationData, boolean _notificationIsNew) {
         notificationId = _notificationId;
         notificationOwnerId  = _notificationOwnerId;
         notificationReceiverId = _notificationReceiverId;
         notificationType = _notificationType;
         notificationData = _notificationData;
+        notificationIsNew = _notificationIsNew;
     }
 }
