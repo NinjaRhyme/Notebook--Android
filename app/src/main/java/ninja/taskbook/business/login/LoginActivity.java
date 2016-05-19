@@ -86,7 +86,7 @@ public class LoginActivity extends AppCompatActivity {
 
     //----------------------------------------------------------------------------------------------------
     private void login() {
-        DataManager.getInstance().RequestLogin(mNameEditText.getText().toString(), mPasswordEditText.getText().toString(),
+        DataManager.getInstance().requestLogin(mNameEditText.getText().toString(), mPasswordEditText.getText().toString(),
                 new DataManager.RequestCallback<Integer>() {
                     @Override
                     public void onResult(Integer result) {

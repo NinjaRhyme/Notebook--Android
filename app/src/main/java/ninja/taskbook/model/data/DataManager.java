@@ -71,7 +71,7 @@ public class DataManager {
         this.mUserItem = userItem;
     }
 
-    public void RequestLogin(final String userName, final String password, final RequestCallback<Integer> callback) {
+    public void requestLogin(final String userName, final String password, final RequestCallback<Integer> callback) {
         Observable.just(0)
                 .map(new Func1<Integer, Integer>() {
                     @Override
@@ -104,7 +104,7 @@ public class DataManager {
                 });
     }
 
-    public void RequestSignup(final String userName, final String userNickname, final String password, final RequestCallback<Integer> callback) {
+    public void requestSignup(final String userName, final String userNickname, final String password, final RequestCallback<Integer> callback) {
         Observable.just(0)
                 .map(new Func1<Integer, Integer>() {
                     @Override
@@ -318,6 +318,76 @@ public class DataManager {
                         }
                         if (callback != null) {
                             callback.onResult(mTaskItems);
+                        }
+                    }
+                });
+    }
+
+    public void requestAlertTask(final TaskEntity taskEntity, final RequestCallback<Boolean> callback) {
+        UserEntity entity = getUserItem();
+        if (entity == null || entity.userId <= 0) {
+            return;
+        }
+
+        Observable.just(entity.userId)
+                .map(new Func1<Integer, Boolean>() {
+                    @Override
+                    public Boolean call(Integer userId) {
+                        try {
+                            TaskBookService.Client client = (TaskBookService.Client) ThriftManager.createClient(ThriftManager.ClientTypeEnum.CLIENT.toString());
+                            if (client != null) {
+                                ThriftTaskInfo taskInfo = new ThriftTaskInfo(taskEntity.taskId, taskEntity.taskGroupId, taskEntity.taskAuthor, taskEntity.taskName, taskEntity.taskContent, taskEntity.taskBeginning, taskEntity.taskDeadline, taskEntity.taskProgress);
+                                taskInfo.userRole = taskEntity.taskUserRole;
+                                return client.alertTask(userId, taskInfo);
+                            }
+                        } catch (TException e) {
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Boolean>() {
+                    @Override
+                    public void call(Boolean result) {
+                        if (callback != null) {
+                            callback.onResult(result);
+                        }
+                    }
+                });
+    }
+
+    public void requestEditTask(final TaskEntity taskEntity, final RequestCallback<Boolean> callback) {
+        UserEntity entity = getUserItem();
+        if (entity == null || entity.userId <= 0) {
+            return;
+        }
+
+        Observable.just(entity.userId)
+                .map(new Func1<Integer, Boolean>() {
+                    @Override
+                    public Boolean call(Integer userId) {
+                        try {
+                            TaskBookService.Client client = (TaskBookService.Client) ThriftManager.createClient(ThriftManager.ClientTypeEnum.CLIENT.toString());
+                            if (client != null) {
+                                ThriftTaskInfo taskInfo = new ThriftTaskInfo(taskEntity.taskId, taskEntity.taskGroupId, taskEntity.taskAuthor, taskEntity.taskName, taskEntity.taskContent, taskEntity.taskBeginning, taskEntity.taskDeadline, taskEntity.taskProgress);
+                                taskInfo.userRole = taskEntity.taskUserRole;
+                                return client.editTask(userId, taskInfo);
+                            }
+                        } catch (TException e) {
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Boolean>() {
+                    @Override
+                    public void call(Boolean result) {
+                        if (callback != null) {
+                            callback.onResult(result);
                         }
                     }
                 });

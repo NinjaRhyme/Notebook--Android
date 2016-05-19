@@ -2,11 +2,13 @@ package ninja.taskbook.business.task;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,6 +33,7 @@ public class TaskDetailFragment extends Fragment {
     TextView mProgressTextView;
     int mTaskId = 0;
     TaskEntity mTaskInfo = null;
+    TaskEntity mTempTaskInfo = null;
 
     //----------------------------------------------------------------------------------------------------
     public TaskDetailFragment() {
@@ -96,6 +99,7 @@ public class TaskDetailFragment extends Fragment {
         // Data
         mTaskId = getArguments().getInt("id");
         mTaskInfo = DataManager.getInstance().getTaskItem(mTaskId);
+        mTempTaskInfo = new TaskEntity(mTaskInfo);
         if (mTaskInfo == null || mTaskInfo.taskUserRole != 0)
         {
             alertButton.setVisibility(View.INVISIBLE);
@@ -129,11 +133,42 @@ public class TaskDetailFragment extends Fragment {
 
     //----------------------------------------------------------------------------------------------------
     private void alert() {
-
+        DataManager.getInstance().requestAlertTask(mTempTaskInfo,
+                new DataManager.RequestCallback<Boolean>() {
+                    @Override
+                    public void onResult(Boolean result) {
+                        if (result) {
+                            Toast toast = Toast.makeText(getContext(), "提醒成功", Toast.LENGTH_LONG);
+                            toast.setGravity(Gravity.CENTER, 0, 0);
+                            toast.show();
+                        } else {
+                            Toast toast = Toast.makeText(getContext(), "提醒失败", Toast.LENGTH_LONG);
+                            toast.setGravity(Gravity.CENTER, 0, 0);
+                            toast.show();
+                        }
+                    }
+                }
+        );
     }
 
     //----------------------------------------------------------------------------------------------------
     private void edit() {
-
+        DataManager.getInstance().requestEditTask(mTempTaskInfo,
+                new DataManager.RequestCallback<Boolean>() {
+                    @Override
+                    public void onResult(Boolean result) {
+                        if (result) {
+                            mTaskInfo.setTaskEntity(mTempTaskInfo);
+                            Toast toast = Toast.makeText(getContext(), "修改成功", Toast.LENGTH_LONG);
+                            toast.setGravity(Gravity.CENTER, 0, 0);
+                            toast.show();
+                        } else {
+                            Toast toast = Toast.makeText(getContext(), "修改失败", Toast.LENGTH_LONG);
+                            toast.setGravity(Gravity.CENTER, 0, 0);
+                            toast.show();
+                        }
+                    }
+                }
+        );
     }
 }

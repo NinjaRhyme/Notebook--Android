@@ -31,4 +31,24 @@ public class TaskEntity {
         taskProgress = progress;
         taskUserRole = userRole;
     }
+
+    //----------------------------------------------------------------------------------------------------
+    public TaskEntity(TaskEntity entity) {
+        setTaskEntity(entity);
+    }
+
+    //----------------------------------------------------------------------------------------------------
+    public void setTaskEntity(TaskEntity entity) {
+        if (entity != null) {
+            taskId = entity.taskId;
+            taskGroupId = entity.taskGroupId;
+            taskAuthor = entity.taskAuthor;
+            taskName = entity.taskName;
+            taskContent = entity.taskContent;
+            taskBeginning = entity.taskBeginning;
+            taskDeadline = entity.taskDeadline;
+            taskProgress = entity.taskProgress;
+            taskUserRole = entity.taskUserRole;
+        }
+    }
 }

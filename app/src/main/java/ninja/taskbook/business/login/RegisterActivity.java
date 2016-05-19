@@ -93,7 +93,7 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        DataManager.getInstance().RequestSignup(mNameEditText.getText().toString(), mNicknameEditText.getText().toString(), mPasswordEditText.getText().toString(),
+        DataManager.getInstance().requestSignup(mNameEditText.getText().toString(), mNicknameEditText.getText().toString(), mPasswordEditText.getText().toString(),
                 new DataManager.RequestCallback<Integer>() {
                     @Override
                     public void onResult(Integer result) {
