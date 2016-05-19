@@ -66,9 +66,9 @@ public class TaskBookServer {
         userGroupTable = (UserGroupTable)mDatabaseManager.getTable(UserGroupTable.class);
         UserGroupRelation userGroupRelation = new UserGroupRelation(0, 1, 1, 0);
         userGroupTable.insert(userGroupRelation);
-        userGroupRelation = new UserGroupRelation(0, 1, 2, 0);
+        userGroupRelation = new UserGroupRelation(0, 1, 2, UserGroupRelation.UserGroupRole.USER_GROUP_ADMIN.ordinal());
         userGroupTable.insert(userGroupRelation);
-        userGroupRelation = new UserGroupRelation(0, 1, 3, 0);
+        userGroupRelation = new UserGroupRelation(0, 1, 3, UserGroupRelation.UserGroupRole.USER_GROUP_ADMIN.ordinal());
         userGroupTable.insert(userGroupRelation);
 
         TaskTable taskTable = (TaskTable)mDatabaseManager.getTable(TaskTable.class);
@@ -86,13 +86,15 @@ public class TaskBookServer {
         UserTaskTable userTaskTable = (UserTaskTable)mDatabaseManager.getTable(UserTaskTable.class);
         userTaskTable.drop();
         userTaskTable = (UserTaskTable)mDatabaseManager.getTable(UserTaskTable.class);
-        UserTaskRelation userTaskRelation = new UserTaskRelation(0, 1, 1, 0);
+        UserTaskRelation userTaskRelation = new UserTaskRelation(0, 1, 1, UserTaskRelation.UserTaskRole.USER_TASK_ADMIN.ordinal());
         userTaskTable.insert(userTaskRelation);
-        userTaskRelation = new UserTaskRelation(0, 1, 2, 0);
+        userTaskRelation = new UserTaskRelation(0, 1, 2, UserTaskRelation.UserTaskRole.USER_TASK_ADMIN.ordinal());
         userTaskTable.insert(userTaskRelation);
-        userTaskRelation = new UserTaskRelation(0, 1, 3, 0);
+        userTaskRelation = new UserTaskRelation(0, 1, 3, UserTaskRelation.UserTaskRole.USER_TASK_ADMIN.ordinal());
         userTaskTable.insert(userTaskRelation);
-        userTaskRelation = new UserTaskRelation(0, 1, 4, 0);
+        userTaskRelation = new UserTaskRelation(0, 1, 4, UserTaskRelation.UserTaskRole.USER_TASK_ADMIN.ordinal());
+        userTaskTable.insert(userTaskRelation);
+        userTaskRelation = new UserTaskRelation(0, 1, 1, UserTaskRelation.UserTaskRole.USER_TASK_MEMBER.ordinal()); // Test
         userTaskTable.insert(userTaskRelation);
 
         NotificationTable notificationTable = (NotificationTable)mDatabaseManager.getTable(NotificationTable.class);
@@ -385,7 +387,7 @@ public class TaskBookServer {
         public List<ThriftNotification> newNotifications(int userId) throws org.apache.thrift.TException {
             // Todo: update
             NotificationTable table = (NotificationTable)mDatabaseManager.getTable(NotificationTable.class);
-            List<NotificationEntity> entities = table.queryEntities("notification_receiver_id = '" + userId + "' and notification_is_new = 1");
+            List<NotificationEntity> entities = table.queryEntities("notification_receiver_id = '" + userId + "' and notification_is_new = 'true'");
             List<ThriftNotification> notifications = new ArrayList<>();
             for (NotificationEntity entity : entities) {
                 ThriftNotification notification = new ThriftNotification(entity.notificationId, entity.notificationOwnerId, entity.notificationReceiverId, ThriftNotificationType.findByValue(entity.notificationType), entity.notificationData,  entity.notificationIsNew);
