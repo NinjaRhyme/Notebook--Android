@@ -30,7 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="100dp">
+        android:layout_marginTop="50dp">
         <Space
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -48,7 +48,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="6"
-            android:ems="10"
+            android:textAppearance="?android:attr/textAppearanceSmall"
             android:text=""
             android:textColor="@color/task_text_color"
             android:backgroundTint="@color/task_text_color"/>
@@ -71,18 +71,19 @@
             android:layout_height="match_parent"
             android:layout_weight="3"
             android:gravity="center_vertical|end"
-            android:labelFor="@+id/name_text_view"
+            android:labelFor="@+id/name_edit_text"
             android:text="Name:"
             android:textColor="@color/task_text_color"/>
-        <TextView
-            android:id="@+id/name_text_view"
+        <EditText
+            android:id="@+id/name_edit_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="6"
-            android:ems="10"
+            android:textAppearance="?android:attr/textAppearanceSmall"
             android:text=""
             android:textColor="@color/task_text_color"
-            android:backgroundTint="@color/task_text_color"/>
+            android:backgroundTint="@color/task_text_color"
+            android:inputType="text" />
         <Space
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -104,12 +105,13 @@
             android:gravity="center_vertical|end"
             android:text="Beginning:"
             android:textColor="@color/task_text_color"/>
-        <TextView
-            android:id="@+id/beginning_calendar_text_view"
+        <EditText
+            android:id="@+id/beginning_calendar_edit_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="6"
-            android:ems="10"
+            android:inputType="text"
+            android:textAppearance="?android:attr/textAppearanceSmall"
             android:text=""
             android:textColor="@color/task_text_color"
             android:backgroundTint="@color/task_text_color"/>
@@ -126,12 +128,13 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="4"/>
-        <TextView
-            android:id="@+id/beginning_time_text_view"
+        <EditText
+            android:id="@+id/beginning_time_edit_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="6"
-            android:ems="10"
+            android:inputType="text"
+            android:textAppearance="?android:attr/textAppearanceSmall"
             android:text=""
             android:textColor="@color/task_text_color"
             android:backgroundTint="@color/task_text_color"/>
@@ -156,12 +159,13 @@
             android:gravity="center_vertical|end"
             android:text="Deadline:"
             android:textColor="@color/task_text_color"/>
-        <TextView
-            android:id="@+id/deadline_calendar_text_view"
+        <EditText
+            android:id="@+id/deadline_calendar_edit_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="6"
-            android:ems="10"
+            android:inputType="text"
+            android:textAppearance="?android:attr/textAppearanceSmall"
             android:text=""
             android:textColor="@color/task_text_color"
             android:backgroundTint="@color/task_text_color"/>
@@ -178,12 +182,13 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="4"/>
-        <TextView
-            android:id="@+id/deadline_time_text_view"
+        <EditText
+            android:id="@+id/deadline_time_edit_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="6"
-            android:ems="10"
+            android:inputType="text"
+            android:textAppearance="?android:attr/textAppearanceSmall"
             android:text=""
             android:textColor="@color/task_text_color"
             android:backgroundTint="@color/task_text_color"/>
@@ -206,15 +211,16 @@
             android:layout_height="match_parent"
             android:layout_weight="3"
             android:gravity="center_vertical|end"
-            android:labelFor="@+id/content_text_view"
+            android:labelFor="@+id/content_edit_text"
             android:text="Content:"
             android:textColor="@color/task_text_color"/>
-        <TextView
-            android:id="@+id/content_text_view"
+        <EditText
+            android:id="@+id/content_edit_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="6"
-            android:ems="10"
+            android:inputType="text"
+            android:textAppearance="?android:attr/textAppearanceSmall"
             android:text=""
             android:textColor="@color/task_text_color"
             android:backgroundTint="@color/task_text_color"/>
@@ -237,15 +243,16 @@
             android:layout_height="match_parent"
             android:layout_weight="3"
             android:gravity="center_vertical|end"
-            android:labelFor="@+id/progress_text_view"
+            android:labelFor="@+id/progress_edit_text"
             android:text="Progress:"
             android:textColor="@color/task_text_color"/>
-        <TextView
-            android:id="@+id/progress_text_view"
+        <EditText
+            android:id="@+id/progress_edit_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="6"
-            android:ems="10"
+            android:inputType="text"
+            android:textAppearance="?android:attr/textAppearanceSmall"
             android:text=""
             android:textColor="@color/task_text_color"
             android:backgroundTint="@color/task_text_color"/>
@@ -253,5 +260,25 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button style="?android:buttonBarButtonStyle"
+            android:id="@+id/edit_cancel_button"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:text="cancel"/>
+
+        <Button style="?android:buttonBarButtonStyle"
+            android:id="@+id/edit_confirm_button"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:text="confirm"/>
     </LinearLayout>
 </LinearLayout>

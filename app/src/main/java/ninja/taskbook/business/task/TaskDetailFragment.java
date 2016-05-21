@@ -1,5 +1,6 @@
 package ninja.taskbook.business.task;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
@@ -11,6 +12,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.thrift.TException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,17 +27,18 @@ public class TaskDetailFragment extends Fragment {
 
     //----------------------------------------------------------------------------------------------------
     TextView mIdTextView;
-    TextView mNameTextView;
-    TextView mTaskBeginningCalendarTextView;
-    TextView mTaskBeginningTimeTextView;
-    TextView mTaskDeadlineCalendarTextView;
-    TextView mTaskDeadlineTimeTextView;
-    TextView mContentTextView;
-    TextView mProgressTextView;
-
     EditText mNameEditText;
+    EditText mTaskBeginningCalendarEditText;
+    EditText mTaskBeginningTimeEditText;
+    EditText mTaskDeadlineCalendarEditText;
+    EditText mTaskDeadlineTimeEditText;
+    EditText mContentEditText;
     EditText mProgressEditText;
+    Button mEditCancelButton;
+    Button mEditConfirmButton;
+    Drawable mUnderlineDrawable;
 
+    boolean mIsEditing = false;
     int mTaskId = 0;
     TaskEntity mTaskInfo = null;
     TaskEntity mTempTaskInfo = null;
@@ -62,28 +65,29 @@ public class TaskDetailFragment extends Fragment {
         mIdTextView.setText("id");
 
         // Name
-        mNameTextView = (TextView)rootView.findViewById(R.id.name_text_view);
-        mNameTextView.setText("name");
+        mNameEditText = (EditText)rootView.findViewById(R.id.name_edit_text);
+        mNameEditText.setText("name");
+        mUnderlineDrawable = mNameEditText.getBackground();
 
         // Beginning
-        mTaskBeginningCalendarTextView = (TextView)rootView.findViewById(R.id.beginning_calendar_text_view);
-        mTaskBeginningCalendarTextView.setText("beginning");
-        mTaskBeginningTimeTextView = (TextView)rootView.findViewById(R.id.beginning_time_text_view);
-        mTaskBeginningTimeTextView.setText("beginning");
+        mTaskBeginningCalendarEditText = (EditText)rootView.findViewById(R.id.beginning_calendar_edit_text);
+        mTaskBeginningCalendarEditText.setText("beginning");
+        mTaskBeginningTimeEditText = (EditText)rootView.findViewById(R.id.beginning_time_edit_text);
+        mTaskBeginningTimeEditText.setText("beginning");
 
         // Deadline
-        mTaskDeadlineCalendarTextView = (TextView)rootView.findViewById(R.id.deadline_calendar_text_view);
-        mTaskDeadlineCalendarTextView.setText("deadline");
-        mTaskDeadlineTimeTextView = (TextView)rootView.findViewById(R.id.deadline_time_text_view);
-        mTaskDeadlineTimeTextView.setText("deadline");
+        mTaskDeadlineCalendarEditText = (EditText)rootView.findViewById(R.id.deadline_calendar_edit_text);
+        mTaskDeadlineCalendarEditText.setText("deadline");
+        mTaskDeadlineTimeEditText = (EditText)rootView.findViewById(R.id.deadline_time_edit_text);
+        mTaskDeadlineTimeEditText.setText("deadline");
 
         // Content
-        mContentTextView = (TextView)rootView.findViewById(R.id.content_text_view);
-        mContentTextView.setText("content");
+        mContentEditText = (EditText)rootView.findViewById(R.id.content_edit_text);
+        mContentEditText.setText("content");
 
         // Progress
-        mProgressTextView = (TextView)rootView.findViewById(R.id.progress_text_view);
-        mProgressTextView.setText("progress");
+        mProgressEditText = (EditText)rootView.findViewById(R.id.progress_edit_text);
+        mProgressEditText.setText("progress");
 
         // Alert
         Button alertButton = (Button)rootView.findViewById(R.id.alert_task_button);
@@ -100,6 +104,18 @@ public class TaskDetailFragment extends Fragment {
                 edit();
             }
         });
+        mEditCancelButton = (Button)rootView.findViewById(R.id.edit_cancel_button);
+        mEditCancelButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                editCancel();
+            }
+        });
+        mEditConfirmButton= (Button)rootView.findViewById(R.id.edit_confirm_button);
+        mEditConfirmButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                editConfirm();
+            }
+        });
 
         // Data
         mTaskId = getArguments().getInt("id");
@@ -109,6 +125,7 @@ public class TaskDetailFragment extends Fragment {
         {
             alertButton.setVisibility(View.INVISIBLE);
         }
+        disableEdit();
 
         // Load
         loadTaskData();
@@ -120,19 +137,19 @@ public class TaskDetailFragment extends Fragment {
     private void loadTaskData() {
         if (mTaskInfo != null) {
             mIdTextView.setText(String.valueOf(mTaskInfo.taskId));
-            mNameTextView.setText(mTaskInfo.taskName);
+            mNameEditText.setText(mTaskInfo.taskName);
             try {
                 JSONObject beginningJsonData = new JSONObject(mTaskInfo.taskBeginning);
-                mTaskBeginningCalendarTextView.setText(beginningJsonData.getString("calendar"));
-                mTaskBeginningTimeTextView.setText(beginningJsonData.getString("time"));
+                mTaskBeginningCalendarEditText.setText(beginningJsonData.getString("calendar"));
+                mTaskBeginningTimeEditText.setText(beginningJsonData.getString("time"));
                 JSONObject deadlineJsonData = new JSONObject(mTaskInfo.taskDeadline);
-                mTaskDeadlineCalendarTextView.setText(deadlineJsonData.getString("calendar"));
-                mTaskDeadlineTimeTextView.setText(deadlineJsonData.getString("time"));
+                mTaskDeadlineCalendarEditText.setText(deadlineJsonData.getString("calendar"));
+                mTaskDeadlineTimeEditText.setText(deadlineJsonData.getString("time"));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            mContentTextView.setText(mTaskInfo.taskContent);
-            mProgressTextView.setText(String.valueOf(mTaskInfo.taskProgress));
+            mContentEditText.setText(mTaskInfo.taskContent);
+            mProgressEditText.setText(String.valueOf(mTaskInfo.taskProgress));
         }
     }
 
@@ -157,12 +174,87 @@ public class TaskDetailFragment extends Fragment {
     }
 
     //----------------------------------------------------------------------------------------------------
-    private void edit() {
+    private void enableEdit() {
+        switch (mTaskInfo.taskUserRole) {
+            case 0:
+                // Name
+                mNameEditText.setEnabled(true);
+                mNameEditText.setBackground(mUnderlineDrawable);
+                break;
+            case 1:
+                break;
+            default:
+                break;
+        }
 
+        // Progress
+        mProgressEditText.setEnabled(true);
+        mProgressEditText.setBackground(mUnderlineDrawable);
+
+        // Button
+        mEditCancelButton.setVisibility(View.INVISIBLE);
+        mEditConfirmButton.setVisibility(View.INVISIBLE);
+    }
+
+    //----------------------------------------------------------------------------------------------------
+    private void disableEdit() {
+        // Name
+        mNameEditText.setEnabled(false);
+        mNameEditText.setBackground(null);
+
+        // Beginning
+        mTaskBeginningCalendarEditText.setEnabled(false);
+        mTaskBeginningCalendarEditText.setBackground(null);
+        mTaskBeginningTimeEditText.setEnabled(false);
+        mTaskBeginningTimeEditText.setBackground(null);
+
+        // Deadline
+        mTaskDeadlineCalendarEditText.setEnabled(false);
+        mTaskDeadlineCalendarEditText.setBackground(null);
+        mTaskDeadlineTimeEditText.setEnabled(false);
+        mTaskDeadlineTimeEditText.setBackground(null);
+
+        // Content
+        mContentEditText.setEnabled(false);
+        mContentEditText.setBackground(null);
+
+        // Progress
+        mProgressEditText.setEnabled(false);
+        mProgressEditText.setBackground(null);
+
+        // Button
+        mEditCancelButton.setVisibility(View.INVISIBLE);
+        mEditConfirmButton.setVisibility(View.INVISIBLE);
+    }
+
+    //----------------------------------------------------------------------------------------------------
+    private void edit() {
+        if (mIsEditing) {
+            editCancel();
+        } else {
+            enableEdit();
+        }
+        mIsEditing = !mIsEditing;
     }
 
     //----------------------------------------------------------------------------------------------------
     private void editConfirm() {
+        try {
+            mTempTaskInfo.taskName = mNameEditText.getText().toString();
+            JSONObject timeJsonData = new JSONObject();
+            timeJsonData.put("calendar", mTaskBeginningCalendarEditText.getText().toString());
+            timeJsonData.put("time", mTaskBeginningTimeEditText.getText().toString());
+            mTempTaskInfo.taskBeginning = timeJsonData.toString();
+            JSONObject deadlineJsonData = new JSONObject();
+            deadlineJsonData.put("calendar", mTaskDeadlineCalendarEditText.getText().toString());
+            deadlineJsonData.put("time", mTaskDeadlineTimeEditText.getText().toString());
+            mTempTaskInfo.taskDeadline = deadlineJsonData.toString();
+            mTempTaskInfo.taskContent = mContentEditText.getText().toString();
+            mTempTaskInfo.taskProgress = Float.valueOf(mProgressEditText.getText().toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         DataManager.getInstance().requestEditTask(mTempTaskInfo,
                 new DataManager.RequestCallback<Boolean>() {
                     @Override
@@ -172,6 +264,7 @@ public class TaskDetailFragment extends Fragment {
                             Toast toast = Toast.makeText(getContext(), "修改成功", Toast.LENGTH_LONG);
                             toast.setGravity(Gravity.CENTER, 0, 0);
                             toast.show();
+                            disableEdit();
                         } else {
                             Toast toast = Toast.makeText(getContext(), "修改失败", Toast.LENGTH_LONG);
                             toast.setGravity(Gravity.CENTER, 0, 0);
@@ -184,6 +277,8 @@ public class TaskDetailFragment extends Fragment {
 
     //----------------------------------------------------------------------------------------------------
     private void editCancel() {
-
+        mTempTaskInfo.setTaskEntity(mTaskInfo);
+        loadTaskData();
+        disableEdit();
     }
 }
