@@ -81,7 +81,7 @@ public class NotificationFragment  extends Fragment {
     }
 
     //----------------------------------------------------------------------------------------------------
-    void onNotificationItemClicked(int id) {
+    void onNotificationItemClicked(final int id) {
         new AlertDialog.Builder(getContext())
                 .setMessage("你确定?")
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -139,7 +139,7 @@ public class NotificationFragment  extends Fragment {
                     case NOTIFICATION_JOIN:
                         try {
                             JSONObject jsonData = new JSONObject(entity.notificationData);
-                            String text = "邀请您加入群组:" + jsonData.getInt("group_id");
+                            String text = jsonData.getString("user_name") + "邀请您加入群组:" + jsonData.getInt("group_id");
                             holder.titleTextView.setText(text);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -148,7 +148,7 @@ public class NotificationFragment  extends Fragment {
                     case NOTIFICATION_INVITE:
                         try {
                             JSONObject jsonData = new JSONObject(entity.notificationData);
-                            String text = "" + entity.notificationOwnerId + "申请加入群组:" + jsonData.getInt("group_id");
+                            String text = jsonData.getString("user_name") + entity.notificationOwnerId + "申请加入群组:" + jsonData.getInt("group_id");
                             holder.titleTextView.setText(text);
                         } catch (JSONException e) {
                             e.printStackTrace();

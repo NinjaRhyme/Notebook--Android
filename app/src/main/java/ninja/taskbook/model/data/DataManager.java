@@ -197,6 +197,48 @@ public class DataManager {
         return null;
     }
 
+    public void requestGroupItem(final int groupId, final RequestCallback<GroupEntity> callback) {
+        UserEntity entity = getUserItem();
+        if (entity == null || entity.userId <= 0) {
+            return;
+        }
+
+        Observable.just(entity.userId)
+                .map(new Func1<Integer, ThriftGroupInfo>() {
+                    @Override
+                    public ThriftGroupInfo call(Integer userId) {
+                        try {
+                            TaskBookService.Client client = (TaskBookService.Client)ThriftManager.createClient(ThriftManager.ClientTypeEnum.CLIENT.toString());
+                            if (client != null)
+                                return client.groupInfo(userId, groupId);
+                        } catch (TException e) {
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<ThriftGroupInfo>() {
+                    @Override
+                    public void call(ThriftGroupInfo result) {
+                        GroupEntity entity = null;
+                        if (result != null) {
+                            entity = new GroupEntity(result.groupId, result.groupName, result.userRole);
+                            if (getGroupItem(groupId) == null) {
+                                if (mGroupItems == null) {
+                                    mGroupItems = new ArrayList<>();
+                                }
+                                mGroupItems.add(entity);
+                            }
+                        }
+                        if (callback != null) {
+                            callback.onResult(entity);
+                        }
+                    }
+                });
+    }
+
     public void requestGroupItems(final RequestCallback<List<GroupEntity>> callback) {
         UserEntity entity = getUserItem();
         if (entity == null || entity.userId <= 0) {

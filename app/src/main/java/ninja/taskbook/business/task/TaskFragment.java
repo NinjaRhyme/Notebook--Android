@@ -130,7 +130,7 @@ public class TaskFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(TaskItemHolder holder, final int position) {
+        public void onBindViewHolder(final TaskItemHolder holder, final int position) {
             CardView cardView = (CardView)holder.itemView;
             switch (position % 4) {
                 case 0:
@@ -147,9 +147,20 @@ public class TaskFragment extends Fragment {
                     break;
             }
             final TaskEntity taskEntity = mTaskItems.get(position);
-            final GroupEntity groupEntity = DataManager.getInstance().getGroupItem(taskEntity.taskGroupId); // Todo !!!
+            final GroupEntity groupEntity = DataManager.getInstance().getGroupItem(taskEntity.taskGroupId);
+            if (groupEntity == null) {
+                DataManager.getInstance().requestGroupItem(taskEntity.taskGroupId,
+                        new DataManager.RequestCallback<GroupEntity>() {
+                            @Override
+                            public void onResult(GroupEntity result) {
+                                holder.groupNameTextView.setText(result.groupName);
+                            }
+                        }
+                );
+            } else {
+                holder.groupNameTextView.setText(groupEntity.groupName);
+            }
             holder.titleTextView.setText(taskEntity.taskName);
-            holder.groupNameTextView.setText(groupEntity.groupName);
             holder.authorTextView.setText(taskEntity.taskAuthor);
             cardView.setOnClickListener(new View.OnClickListener() {
                 @Override

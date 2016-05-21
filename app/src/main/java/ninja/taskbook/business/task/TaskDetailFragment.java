@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +32,10 @@ public class TaskDetailFragment extends Fragment {
     TextView mTaskDeadlineTimeTextView;
     TextView mContentTextView;
     TextView mProgressTextView;
+
+    EditText mNameEditText;
+    EditText mProgressEditText;
+
     int mTaskId = 0;
     TaskEntity mTaskInfo = null;
     TaskEntity mTempTaskInfo = null;
@@ -133,7 +138,7 @@ public class TaskDetailFragment extends Fragment {
 
     //----------------------------------------------------------------------------------------------------
     private void alert() {
-        DataManager.getInstance().requestAlertTask(mTempTaskInfo,
+        DataManager.getInstance().requestAlertTask(mTaskInfo,
                 new DataManager.RequestCallback<Boolean>() {
                     @Override
                     public void onResult(Boolean result) {
@@ -153,6 +158,11 @@ public class TaskDetailFragment extends Fragment {
 
     //----------------------------------------------------------------------------------------------------
     private void edit() {
+
+    }
+
+    //----------------------------------------------------------------------------------------------------
+    private void editConfirm() {
         DataManager.getInstance().requestEditTask(mTempTaskInfo,
                 new DataManager.RequestCallback<Boolean>() {
                     @Override
@@ -170,5 +180,10 @@ public class TaskDetailFragment extends Fragment {
                     }
                 }
         );
+    }
+
+    //----------------------------------------------------------------------------------------------------
+    private void editCancel() {
+
     }
 }

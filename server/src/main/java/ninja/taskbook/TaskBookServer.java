@@ -100,7 +100,7 @@ public class TaskBookServer {
         NotificationTable notificationTable = (NotificationTable)mDatabaseManager.getTable(NotificationTable.class);
         notificationTable.drop();
         notificationTable = (NotificationTable)mDatabaseManager.getTable(NotificationTable.class);
-        NotificationEntity notificationEntity = new NotificationEntity(0, 1, 1, 0, "{\"group_id\":\"1\"}", true);
+        NotificationEntity notificationEntity = new NotificationEntity(0, 1, 1, 0, "{\"user_name\":\"嘻嘻嘻嘻\", \"group_id\":\"1\"}", true);
         notificationTable.insert(notificationEntity);
         */
 
@@ -138,7 +138,7 @@ public class TaskBookServer {
         @Override
         public int login(String userName, String userPassword) throws org.apache.thrift.TException {
             UserTable table = (UserTable)mDatabaseManager.getTable(UserTable.class);
-            UserEntity entity = table.queryEntity("user_name = '" + userName  + "' and user_password = '" + userPassword + "'");
+            UserEntity entity = table.queryEntity("user_name = '" + userName + "' and user_password = '" + userPassword + "'");
             if (entity != null) {
                 return entity.userId;
             }
@@ -219,24 +219,34 @@ public class TaskBookServer {
 
         @Override
         public boolean join(int userId, int groupId) throws org.apache.thrift.TException {
-            UserGroupTable userGroupTable = (UserGroupTable)mDatabaseManager.getTable(UserGroupTable.class);
-            UserGroupRelation relation = userGroupTable.queryEntity("group_id = '" + groupId + "' and user_role = 0");
-            if (relation != null) {
-                JSONObject jsonData = new JSONObject();
-                jsonData.put("group_id", groupId);
-                ThriftNotification notification = new ThriftNotification(0, userId, relation.userId, ThriftNotificationType.NOTIFICATION_JOIN, jsonData.toString(), true);
-                return sendNotification(userId, notification);
+            UserTable table = (UserTable)mDatabaseManager.getTable(UserTable.class);
+            UserEntity entity = table.queryEntity("user_id = '" + userId + "'");
+            if (entity != null) {
+                UserGroupTable userGroupTable = (UserGroupTable) mDatabaseManager.getTable(UserGroupTable.class);
+                UserGroupRelation relation = userGroupTable.queryEntity("group_id = '" + groupId + "' and user_role = 0");
+                if (relation != null) {
+                    JSONObject jsonData = new JSONObject();
+                    jsonData.put("user_name", entity.userNickname);
+                    jsonData.put("group_id", groupId);
+                    ThriftNotification notification = new ThriftNotification(0, userId, relation.userId, ThriftNotificationType.NOTIFICATION_JOIN, jsonData.toString(), true);
+                    return sendNotification(userId, notification);
+                }
             }
             return false;
         }
 
         @Override
         public boolean invite(int userId, int groupId, int targetUserId) throws org.apache.thrift.TException {
-            // Todo: user's rights
-            JSONObject jsonData = new JSONObject();
-            jsonData.put("group_id", groupId);
-            ThriftNotification notification = new ThriftNotification(0, userId, targetUserId, ThriftNotificationType.NOTIFICATION_INVITE, jsonData.toString(), true);
-            return sendNotification(userId, notification);
+            UserTable table = (UserTable)mDatabaseManager.getTable(UserTable.class);
+            UserEntity entity = table.queryEntity("user_id = '" + userId + "'");
+            if (entity != null) {
+                JSONObject jsonData = new JSONObject();
+                jsonData.put("user_name", entity.userNickname);
+                jsonData.put("group_id", groupId);
+                ThriftNotification notification = new ThriftNotification(0, userId, targetUserId, ThriftNotificationType.NOTIFICATION_INVITE, jsonData.toString(), true);
+                return sendNotification(userId, notification);
+            }
+            return false;
         }
 
         //----------------------------------------------------------------------------------------------------
