@@ -12,10 +12,14 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 import lecho.lib.hellocharts.listener.LineChartOnValueSelectListener;
 import lecho.lib.hellocharts.model.Axis;
+import lecho.lib.hellocharts.model.AxisValue;
 import lecho.lib.hellocharts.model.Line;
 import lecho.lib.hellocharts.model.LineChartData;
 import lecho.lib.hellocharts.model.PointValue;
@@ -33,14 +37,8 @@ public class GroupTaskLineFragment extends Fragment {
     //----------------------------------------------------------------------------------------------------
     private LineChartView chartView;
     private LineChartData chartData;
-
-    private int numberOfLines = 1;
-    private int maxNumberOfLines = 4;
-    private int numberOfPoints = 12;
-
-    float[][] randomNumbersTab = new float[maxNumberOfLines][numberOfPoints];
-
     List<TaskEntity> mGroupTaskItems = null;
+    List<HashMap.Entry<String, List<Calendar>>> mTaskCalendarList;
 
     //----------------------------------------------------------------------------------------------------
     @Override
@@ -76,56 +74,71 @@ public class GroupTaskLineFragment extends Fragment {
 
     //----------------------------------------------------------------------------------------------------
     private void generateValues() {
+        HashMap<String, List<Calendar>> taskCalendarMap = new HashMap<>();
         for (TaskEntity entity : mGroupTaskItems) {
             try {
-                JSONObject beginningJsonData = new JSONObject(entity.taskBeginning);
-                Calendar beginingCalendar = Helper.stringToCalendar(beginningJsonData.getString("date") + " " + beginningJsonData.getString("time"));
+                //JSONObject beginningJsonData = new JSONObject(entity.taskBeginning);
+                //Calendar beginningCalendar = Helper.stringToCalendar(beginningJsonData.getString("date") + " " + beginningJsonData.getString("time"));
                 JSONObject deadlineJsonData = new JSONObject(entity.taskDeadline);
                 Calendar deadlineCalendar = Helper.stringToCalendar(deadlineJsonData.getString("date") + " " + deadlineJsonData.getString("time"));
+
+                List<Calendar> taskCalendars = taskCalendarMap.get(deadlineJsonData.getString("date"));
+                if (taskCalendars == null) {
+                    taskCalendars = new ArrayList<>();
+                    taskCalendarMap.put(deadlineJsonData.getString("date"), taskCalendars);
+                }
+                taskCalendars.add(deadlineCalendar);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-
-        for (int i = 0; i < maxNumberOfLines; ++i) {
-            for (int j = 0; j < numberOfPoints; ++j) {
-                randomNumbersTab[i][j] = (float) Math.random() * 100f;
+        mTaskCalendarList = new ArrayList<>(taskCalendarMap.entrySet());
+        Collections.sort(mTaskCalendarList, new Comparator<HashMap.Entry<String, List<Calendar>>>() {
+            public int compare(HashMap.Entry<String, List<Calendar>> object1, HashMap.Entry<String, List<Calendar>> object2) {
+                return object1.getKey().compareTo(object2.getKey());
             }
-        }
+        });
     }
 
     //----------------------------------------------------------------------------------------------------
     private void generateData() {
+        // Line
         List<Line> lines = new ArrayList<>();
-        for (int i = 0; i < numberOfLines; ++i) {
-
-            List<PointValue> values = new ArrayList<>();
-            for (int j = 0; j < numberOfPoints; ++j) {
-                values.add(new PointValue(j, randomNumbersTab[i][j]));
-            }
-
-            Line line = new Line(values);
-            line.setColor(ChartUtils.COLORS[i]);
-            line.setShape(ValueShape.CIRCLE);
-            line.setCubic(false);
-            line.setFilled(false);
-            line.setHasLabels(false);
-            line.setHasLabelsOnlyForSelected(false);
-            line.setHasLines(true);
-            line.setHasPoints(true);
-            lines.add(line);
+        List<PointValue> values = new ArrayList<>();
+        for (int i = 0; i < mTaskCalendarList.size(); ++i) {
+            values.add(new PointValue(i, mTaskCalendarList.get(i).getValue().size()));
         }
+        Line line = new Line(values);
+        line.setColor(ChartUtils.COLORS[0]);
+        line.setShape(ValueShape.CIRCLE);
+        line.setCubic(false);
+        line.setFilled(false);
+        line.setHasLabels(false);
+        line.setHasLabelsOnlyForSelected(false);
+        line.setHasLines(true);
+        line.setHasPoints(true);
+        lines.add(line);
+
+        // AxisX
+        List<AxisValue> axisXValues = new ArrayList<>();
+        for (int i = 0; i < mTaskCalendarList.size(); ++i) {
+            AxisValue value = new AxisValue(i);
+            value.setLabel(mTaskCalendarList.get(i).getKey());
+            axisXValues.add(value);
+        }
+        Axis axisX = new Axis();
+        axisX.setHasLines(true);
+        axisX.setValues(axisXValues);
+        axisX.setName("日期");
+
+        // AxisY
+        Axis axisY = new Axis();
+        axisY.setName("数量");
 
         chartData = new LineChartData(lines);
-
-        Axis axisX = new Axis();
-        Axis axisY = new Axis().setHasLines(true);
-        axisX.setName("Axis X");
-        axisY.setName("Axis Y");
         chartData.setAxisXBottom(axisX);
         chartData.setAxisYLeft(axisY);
-
-        chartData.setBaseValue(Float.NEGATIVE_INFINITY);
+        chartData.setBaseValue(1.f);
         chartView.setLineChartData(chartData);
 
     }
@@ -133,9 +146,9 @@ public class GroupTaskLineFragment extends Fragment {
     private void resetViewport() {
         final Viewport viewPort = new Viewport(chartView.getMaximumViewport());
         viewPort.bottom = 0;
-        viewPort.top = 100;
+        viewPort.top = 5; // Todo
         viewPort.left = 0;
-        viewPort.right = numberOfPoints - 1;
+        viewPort.right = mTaskCalendarList.size();
         chartView.setMaximumViewport(viewPort);
         chartView.setCurrentViewport(viewPort);
     }
@@ -150,8 +163,6 @@ public class GroupTaskLineFragment extends Fragment {
 
         @Override
         public void onValueDeselected() {
-            // TODO Auto-generated method stub
-
         }
     }
 }
