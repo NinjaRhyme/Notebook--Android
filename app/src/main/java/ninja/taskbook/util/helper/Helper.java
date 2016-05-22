@@ -22,6 +22,12 @@ public class Helper {
     }
 
     //----------------------------------------------------------------------------------------------------
+    public static String calendarToString(Calendar calendar) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyy-MM-dd HH:mm", Locale.CHINESE);
+        return formatter.format(calendar.getTime());
+    }
+
+    //----------------------------------------------------------------------------------------------------
     public static Calendar dateStringToCalendar(String dateString) {
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("yyy-MM-dd", Locale.CHINESE);
@@ -49,6 +55,17 @@ public class Helper {
         return null;
     }
 
-
-
+    //----------------------------------------------------------------------------------------------------
+    public static Calendar stringToCalendar(String string) {
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyy-MM-dd HH:mm", Locale.CHINESE);
+            Date date = formatter.parse(string);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            return calendar;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

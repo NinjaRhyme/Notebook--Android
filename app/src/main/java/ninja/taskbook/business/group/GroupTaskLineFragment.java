@@ -7,7 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import lecho.lib.hellocharts.listener.LineChartOnValueSelectListener;
@@ -20,29 +24,23 @@ import lecho.lib.hellocharts.model.Viewport;
 import lecho.lib.hellocharts.util.ChartUtils;
 import lecho.lib.hellocharts.view.LineChartView;
 import ninja.taskbook.R;
+import ninja.taskbook.model.entity.TaskEntity;
+import ninja.taskbook.util.helper.Helper;
 
 //----------------------------------------------------------------------------------------------------
 public class GroupTaskLineFragment extends Fragment {
 
     //----------------------------------------------------------------------------------------------------
-    private LineChartView chart;
-    private LineChartData data;
+    private LineChartView chartView;
+    private LineChartData chartData;
+
     private int numberOfLines = 1;
     private int maxNumberOfLines = 4;
     private int numberOfPoints = 12;
 
     float[][] randomNumbersTab = new float[maxNumberOfLines][numberOfPoints];
 
-    private boolean hasAxes = true;
-    private boolean hasAxesNames = true;
-    private boolean hasLines = true;
-    private boolean hasPoints = true;
-    private ValueShape shape = ValueShape.CIRCLE;
-    private boolean isFilled = false;
-    private boolean hasLabels = false;
-    private boolean isCubic = false;
-    private boolean hasLabelForSelected = false;
-    private boolean pointsHaveDifferentColor;
+    List<TaskEntity> mGroupTaskItems = null;
 
     //----------------------------------------------------------------------------------------------------
     @Override
@@ -56,17 +54,39 @@ public class GroupTaskLineFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.group_task_line, container, false);
 
-        chart = (LineChartView)rootView.findViewById(R.id.chart);
-        chart.setOnValueTouchListener(new ValueTouchListener());
+        chartView = (LineChartView)rootView.findViewById(R.id.chart_view);
+        chartView.setOnValueTouchListener(new ValueTouchListener());
+        chartView.setViewportCalculationEnabled(false);
         generateValues();
         generateData();
-        chart.setViewportCalculationEnabled(false);
         resetViewport();
 
         return rootView;
     }
 
+    //----------------------------------------------------------------------------------------------------
+    void setGroupTaskItems(List<TaskEntity> groupTaskItems) {
+        mGroupTaskItems = groupTaskItems;
+        generateValues();
+        if (chartView != null) {
+            generateData();
+            resetViewport();
+        }
+    }
+
+    //----------------------------------------------------------------------------------------------------
     private void generateValues() {
+        for (TaskEntity entity : mGroupTaskItems) {
+            try {
+                JSONObject beginningJsonData = new JSONObject(entity.taskBeginning);
+                Calendar beginingCalendar = Helper.stringToCalendar(beginningJsonData.getString("date") + " " + beginningJsonData.getString("time"));
+                JSONObject deadlineJsonData = new JSONObject(entity.taskDeadline);
+                Calendar deadlineCalendar = Helper.stringToCalendar(deadlineJsonData.getString("date") + " " + deadlineJsonData.getString("time"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
         for (int i = 0; i < maxNumberOfLines; ++i) {
             for (int j = 0; j < numberOfPoints; ++j) {
                 randomNumbersTab[i][j] = (float) Math.random() * 100f;
@@ -74,8 +94,8 @@ public class GroupTaskLineFragment extends Fragment {
         }
     }
 
+    //----------------------------------------------------------------------------------------------------
     private void generateData() {
-
         List<Line> lines = new ArrayList<>();
         for (int i = 0; i < numberOfLines; ++i) {
 
@@ -86,51 +106,41 @@ public class GroupTaskLineFragment extends Fragment {
 
             Line line = new Line(values);
             line.setColor(ChartUtils.COLORS[i]);
-            line.setShape(shape);
-            line.setCubic(isCubic);
-            line.setFilled(isFilled);
-            line.setHasLabels(hasLabels);
-            line.setHasLabelsOnlyForSelected(hasLabelForSelected);
-            line.setHasLines(hasLines);
-            line.setHasPoints(hasPoints);
-            if (pointsHaveDifferentColor){
-                line.setPointColor(ChartUtils.COLORS[(i + 1) % ChartUtils.COLORS.length]);
-            }
+            line.setShape(ValueShape.CIRCLE);
+            line.setCubic(false);
+            line.setFilled(false);
+            line.setHasLabels(false);
+            line.setHasLabelsOnlyForSelected(false);
+            line.setHasLines(true);
+            line.setHasPoints(true);
             lines.add(line);
         }
 
-        data = new LineChartData(lines);
+        chartData = new LineChartData(lines);
 
-        if (hasAxes) {
-            Axis axisX = new Axis();
-            Axis axisY = new Axis().setHasLines(true);
-            if (hasAxesNames) {
-                axisX.setName("Axis X");
-                axisY.setName("Axis Y");
-            }
-            data.setAxisXBottom(axisX);
-            data.setAxisYLeft(axisY);
-        } else {
-            data.setAxisXBottom(null);
-            data.setAxisYLeft(null);
-        }
+        Axis axisX = new Axis();
+        Axis axisY = new Axis().setHasLines(true);
+        axisX.setName("Axis X");
+        axisY.setName("Axis Y");
+        chartData.setAxisXBottom(axisX);
+        chartData.setAxisYLeft(axisY);
 
-        data.setBaseValue(Float.NEGATIVE_INFINITY);
-        chart.setLineChartData(data);
+        chartData.setBaseValue(Float.NEGATIVE_INFINITY);
+        chartView.setLineChartData(chartData);
 
     }
 
     private void resetViewport() {
-        // Reset viewport height range to (0,100)
-        final Viewport v = new Viewport(chart.getMaximumViewport());
-        v.bottom = 0;
-        v.top = 100;
-        v.left = 0;
-        v.right = numberOfPoints - 1;
-        chart.setMaximumViewport(v);
-        chart.setCurrentViewport(v);
+        final Viewport viewPort = new Viewport(chartView.getMaximumViewport());
+        viewPort.bottom = 0;
+        viewPort.top = 100;
+        viewPort.left = 0;
+        viewPort.right = numberOfPoints - 1;
+        chartView.setMaximumViewport(viewPort);
+        chartView.setCurrentViewport(viewPort);
     }
 
+    //----------------------------------------------------------------------------------------------------
     private class ValueTouchListener implements LineChartOnValueSelectListener {
 
         @Override

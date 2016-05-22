@@ -59,7 +59,7 @@
                 android:text="Task Beginning"
                 android:textColor="@color/task_text_color"/>
             <EditText
-                android:id="@+id/task_beginning_calendar_edit_text"
+                android:id="@+id/task_beginning_date_edit_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="6"
@@ -113,7 +113,7 @@
                 android:text="Task Deadline"
                 android:textColor="@color/task_text_color"/>
             <EditText
-                android:id="@+id/task_deadline_calendar_edit_text"
+                android:id="@+id/task_deadline_date_edit_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="6"

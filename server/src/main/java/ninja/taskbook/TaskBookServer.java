@@ -74,13 +74,13 @@ public class TaskBookServer {
         TaskTable taskTable = (TaskTable)mDatabaseManager.getTable(TaskTable.class);
         taskTable.drop();
         taskTable = (TaskTable)mDatabaseManager.getTable(TaskTable.class);
-        TaskEntity taskEntity = new TaskEntity(0, 1, "Boss1", "Task1", "嘻嘻嘻嘻嘻嘻嘻嘻嘻", "{\"calendar\":\"2016-04-10\", \"time\":\"08:00\"}", "{\"calendar\":\"2016-04-15\", \"time\":\"08:00\"}", 1.f);
+        TaskEntity taskEntity = new TaskEntity(0, 1, "Boss1", "Task1", "嘻嘻嘻嘻嘻嘻嘻嘻嘻", "{\"date\":\"2016-04-10\", \"time\":\"08:00\"}", "{\"date\":\"2016-04-15\", \"time\":\"08:00\"}", 1.f);
         taskTable.insert(taskEntity);
-        taskEntity = new TaskEntity(0, 1, "Boss1", "Task2", "嘻嘻嘻嘻嘻嘻嘻嘻嘻", "{\"calendar\":\"2016-04-13\", \"time\":\"08:00\"}", "{\"calendar\":\"2016-05-1\", \"time\":\"08:00\"}", 0.5f);
+        taskEntity = new TaskEntity(0, 1, "Boss1", "Task2", "嘻嘻嘻嘻嘻嘻嘻嘻嘻", "{\"date\":\"2016-04-13\", \"time\":\"08:00\"}", "{\"date\":\"2016-05-1\", \"time\":\"08:00\"}", 0.5f);
         taskTable.insert(taskEntity);
-        taskEntity = new TaskEntity(0, 1, "Boss2", "Task3", "嘻嘻嘻嘻嘻嘻嘻嘻嘻", "{\"calendar\":\"2016-04-25\", \"time\":\"08:00\"}", "{\"calendar\":\"2016-05-11\", \"time\":\"08:00\"}",  0.3f);
+        taskEntity = new TaskEntity(0, 1, "Boss2", "Task3", "嘻嘻嘻嘻嘻嘻嘻嘻嘻", "{\"date\":\"2016-04-25\", \"time\":\"08:00\"}", "{\"date\":\"2016-05-11\", \"time\":\"08:00\"}",  0.3f);
         taskTable.insert(taskEntity);
-        taskEntity = new TaskEntity(0, 1, "Boss2", "Task4", "嘻嘻嘻嘻嘻嘻嘻嘻嘻", "{\"calendar\":\"2016-05-11\", \"time\":\"08:00\"}", "{\"calendar\":\"2016-05-12\", \"time\":\"08:00\"}",  0.5f);
+        taskEntity = new TaskEntity(0, 1, "Boss2", "Task4", "嘻嘻嘻嘻嘻嘻嘻嘻嘻", "{\"date\":\"2016-05-11\", \"time\":\"08:00\"}", "{\"date\":\"2016-05-12\", \"time\":\"08:00\"}",  0.5f);
         taskTable.insert(taskEntity);
 
         UserTaskTable userTaskTable = (UserTaskTable)mDatabaseManager.getTable(UserTaskTable.class);
@@ -283,7 +283,7 @@ public class TaskBookServer {
         }
 
         @Override
-        public List<ThriftTaskInfo> groupTaskInfos(int groupId) throws org.apache.thrift.TException {
+        public List<ThriftTaskInfo> groupTaskInfos(int userId, int groupId) throws org.apache.thrift.TException {
             TaskTable taskTable = (TaskTable)mDatabaseManager.getTable(TaskTable.class);
             List<TaskEntity> entities = taskTable.queryEntities("task_group_id = '" + groupId + "'");
             List<ThriftTaskInfo> taskInfos = new ArrayList<>();
@@ -305,6 +305,13 @@ public class TaskBookServer {
                 return taskInfo(userId, taskId);
             }
             return null;
+        }
+
+        public boolean assignTask(int userId, int taskId, int targetUserId) throws org.apache.thrift.TException {
+            // Todo: dangerous & repeat
+            UserTaskTable userTaskTable = (UserTaskTable)mDatabaseManager.getTable(UserTaskTable.class);
+            UserTaskRelation relation = new UserTaskRelation(0, targetUserId, taskId, UserTaskRelation.UserTaskRole.USER_TASK_MEMBER.ordinal());
+            return 0 < userTaskTable.insert(relation);
         }
 
         @Override
@@ -330,7 +337,7 @@ public class TaskBookServer {
         //----------------------------------------------------------------------------------------------------
         @Override
         public boolean sendNotification(int userId, ThriftNotification notification) throws org.apache.thrift.TException {
-            // Todo: userId vs ownerId && Json
+            // Todo: userId vs ownerId
             JSONObject jsonData = new JSONObject(notification.notificationData);
             switch (notification.notificationType) {
                 case NOTIFICATION_JOIN:
@@ -395,7 +402,7 @@ public class TaskBookServer {
 
         @Override
         public List<ThriftNotification> newNotifications(int userId) throws org.apache.thrift.TException {
-            // Todo: update
+            // Todo: delete alert
             NotificationTable table = (NotificationTable)mDatabaseManager.getTable(NotificationTable.class);
             List<NotificationEntity> entities = table.queryEntities("notification_receiver_id = '" + userId + "' and notification_is_new = 'true'");
             List<ThriftNotification> notifications = new ArrayList<>();

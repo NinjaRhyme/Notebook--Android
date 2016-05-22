@@ -8,10 +8,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.List;
+
 import ninja.taskbook.R;
 import ninja.taskbook.business.task.TaskCreatorFragment;
 import ninja.taskbook.model.data.DataManager;
 import ninja.taskbook.model.entity.GroupEntity;
+import ninja.taskbook.model.entity.TaskEntity;
 
 //----------------------------------------------------------------------------------------------------
 public class GroupDetailFragment extends Fragment {
@@ -21,6 +24,7 @@ public class GroupDetailFragment extends Fragment {
     TextView mNameTextView;
     int mGroupId = 0;
     GroupEntity mGroupInfo = null;
+    List<TaskEntity> mGroupTaskItems = null;
 
     //----------------------------------------------------------------------------------------------------
     @Override
@@ -75,13 +79,23 @@ public class GroupDetailFragment extends Fragment {
             mNameTextView.setText(mGroupInfo.groupName);
         }
 
-        loadChart();
+        DataManager.getInstance().requestGroupTaskItems(mGroupId,
+                new DataManager.RequestCallback<List<TaskEntity>>() {
+                    @Override
+                    public void onResult(List<TaskEntity> result) {
+                        mGroupTaskItems = result;
+                        loadChart();
+                    }
+                }
+        );
     }
 
     private void loadChart() {
+        GroupTaskLineFragment fragment = new GroupTaskLineFragment();
+        fragment.setGroupTaskItems(mGroupTaskItems);
         getChildFragmentManager()
                 .beginTransaction()
-                .replace(R.id.chart_frame_layout, new GroupTaskLineFragment())
+                .replace(R.id.chart_frame_layout, fragment)
                 .commit();
     }
 

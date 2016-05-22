@@ -40,9 +40,9 @@ public class TaskCreatorFragment extends Fragment {
 
     //----------------------------------------------------------------------------------------------------
     EditText mTaskNameEditText;
-    EditText mTaskBeginningCalendarEditText;
+    EditText mTaskBeginningDateEditText;
     EditText mTaskBeginningTimeEditText;
-    EditText mTaskDeadlineCalendarEditText;
+    EditText mTaskDeadlineDateEditText;
     EditText mTaskDeadlineTimeEditText;
     EditText mTaskContentEditText;
     int mGroupId = 0;
@@ -72,10 +72,10 @@ public class TaskCreatorFragment extends Fragment {
 
         // Beginning
         final Calendar calendar = Calendar.getInstance();
-        mTaskBeginningCalendarEditText = (EditText)rootView.findViewById(R.id.task_beginning_calendar_edit_text);
-        mTaskBeginningCalendarEditText.setInputType(InputType.TYPE_NULL);
-        mTaskBeginningCalendarEditText.setText(Helper.calendarToDateString(calendar));
-        mTaskBeginningCalendarEditText.setOnClickListener(new View.OnClickListener() {
+        mTaskBeginningDateEditText = (EditText)rootView.findViewById(R.id.task_beginning_date_edit_text);
+        mTaskBeginningDateEditText.setInputType(InputType.TYPE_NULL);
+        mTaskBeginningDateEditText.setText(Helper.calendarToDateString(calendar));
+        mTaskBeginningDateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 DatePickerDialog dialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
@@ -83,7 +83,7 @@ public class TaskCreatorFragment extends Fragment {
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                         Calendar tmpCalendar = Calendar.getInstance();
                         tmpCalendar.set(year, monthOfYear, dayOfMonth);
-                        mTaskBeginningCalendarEditText.setText(Helper.calendarToDateString(tmpCalendar));
+                        mTaskBeginningDateEditText.setText(Helper.calendarToDateString(tmpCalendar));
                     }
                 }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
                 dialog.show();
@@ -107,10 +107,10 @@ public class TaskCreatorFragment extends Fragment {
         });
 
         // Deadline
-        mTaskDeadlineCalendarEditText = (EditText)rootView.findViewById(R.id.task_deadline_calendar_edit_text);
-        mTaskDeadlineCalendarEditText.setInputType(InputType.TYPE_NULL);
-        mTaskDeadlineCalendarEditText.setText(Helper.calendarToDateString(calendar));
-        mTaskDeadlineCalendarEditText.setOnClickListener(new View.OnClickListener() {
+        mTaskDeadlineDateEditText = (EditText)rootView.findViewById(R.id.task_deadline_date_edit_text);
+        mTaskDeadlineDateEditText.setInputType(InputType.TYPE_NULL);
+        mTaskDeadlineDateEditText.setText(Helper.calendarToDateString(calendar));
+        mTaskDeadlineDateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 DatePickerDialog dialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
@@ -118,7 +118,7 @@ public class TaskCreatorFragment extends Fragment {
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                         Calendar tmpCalendar = Calendar.getInstance();
                         tmpCalendar.set(year, monthOfYear, dayOfMonth);
-                        mTaskDeadlineCalendarEditText.setText(Helper.calendarToDateString(tmpCalendar));
+                        mTaskDeadlineDateEditText.setText(Helper.calendarToDateString(tmpCalendar));
                     }
                 }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
                 dialog.show();
@@ -170,10 +170,10 @@ public class TaskCreatorFragment extends Fragment {
                             TaskBookService.Client client = (TaskBookService.Client) ThriftManager.createClient(ThriftManager.ClientTypeEnum.CLIENT.toString());
                             if (client != null) {
                                 JSONObject timeJsonData = new JSONObject();
-                                timeJsonData.put("calendar", mTaskBeginningCalendarEditText.getText().toString());
+                                timeJsonData.put("date", mTaskBeginningDateEditText.getText().toString());
                                 timeJsonData.put("time", mTaskBeginningTimeEditText.getText().toString());
                                 JSONObject deadlineJsonData = new JSONObject();
-                                deadlineJsonData.put("calendar", mTaskDeadlineCalendarEditText.getText().toString());
+                                deadlineJsonData.put("date", mTaskDeadlineDateEditText.getText().toString());
                                 deadlineJsonData.put("time", mTaskDeadlineTimeEditText.getText().toString());
                                 ThriftTaskInfo info = new ThriftTaskInfo(0, mGroupId, entity.userName, mTaskNameEditText.getText().toString(), mTaskContentEditText.getText().toString(), timeJsonData.toString(), deadlineJsonData.toString(), 0);
                                 return client.createTask(userId, info);

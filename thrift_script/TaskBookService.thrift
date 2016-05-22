@@ -61,8 +61,9 @@ service TaskBookService
 	
 	ThriftTaskInfo taskInfo(1: required i32 userId, 2: required i32 taskId);
 	list<ThriftTaskInfo> userTaskInfos(1: required i32 userId);
-	list<ThriftTaskInfo> groupTaskInfos(1: required i32 groupId);
+	list<ThriftTaskInfo> groupTaskInfos(1: required i32 userId, 2: required i32 groupId);
 	ThriftTaskInfo createTask(1: required i32 userId, 2: required ThriftTaskInfo taskInfo);
+	bool assignTask(1: required i32 userId, 2: required i32 taskId, 3: required i32 targetUserId);
 	bool editTask(1: required i32 userId, 2: required ThriftTaskInfo taskInfo);
 	bool alertTask(1: required i32 userId, 2: required ThriftTaskInfo taskInfo);
 

@@ -43,6 +43,7 @@ public class DataManager {
     private List<TaskEntity> mTaskItems;
     private List<TaskEntity> mAdminTaskItems;
     private List<TaskEntity> mMemberTaskItems;
+    //private HashMap<String, List<TaskEntity>> mGroupTaskItems = new HashMap<>();
     private List<NotificationEntity> mNotificationItems;
     private List<NotificationEntity> mNewNotificationItems;
     private HashMap<String, String> mSettingItems = new HashMap<>(); // Memo: Local
@@ -360,6 +361,80 @@ public class DataManager {
                         }
                         if (callback != null) {
                             callback.onResult(mTaskItems);
+                        }
+                    }
+                });
+    }
+
+    public void requestGroupTaskItems(final int groupId, final RequestCallback<List<TaskEntity>> callback) {
+        UserEntity entity = getUserItem();
+        if (entity == null || entity.userId <= 0) {
+            return;
+        }
+
+        Observable.just(entity.userId)
+                .map(new Func1<Integer, List<ThriftTaskInfo>>() {
+                    @Override
+                    public List<ThriftTaskInfo> call(Integer userId) {
+                        try {
+                            TaskBookService.Client client = (TaskBookService.Client) ThriftManager.createClient(ThriftManager.ClientTypeEnum.CLIENT.toString());
+                            if (client != null) {
+                                return client.groupTaskInfos(userId, groupId);
+                            }
+                        } catch (TException e) {
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<List<ThriftTaskInfo>>() {
+                    @Override
+                    public void call(List<ThriftTaskInfo> result) {
+                        List<TaskEntity> groupTaskItems = null;
+                        if (result != null) {
+                            groupTaskItems = new ArrayList<>();
+                            for (ThriftTaskInfo info : result) {
+                                TaskEntity entity = new TaskEntity(info.taskId, info.groupId, info.taskAuthor, info.taskName, info.taskContent, info.taskBeginning, info.taskDeadline, (float)info.taskProgress, info.userRole);
+                                groupTaskItems.add(entity);
+                            }
+                        }
+                        if (callback != null) {
+                            callback.onResult(groupTaskItems);
+                        }
+                    }
+                });
+    }
+
+    public void requestAssignTask(final int taskId, final int targetUserId, final RequestCallback<Boolean> callback) {
+        UserEntity entity = getUserItem();
+        if (entity == null || entity.userId <= 0) {
+            return;
+        }
+
+        Observable.just(entity.userId)
+                .map(new Func1<Integer, Boolean>() {
+                    @Override
+                    public Boolean call(Integer userId) {
+                        try {
+                            TaskBookService.Client client = (TaskBookService.Client) ThriftManager.createClient(ThriftManager.ClientTypeEnum.CLIENT.toString());
+                            if (client != null) {
+                                return client.assignTask(userId, taskId, targetUserId);
+                            }
+                        } catch (TException e) {
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Boolean>() {
+                    @Override
+                    public void call(Boolean result) {
+                        if (callback != null) {
+                            callback.onResult(result);
                         }
                     }
                 });
