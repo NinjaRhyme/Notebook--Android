@@ -1,29 +1,16 @@
-package ninja.taskbook.business.login;
+package ninja.taskbook.view.login;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import org.apache.thrift.TException;
-
 import ninja.taskbook.R;
 import ninja.taskbook.model.data.DataManager;
-import ninja.taskbook.model.entity.UserEntity;
-import ninja.taskbook.model.network.thrift.manager.ThriftManager;
-import ninja.taskbook.model.network.thrift.service.TaskBookService;
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 
 //----------------------------------------------------------------------------------------------------
 public class RegisterActivity extends AppCompatActivity {

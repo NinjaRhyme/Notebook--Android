@@ -1,4 +1,4 @@
-package ninja.taskbook.business.group;
+package ninja.taskbook.view.group;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,7 +17,6 @@ import ninja.taskbook.model.data.DataManager;
 import ninja.taskbook.model.entity.UserEntity;
 import ninja.taskbook.model.network.thrift.manager.ThriftManager;
 import ninja.taskbook.model.network.thrift.service.TaskBookService;
-import ninja.taskbook.model.network.thrift.service.ThriftGroupInfo;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;

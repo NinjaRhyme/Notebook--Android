@@ -1,4 +1,4 @@
-package ninja.taskbook.business.task;
+package ninja.taskbook.view.task;
 
 //----------------------------------------------------------------------------------------------------
 public class TaskItemAnimation {

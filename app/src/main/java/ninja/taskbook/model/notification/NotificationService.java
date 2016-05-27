@@ -14,7 +14,7 @@ import android.os.IBinder;
 import java.util.List;
 
 import ninja.taskbook.R;
-import ninja.taskbook.business.MainActivity;
+import ninja.taskbook.view.MainActivity;
 import ninja.taskbook.model.data.DataManager;
 import ninja.taskbook.model.database.DatabaseManager;
 import ninja.taskbook.model.entity.NotificationEntity;

@@ -1,4 +1,4 @@
-package ninja.taskbook.business.group;
+package ninja.taskbook.view.group;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,23 +11,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import org.apache.thrift.TException;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import ninja.taskbook.R;
 import ninja.taskbook.model.data.DataManager;
 import ninja.taskbook.model.entity.GroupEntity;
-import ninja.taskbook.model.entity.UserEntity;
-import ninja.taskbook.model.network.thrift.manager.ThriftManager;
-import ninja.taskbook.model.network.thrift.service.TaskBookService;
-import ninja.taskbook.model.network.thrift.service.ThriftGroupInfo;
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 
 //----------------------------------------------------------------------------------------------------
 public class GroupFragment extends Fragment {

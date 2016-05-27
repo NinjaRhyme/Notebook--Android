@@ -1,4 +1,4 @@
-package ninja.taskbook.business.notification;
+package ninja.taskbook.view.notification;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.apache.thrift.TException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -22,17 +21,7 @@ import java.util.List;
 import ninja.taskbook.R;
 import ninja.taskbook.model.data.DataManager;
 import ninja.taskbook.model.entity.NotificationEntity;
-import ninja.taskbook.model.entity.TaskEntity;
-import ninja.taskbook.model.entity.UserEntity;
-import ninja.taskbook.model.network.thrift.manager.ThriftManager;
-import ninja.taskbook.model.network.thrift.service.TaskBookService;
-import ninja.taskbook.model.network.thrift.service.ThriftNotification;
 import ninja.taskbook.model.network.thrift.service.ThriftNotificationType;
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 
 //----------------------------------------------------------------------------------------------------
 public class NotificationFragment  extends Fragment {

@@ -1,4 +1,4 @@
-package ninja.taskbook.business.group;
+package ninja.taskbook.view.group;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

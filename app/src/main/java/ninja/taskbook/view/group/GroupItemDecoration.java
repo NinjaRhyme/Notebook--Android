@@ -1,4 +1,4 @@
-package ninja.taskbook.business.notification;
+package ninja.taskbook.view.group;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -7,12 +7,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 //----------------------------------------------------------------------------------------------------
-public class NotificationItemDecoration extends RecyclerView.ItemDecoration {
+public class GroupItemDecoration extends RecyclerView.ItemDecoration {
 
     //----------------------------------------------------------------------------------------------------
 
     //----------------------------------------------------------------------------------------------------
-    public NotificationItemDecoration(Context context) {
+    public GroupItemDecoration(Context context) {
 
     }
 

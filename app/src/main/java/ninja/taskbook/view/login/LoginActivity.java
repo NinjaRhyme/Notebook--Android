@@ -1,4 +1,4 @@
-package ninja.taskbook.business.login;
+package ninja.taskbook.view.login;
 
 import android.content.Intent;
 import android.os.Bundle;

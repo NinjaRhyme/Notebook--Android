@@ -1,4 +1,4 @@
-package ninja.taskbook.business.task;
+package ninja.taskbook.view.task;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -7,31 +7,18 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.apache.thrift.TException;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import ninja.taskbook.R;
-import ninja.taskbook.business.group.GroupTaskLineFragment;
 import ninja.taskbook.model.data.DataManager;
 import ninja.taskbook.model.entity.GroupEntity;
 import ninja.taskbook.model.entity.TaskEntity;
-import ninja.taskbook.model.entity.UserEntity;
-import ninja.taskbook.model.network.thrift.manager.ThriftManager;
-import ninja.taskbook.model.network.thrift.service.TaskBookService;
-import ninja.taskbook.model.network.thrift.service.ThriftTaskInfo;
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 
 //----------------------------------------------------------------------------------------------------
 public class TaskFragment extends Fragment {

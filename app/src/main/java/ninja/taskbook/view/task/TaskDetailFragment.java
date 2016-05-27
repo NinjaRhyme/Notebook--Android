@@ -1,4 +1,4 @@
-package ninja.taskbook.business.task;
+package ninja.taskbook.view.task;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -13,11 +13,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.apache.thrift.TException;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.List;
 
 import ninja.taskbook.R;
 import ninja.taskbook.model.data.DataManager;

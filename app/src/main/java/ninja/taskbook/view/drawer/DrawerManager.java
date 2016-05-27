@@ -1,4 +1,4 @@
-package ninja.taskbook.business.drawer;
+package ninja.taskbook.view.drawer;
 
 import android.graphics.Color;
 import android.os.Handler;

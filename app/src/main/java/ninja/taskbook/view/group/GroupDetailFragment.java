@@ -1,4 +1,4 @@
-package ninja.taskbook.business.group;
+package ninja.taskbook.view.group;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,7 +11,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import ninja.taskbook.R;
-import ninja.taskbook.business.task.TaskCreatorFragment;
+import ninja.taskbook.view.task.TaskCreatorFragment;
 import ninja.taskbook.model.data.DataManager;
 import ninja.taskbook.model.entity.GroupEntity;
 import ninja.taskbook.model.entity.TaskEntity;

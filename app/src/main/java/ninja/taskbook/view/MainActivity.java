@@ -1,4 +1,4 @@
-package ninja.taskbook.business;
+package ninja.taskbook.view;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,15 +16,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ninja.taskbook.R;
-import ninja.taskbook.business.group.GroupFragment;
-import ninja.taskbook.business.login.LoginActivity;
-import ninja.taskbook.business.notification.NotificationFragment;
-import ninja.taskbook.business.profile.ProfileFragment;
-import ninja.taskbook.business.setting.SettingFragment;
-import ninja.taskbook.business.task.TaskFragment;
-import ninja.taskbook.business.drawer.DrawerManager;
-import ninja.taskbook.business.drawer.DrawerItem;
-import ninja.taskbook.model.data.DataManager;
+import ninja.taskbook.view.group.GroupFragment;
+import ninja.taskbook.view.login.LoginActivity;
+import ninja.taskbook.view.notification.NotificationFragment;
+import ninja.taskbook.view.profile.ProfileFragment;
+import ninja.taskbook.view.setting.SettingFragment;
+import ninja.taskbook.view.task.TaskFragment;
+import ninja.taskbook.view.drawer.DrawerManager;
+import ninja.taskbook.view.drawer.DrawerItem;
 import ninja.taskbook.model.database.DatabaseManager;
 
 //----------------------------------------------------------------------------------------------------
