@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ninja.taskbook.R;
+import ninja.taskbook.presenter.MainPresenter;
 import ninja.taskbook.view.group.GroupFragment;
 import ninja.taskbook.view.login.LoginActivity;
 import ninja.taskbook.view.notification.NotificationFragment;
@@ -24,10 +25,9 @@ import ninja.taskbook.view.setting.SettingFragment;
 import ninja.taskbook.view.task.TaskFragment;
 import ninja.taskbook.view.drawer.DrawerManager;
 import ninja.taskbook.view.drawer.DrawerItem;
-import ninja.taskbook.model.database.DatabaseManager;
 
 //----------------------------------------------------------------------------------------------------
-public class MainActivity extends AppCompatActivity implements DrawerManager.DrawerListener {
+public class MainActivity extends AppCompatActivity implements IMainView, DrawerManager.DrawerListener {
 
     //----------------------------------------------------------------------------------------------------
     static final int LOGIN_ACTIVITY_CODE = 1;
@@ -35,11 +35,10 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
     //----------------------------------------------------------------------------------------------------
     private CoordinatorLayout mCoordinatorLayout;
     private Toolbar mToolbar;
-    private DrawerLayout mDrawerLayout;
-    private LinearLayout mDrawer;
     private List<DrawerItem> mDrawerItems = new ArrayList<>();
     private DrawerManager mDrawerManager;
     private int mDrawerIndex = 0;
+    private MainPresenter mMainPresenter = new MainPresenter(this);
 
     // Init
     //----------------------------------------------------------------------------------------------------
@@ -56,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
     }
 
     private void initData() {
-        DatabaseManager.init(getContentResolver());
+        mMainPresenter.initDatabase(getContentResolver());
     }
 
     private void initToolbar() {
@@ -66,8 +65,8 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
 
     private void initDrawer() {
         mCoordinatorLayout = (CoordinatorLayout)findViewById(R.id.coordinator_layout);
-        mDrawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
-        mDrawer = (LinearLayout)findViewById(R.id.drawer);
+        DrawerLayout drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+        LinearLayout mDrawer = (LinearLayout)findViewById(R.id.drawer);
 
         DrawerItem item = new DrawerItem(R.mipmap.drawer_item_home);
         mDrawerItems.add(item);
@@ -82,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
         DrawerItem item5 = new DrawerItem(R.mipmap.drawer_item_close);
         mDrawerItems.add(item5);
 
-        mDrawerManager = new DrawerManager(this, mCoordinatorLayout, mToolbar, mDrawerLayout, mDrawer, mDrawerItems, this);
+        mDrawerManager = new DrawerManager(this, mCoordinatorLayout, mToolbar, drawerLayout, mDrawer, mDrawerItems, this);
     }
 
     private void initContent() {
@@ -263,7 +262,7 @@ public class MainActivity extends AppCompatActivity implements DrawerManager.Dra
                             .commit();
                     break;
                 case 5:
-                    DatabaseManager.clear();
+                    mMainPresenter.logout();
                     login();
                     break;
                 default:

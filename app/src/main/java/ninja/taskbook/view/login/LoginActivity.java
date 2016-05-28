@@ -1,5 +1,6 @@
 package ninja.taskbook.view.login;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,9 +17,10 @@ import ninja.taskbook.model.data.DataManager;
 import ninja.taskbook.model.database.DatabaseManager;
 import ninja.taskbook.model.entity.UserEntity;
 import ninja.taskbook.model.notification.NotificationService;
+import ninja.taskbook.presenter.login.LoginPresenter;
 
 //----------------------------------------------------------------------------------------------------
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements ILoginView {
 
     //----------------------------------------------------------------------------------------------------
     static final int REGISTER_ACTIVITY_CODE = 1;
@@ -26,6 +28,7 @@ public class LoginActivity extends AppCompatActivity {
     //----------------------------------------------------------------------------------------------------
     EditText mNameEditText;
     EditText mPasswordEditText;
+    private LoginPresenter mLoginPresenter = new LoginPresenter(this);
 
     //----------------------------------------------------------------------------------------------------
     @Override
@@ -57,13 +60,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        UserEntity entity = DatabaseManager.getUserEntity();
-        if (entity != null) {
-            DataManager.getInstance().setUserItem(entity);
-            NotificationService.actionStart(getApplicationContext(), entity.userId);
-            setResult(RESULT_OK, null);
-            finish();
-        }
+        mLoginPresenter.checkLogin();
     }
 
     //----------------------------------------------------------------------------------------------------
@@ -86,28 +83,29 @@ public class LoginActivity extends AppCompatActivity {
 
     //----------------------------------------------------------------------------------------------------
     private void login() {
-        DataManager.getInstance().requestLogin(mNameEditText.getText().toString(), mPasswordEditText.getText().toString(),
-                new DataManager.RequestCallback<Integer>() {
-                    @Override
-                    public void onResult(Integer result) {
-                        if (0 < result) {
-                            DatabaseManager.setUserId(result);
-                            NotificationService.actionStart(getApplicationContext(), result);
-                            setResult(RESULT_OK, null);
-                            finish();
-                        } else {
-                            Toast toast = Toast.makeText(getApplicationContext(), "用户名或密码错误", Toast.LENGTH_LONG);
-                            toast.setGravity(Gravity.CENTER, 0, 0);
-                            toast.show();
-                        }
-                    }
-                }
-        );
+        mLoginPresenter.login(mNameEditText.getText().toString(), mPasswordEditText.getText().toString());
     }
 
     //----------------------------------------------------------------------------------------------------
     private void register() {
         Intent register = new Intent(LoginActivity.this, RegisterActivity.class);
         startActivityForResult(register, REGISTER_ACTIVITY_CODE);
+    }
+
+    // ILoginView
+    //----------------------------------------------------------------------------------------------------
+    public Context getContext() {
+        return getApplicationContext();
+    }
+
+    public void onLoginSuccess(int userId) {
+        setResult(RESULT_OK, null);
+        finish();
+    }
+
+    public void onLoginFail() {
+        Toast toast = Toast.makeText(getApplicationContext(), "用户名或密码错误", Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
     }
 }
