@@ -78,8 +78,10 @@ public class MainActivity extends AppCompatActivity implements IMainView, Drawer
         mDrawerItems.add(item3);
         DrawerItem item4 = new DrawerItem(R.mipmap.drawer_item_picture);
         mDrawerItems.add(item4);
-        DrawerItem item5 = new DrawerItem(R.mipmap.drawer_item_close);
+        DrawerItem item5 = new DrawerItem(R.mipmap.drawer_item_drink);
         mDrawerItems.add(item5);
+        DrawerItem item6 = new DrawerItem(R.mipmap.drawer_item_close);
+        mDrawerItems.add(item6);
 
         mDrawerManager = new DrawerManager(this, mCoordinatorLayout, mToolbar, drawerLayout, mDrawer, mDrawerItems, this);
     }
@@ -261,7 +263,7 @@ public class MainActivity extends AppCompatActivity implements IMainView, Drawer
                             .replace(R.id.frame_layout, new SettingFragment())
                             .commit();
                     break;
-                case 5:
+                case 6:
                     mMainPresenter.logout();
                     login();
                     break;
