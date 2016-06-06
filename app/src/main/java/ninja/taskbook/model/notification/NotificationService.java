@@ -11,9 +11,13 @@ import android.net.ConnectivityManager;
 import android.os.Handler;
 import android.os.IBinder;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
 
 import ninja.taskbook.R;
+import ninja.taskbook.model.network.thrift.service.ThriftNotificationType;
 import ninja.taskbook.view.MainActivity;
 import ninja.taskbook.model.data.DataManager;
 import ninja.taskbook.model.database.DatabaseManager;
@@ -117,11 +121,47 @@ public class NotificationService extends Service {
                             @Override
                             public void onResult(List<NotificationEntity> result) {
                                 for (NotificationEntity entity : result) {
+                                    String text = "";
+                                    ThriftNotificationType type = ThriftNotificationType.findByValue(entity.notificationType);
+                                    if (type != null) {
+                                        switch (type) {
+                                            case NOTIFICATION_JOIN:
+                                                try {
+                                                    JSONObject jsonData = new JSONObject(entity.notificationData);
+                                                    text = jsonData.getString("user_name") + "申请加入群组:" + jsonData.getInt("group_id");
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+                                                break;
+                                            case NOTIFICATION_INVITE:
+                                                try {
+                                                    JSONObject jsonData = new JSONObject(entity.notificationData);
+                                                    text = jsonData.getString("user_name") + "邀请您加入群组:" + jsonData.getInt("group_id");
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+                                                break;
+                                            case NOTIFICATION_JOIN_ANSWER:
+                                                break;
+                                            case NOTIFICATION_INVITE_ANSWER:
+                                                break;
+                                            case NOTIFICATION_ALERT:
+                                                try {
+                                                    JSONObject jsonData = new JSONObject(entity.notificationData);
+                                                    text = jsonData.getString("user_name") + "提醒您尽快完成任务:" + jsonData.getInt("task_id");
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                    }
                                     PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, new Intent(getApplicationContext(), MainActivity.class), 0);
                                     Notification notify = new Notification.Builder(getApplicationContext())
                                             .setSmallIcon(R.mipmap.ic_launcher)
                                             .setContentTitle("Task Book")
-                                            .setContentText("This is the notification message")
+                                            .setContentText(text)
                                             .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE | Notification.DEFAULT_LIGHTS)
                                             .setContentIntent(pendingIntent)
                                             .setWhen(System.currentTimeMillis())

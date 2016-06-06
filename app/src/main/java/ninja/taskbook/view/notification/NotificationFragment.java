@@ -70,19 +70,71 @@ public class NotificationFragment  extends Fragment {
     }
 
     //----------------------------------------------------------------------------------------------------
-    void onNotificationItemClicked(final int id) {
+    void onNotificationItemClicked(final int index) {
         new AlertDialog.Builder(getContext())
                 .setMessage("你确定?")
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        NotificationEntity entity = new NotificationEntity(mNotificationItems.get(index));
+                        ThriftNotificationType type = ThriftNotificationType.findByValue(entity.notificationType);
+                        if (type != null) {
+                            switch (type) {
+                                case NOTIFICATION_JOIN:
+                                    entity.notificationType = ThriftNotificationType.NOTIFICATION_JOIN_ANSWER.getValue();
+                                    break;
+                                case NOTIFICATION_INVITE:
+                                    entity.notificationType = ThriftNotificationType.NOTIFICATION_INVITE_ANSWER.getValue();
+                                    break;
+                            }
+                        }
+                        try {
+                            JSONObject jsonData = new JSONObject(entity.notificationData);
+                            jsonData.put("result", "YES");
+                            entity.notificationData = jsonData.toString();
+                            DataManager.getInstance().requestSendNotification(entity,
+                                    new DataManager.RequestCallback<Boolean>() {
+                                        @Override
+                                        public void onResult(Boolean result) {
+                                            mRecyclerView.getAdapter().notifyDataSetChanged();
+                                        }
+                                    }
+                            );
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 })
                 .setNegativeButton("拒绝", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        NotificationEntity entity = new NotificationEntity(mNotificationItems.get(index));
+                        ThriftNotificationType type = ThriftNotificationType.findByValue(entity.notificationType);
+                        if (type != null) {
+                            switch (type) {
+                                case NOTIFICATION_JOIN:
+                                    entity.notificationType = ThriftNotificationType.NOTIFICATION_JOIN_ANSWER.getValue();
+                                    break;
+                                case NOTIFICATION_INVITE:
+                                    entity.notificationType = ThriftNotificationType.NOTIFICATION_INVITE_ANSWER.getValue();
+                                    break;
+                            }
+                        }
+                        try {
+                            JSONObject jsonData = new JSONObject(entity.notificationData);
+                            jsonData.put("result", "NO");
+                            entity.notificationData = jsonData.toString();
+                            DataManager.getInstance().requestSendNotification(entity,
+                                    new DataManager.RequestCallback<Boolean>() {
+                                        @Override
+                                        public void onResult(Boolean result) {
+                                            mRecyclerView.getAdapter().notifyDataSetChanged();
+                                        }
+                                    }
+                            );
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 })
                 .setCancelable(true)
@@ -96,7 +148,7 @@ public class NotificationFragment  extends Fragment {
 
         public NotificationItemHolder(View itemView) {
             super(itemView);
-            titleTextView = (TextView)itemView.findViewById(R.id.title_text_view);
+            titleTextView = (TextView) itemView.findViewById(R.id.title_text_view);
         }
     }
 
@@ -128,7 +180,7 @@ public class NotificationFragment  extends Fragment {
                     case NOTIFICATION_JOIN:
                         try {
                             JSONObject jsonData = new JSONObject(entity.notificationData);
-                            String text = jsonData.getString("user_name") + "邀请您加入群组:" + jsonData.getInt("group_id");
+                            String text = jsonData.getString("user_name") + "申请加入群组:" + jsonData.getInt("group_id");
                             holder.titleTextView.setText(text);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -137,7 +189,7 @@ public class NotificationFragment  extends Fragment {
                     case NOTIFICATION_INVITE:
                         try {
                             JSONObject jsonData = new JSONObject(entity.notificationData);
-                            String text = jsonData.getString("user_name") + entity.notificationOwnerId + "申请加入群组:" + jsonData.getInt("group_id");
+                            String text = jsonData.getString("user_name") + "邀请您加入群组:" + jsonData.getInt("group_id");
                             holder.titleTextView.setText(text);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -154,7 +206,7 @@ public class NotificationFragment  extends Fragment {
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    onNotificationItemClicked(mNotificationItems.get(position).notificationId);
+                    onNotificationItemClicked(position);
                 }
             });
         }

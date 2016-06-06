@@ -106,7 +106,6 @@ public class MainActivity extends AppCompatActivity implements IMainView, Drawer
         return true;
     }
 
-    //----------------------------------------------------------------------------------------------------
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();

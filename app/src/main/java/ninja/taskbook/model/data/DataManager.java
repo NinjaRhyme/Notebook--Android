@@ -19,6 +19,7 @@ import ninja.taskbook.model.network.thrift.manager.ThriftManager;
 import ninja.taskbook.model.network.thrift.service.TaskBookService;
 import ninja.taskbook.model.network.thrift.service.ThriftGroupInfo;
 import ninja.taskbook.model.network.thrift.service.ThriftNotification;
+import ninja.taskbook.model.network.thrift.service.ThriftNotificationType;
 import ninja.taskbook.model.network.thrift.service.ThriftTaskInfo;
 import ninja.taskbook.model.network.thrift.service.ThriftUserInfo;
 import rx.Observable;
@@ -517,6 +518,41 @@ public class DataManager {
 
     public void setNotificationItems(List<NotificationEntity> notificationItems) {
         this.mNotificationItems = notificationItems;
+    }
+
+    public void requestSendNotification(final NotificationEntity notificationEntity, final RequestCallback<Boolean> callback) {
+        UserEntity entity = getUserItem();
+        if (entity == null || entity.userId <= 0) {
+            return;
+        }
+
+        Observable.just(entity.userId)
+                .map(new Func1<Integer, Boolean>() {
+                    @Override
+                    public Boolean call(Integer userId) {
+                        try {
+                            TaskBookService.Client client = (TaskBookService.Client)ThriftManager.createClient(ThriftManager.ClientTypeEnum.CLIENT.toString());
+                            if (client != null) {
+                                ThriftNotification notificationInfo = new ThriftNotification(notificationEntity.notificationId, notificationEntity.notificationOwnerId, notificationEntity.notificationReceiverId, ThriftNotificationType.findByValue(notificationEntity.notificationType), notificationEntity.notificationData, notificationEntity.notificationIsNew);
+                                return client.sendNotification(userId, notificationInfo);
+                            }
+                        } catch (TException e) {
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Boolean>() {
+                    @Override
+                    public void call(Boolean result) {
+                        // Todo: remove
+                        if (callback != null) {
+                            callback.onResult(result);
+                        }
+                    }
+                });
     }
 
     public void requestNotificationItems(final RequestCallback<List<NotificationEntity>> callback) {

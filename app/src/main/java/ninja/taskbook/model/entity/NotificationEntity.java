@@ -25,4 +25,14 @@ public class NotificationEntity {
         notificationData = _notificationData;
         notificationIsNew = _notificationIsNew;
     }
+
+    //----------------------------------------------------------------------------------------------------
+    public NotificationEntity(NotificationEntity entity) {
+        notificationId = entity.notificationId;
+        notificationOwnerId  = entity.notificationOwnerId;
+        notificationReceiverId = entity.notificationReceiverId;
+        notificationType = entity.notificationType;
+        notificationData = entity.notificationData;
+        notificationIsNew = entity.notificationIsNew;
+    }
 }
